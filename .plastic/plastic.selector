@@ -1,4 +1,0 @@
-repository "ER@id_loser@cloud.cn"
-  path "/"
-    br "/main"
-    co "/main"
