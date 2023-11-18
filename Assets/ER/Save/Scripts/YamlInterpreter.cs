@@ -1,6 +1,7 @@
 ﻿// Ignore Spelling: Json Deserialize Yaml
-using YamlDotNet.Serialization;
-
+//需要安装 YamlDotNet (yaml解析器)
+//using YamlDotNet.Serialization;
+/*
 namespace ER.Save
 {
     public class YamlInterpreter : ISaveInterpreter
@@ -19,3 +20,4 @@ namespace ER.Save
         }
     }
 }
+*/

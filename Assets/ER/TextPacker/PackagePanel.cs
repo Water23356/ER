@@ -302,7 +302,7 @@ namespace ER.TextPacker
         /// </summary>
         private void OpenAssetFolder()
         {
-            ERTool.ExplorePath(packsPath);
+            ObjectExpand.ExplorePath(packsPath);
         }
 
         /// <summary>

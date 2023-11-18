@@ -1,5 +1,8 @@
 ﻿// Ignore Spelling: Json Deserialize
 
+//需要安装 Newtonsoft.Json;
+
+/*
 using Newtonsoft.Json;
 
 namespace ER.Save
@@ -18,3 +21,4 @@ namespace ER.Save
         }
     }
 }
+*/

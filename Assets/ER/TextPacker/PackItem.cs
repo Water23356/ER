@@ -183,7 +183,7 @@ namespace ER.TextPacker
                 //Debug.Log($"图片路径:{path};存在:{File.Exists(path)}");
                 if (File.Exists(path))
                 {
-                    Sprite sp = ERTool.LoadTextureByIO(path).TextureToSprite();
+                    Sprite sp = ObjectExpand.LoadTextureByIO(path).TextureToSprite();
                     image.sprite = sp;
                 }
                 else

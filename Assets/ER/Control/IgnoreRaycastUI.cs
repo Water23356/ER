@@ -1,5 +1,5 @@
 ﻿// Ignore Spelling: Raycast
-
+using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -8,6 +8,7 @@ namespace ER.Control
     /// <summary>
     /// 完全忽略鼠标动作的UI控件
     /// </summary>
+    [Obsolete("该类有问题, 不要继承")]
     public class IgnoreRaycastUI : MonoBehaviour, IHandler
     {
         public void OnPointerEnter(PointerEventData eventData)
