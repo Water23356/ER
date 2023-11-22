@@ -8,10 +8,19 @@ namespace ER
 {
     /// <summary>
     /// AnchorManager 锚点管理类（非组件单例模式）, 简写为AM
+    /// 注意: 当为一个对象注册锚点时, 需要在对象销毁时注销锚点
     /// </summary>
     public static class AM
     {
         #region 属性
+        /// <summary>
+        /// 当有新的锚点注册时触发的事件
+        /// </summary>
+        public static event Action<Anchor> OnAnchorAdd;
+        /// <summary>
+        /// 当锚点注销时触发的事件
+        /// </summary>
+        public static event Action<Anchor> OnAnchorRemove;
 
         /// <summary>
         /// 锚点列表
@@ -36,6 +45,7 @@ namespace ER
             {
                 anchors.Add(anchor.AnchorTag, anchor);
             }
+            OnAnchorAdd?.Invoke(anchor);
         }
 
         /// <summary>
@@ -50,6 +60,7 @@ namespace ER
             {
                 VirtualAnchor anchor = new VirtualAnchor(tag, x, y);
                 anchors.Add(tag, anchor);
+                OnAnchorAdd?.Invoke(anchor);
                 return;
             }
             anchors[tag].Point = new Vector2(x, y);
@@ -66,6 +77,7 @@ namespace ER
             {
                 VirtualAnchor anchor = new VirtualAnchor(tag, position.x, position.y);
                 anchors.Add(tag, anchor);
+                OnAnchorAdd?.Invoke(anchor);
                 return;
             }
             anchors[tag].Point = position;
@@ -80,8 +92,10 @@ namespace ER
         {
             if (anchors.Keys.Contains(tag))
             {
+                Anchor anchor = anchors[tag];
                 anchors[tag].Destroy();
                 anchors.Remove(tag);
+                OnAnchorRemove?.Invoke(anchor);
                 return true;
             }
             return false;
