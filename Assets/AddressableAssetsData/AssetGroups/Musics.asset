@@ -1,0 +1,65 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Musics
+  m_EditorClassIdentifier: 
+  m_GroupName: Musics
+  m_Data:
+    m_SerializedData: []
+  m_GUID: 144f4df26788cf34ba7b6cea2ed875a8
+  m_SerializeEntries:
+  - m_GUID: e946492d8691dae4e9b46d7525616496
+    m_Address: sounds.sound_1
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1200bccf43d90f74f808f811320cae84
+    m_Address: sounds.sound_2
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 107c68d0240d7844d83991c62d6888d0
+    m_Address: sounds.sound_3
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2877a1d4617efd048b7a536d05de4226
+    m_Address: sounds.sound_7
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: db957890cec2a3f48acb3e677bc003c5
+    m_Address: sounds.sound_5
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6fefde4c29612ae47ba4d6ddbb4f05d3
+    m_Address: sounds.sound_6
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 0969de7a323f73b48bc88ba98071779d
+    m_Address: sounds.sound_8
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 94ab0aa076d08084f82a27f7f3f87e41
+    m_Address: sounds.sound_4
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 123161ea5d65fe34aade44c61dbc5369, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 3bd8b79cf8150754da4745340a5cd2e8, type: 2}
+    - {fileID: 11400000, guid: 7b57c66dc89232f4593bfa3e82d6a49f, type: 2}

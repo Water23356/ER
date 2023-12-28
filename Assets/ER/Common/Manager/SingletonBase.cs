@@ -24,7 +24,7 @@ namespace ER
     }
 
     /// <summary>
-    /// 组件单例模式基类，过场不销毁
+    /// 组件单例模式基类，过场不销毁, 需要手动创建单例对象
     /// </summary>
     /// <typeparam name="T"></typeparam>
     public class MonoSingleton<T> : MonoBehaviour where T : class, new()
@@ -43,6 +43,45 @@ namespace ER
             }
         }
 
+        /// <summary>
+        /// 替换单例对象为自身，如果已存在则销毁自身
+        /// </summary>
+        protected void PasteInstance()
+        {
+            if (instance == null)
+            {
+                instance = this as T;
+                DontDestroyOnLoad(gameObject);
+                return;
+            }
+            Destroy(gameObject);
+        }
+
+        protected virtual void Awake()
+        {
+            PasteInstance();
+        }
+    }
+    /// <summary>
+    /// 组件单例模式基类, 过场不销毁, 自动创建单例对象
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    public class MonoSingletonAutoCreate<T>:MonoBehaviour where T :  MonoBehaviour
+    {
+        private static T instance;
+
+        public static T Instance
+        {
+            get
+            {
+                if(instance == null)
+                {
+                    GameObject obj = new GameObject(nameof(T));
+                    instance = obj.AddComponent<T>();
+                }
+                return instance;
+            }
+        }
         /// <summary>
         /// 替换单例对象为自身，如果已存在则销毁自身
         /// </summary>

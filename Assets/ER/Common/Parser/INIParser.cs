@@ -145,7 +145,14 @@ namespace ER.Parser
             }
             return null;
         }
-
+        /// <summary>
+        /// 获取所有节段名称
+        /// </summary>
+        /// <returns></returns>
+        public string[] GetSectionKeys()
+        {
+            return sections.Keys.ToArray();
+        }
         private void AddSection(string section)
         {
             if (!sections.ContainsKey(section))
@@ -206,6 +213,7 @@ namespace ER.Parser
 
             return unescapedValue.ToString();
         }
+
 
         #endregion 内容操作
 

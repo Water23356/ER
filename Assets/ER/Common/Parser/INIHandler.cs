@@ -225,7 +225,11 @@ namespace ER.Parser
 
             return null;
         }
-
+        /// <summary>
+        /// 获取指定节段
+        /// </summary>
+        /// <param name="sectionName"></param>
+        /// <returns></returns>
         public Dictionary<string, string> GetSection(string sectionName)
         {
             if (sections.TryGetValue(sectionName, out var sectionData))
@@ -233,6 +237,14 @@ namespace ER.Parser
                 return sectionData;
             }
             return null;
+        }
+        /// <summary>
+        /// 获取所有节段名称
+        /// </summary>
+        /// <returns></returns>
+        public string[] GetSectionKeys()
+        {
+            return sections.Keys.ToArray();
         }
 
         private string UnescapeValue(string value)

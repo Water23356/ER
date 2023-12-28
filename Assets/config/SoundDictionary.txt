@@ -1,0 +1,10 @@
+[Normal]
+sound_1 = sound_1
+sound_2 = sound_2
+sound_3 = sound_3
+sound_4 = sound_4
+sound_5 = sound_5
+sound_6 = sound_6
+
+[Special]
+sound_1 = sound_7
