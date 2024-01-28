@@ -15,6 +15,7 @@ namespace ER
         private AudioPlayer player_2;
 
         private int activeIndex = 0;
+        [SerializeField]
         private float volume = 1f;
         /// <summary>
         /// 通常音量
@@ -27,11 +28,11 @@ namespace ER
         /// <summary>
         /// 淡入时间
         /// </summary>
-        public float fadeIn = 1f;
+        public float fadeIn = 5f;
         /// <summary>
         /// 淡出时间
         /// </summary>
-        public float fadeOut = 1f;
+        public float fadeOut = 5f;
 
         /// <summary>
         /// 当前激活的播放器索引
@@ -69,20 +70,47 @@ namespace ER
         }
         public void Stop()
         {
-            GetActivePlayer()?.FadeOut(Volume,0,fadeOut);
+            AudioPlayer p = GetActivePlayer();
+            if(p != null)
+            {
+                p.FadeOut(p.Volume, 0, fadeOut);
+            }
             activeIndex = 0;
         }
         public void Play(AudioClip clip)
         {
-            GetActivePlayer()?.FadeOut(Volume, 0, fadeOut);//淡出当前播放
-            activeIndex++;
-            if(activeIndex>2)
+            if(_clip==null)
             {
-                activeIndex = 1;
-            }//跳转下条索引
-            AudioPlayer player = GetActivePlayer();
-            player.Clip = clip;
-            player.FadeIn(0, Volume, fadeIn);
+                AudioPlayer p = GetActivePlayer();
+                if (p != null)
+                {
+                    p.FadeOut(p.Volume, 0, fadeOut);
+                }
+                activeIndex++;
+                if (activeIndex > 2)
+                {
+                    activeIndex = 1;
+                }//跳转下条索引
+            }
+            _clip = clip;
+            timer = (fadeIn + fadeOut) / 4;
+        }
+        private float timer;
+        private AudioClip _clip;
+
+        private void Update()
+        {
+            if(_clip!=null)
+            {
+                timer -= Time.deltaTime;
+                if(timer<0)
+                {
+                    AudioPlayer player = GetActivePlayer();
+                    player.Clip = _clip;
+                    player.FadeIn(0, Volume, fadeIn);
+                    _clip = null;
+                }
+            }
         }
     }
 }

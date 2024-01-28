@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.IO;
+using UnityEngine;
 
 namespace ER
 {
@@ -78,6 +79,20 @@ namespace ER
         public static string ResPath
         {
             get => "Assets\\Res";
+        }
+        /// <summary>
+        /// 预设存档文件夹路径
+        /// </summary>
+        public static string SavePath
+        {
+            get => Path.Combine(Application.streamingAssetsPath, "saves");
+        }
+        /// <summary>
+        /// 预设可读写配置文件夹路径
+        /// </summary>
+        public static string ConfigPath
+        {
+            get=>Path.Combine(Application.streamingAssetsPath, "config");
         }
 
     }

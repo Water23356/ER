@@ -1,12 +1,13 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using ER.Template;
 
 namespace ER
 {
     /// <summary>
     /// 预制体管理器
     /// </summary>
-    public class PrefabManager : MonoSingleton<PrefabManager>
+    public class PrefabManager : MonoSingleton<PrefabManager>, MonoInit
     {
         #region 预制体
 
@@ -47,6 +48,15 @@ namespace ER
         public void AddPrefab(GameObject obj)
         {
             prefabs.Add(obj);
+        }
+
+        public void Init()
+        {
+            if (!gameObject.activeSelf)
+                gameObject.SetActive(true);
+            if (!enabled)
+                enabled = true;
+            MonoLoader.InitCallback();
         }
 
         /// <summary>

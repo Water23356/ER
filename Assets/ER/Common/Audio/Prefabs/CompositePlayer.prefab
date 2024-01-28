@@ -25,7 +25,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6163379048560463475}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -13.779276, y: 4.4062433, z: -0.03409999}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -48,8 +48,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player_1: {fileID: 1155790251303390941}
   player_2: {fileID: 7730641719782470240}
-  fadeIn: 1
-  fadeOut: 1
+  fadeIn: 3
+  fadeOut: 3
 --- !u!1001 &2531409372172057186
 PrefabInstance:
   m_ObjectHideFlags: 0

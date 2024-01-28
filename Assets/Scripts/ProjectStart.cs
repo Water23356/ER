@@ -5,8 +5,6 @@ class ProjectStart:MonoBehaviour
 {
     private void Start()
     {
-        SceneManager.Instance.AddScene(new SceneConfiger_1());
-        SceneManager.Instance.AddScene(new SceneConfiger_2());
     }
     [ContextMenu("加载场景1")]
     public void LoadScene1()

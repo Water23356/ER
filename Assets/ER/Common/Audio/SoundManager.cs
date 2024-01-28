@@ -1,4 +1,6 @@
 ﻿using ER.Parser;
+using ER.ResourcePacker;
+using ER.Template;
 using JetBrains.Annotations;
 using System.Collections.Generic;
 using System.IO;
@@ -7,7 +9,6 @@ using Unity.VisualScripting.FullSerializer;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
-using static UnityEditor.Experimental.GraphView.GraphView;
 
 namespace ER
 {
@@ -20,9 +21,11 @@ namespace ER
     ///   path: Assets\res\audios\
     ///   address: sounds.xxx (xxx为某个具体名称)(clipName)
     /// </summary>
-    public class SoundManager: MonoSingleton<SoundManager>
+    public class SoundManager: MonoSingleton<SoundManager>,MonoInit
     {
         public GameObject CompositePlayerPrefab;
+        [Tooltip("是否使用资源索引器: 如果启用, 那么url会通过 GameResource 获取, 而不是使用默认的路径")]
+        public bool UseResourceIndexer = false;
 
         private Dictionary<string, AudioClip> clips = new Dictionary<string, AudioClip>();//音频缓存
 
@@ -40,6 +43,10 @@ namespace ER
         /// </summary>
         public void Init()
         {
+            if (!gameObject.activeSelf)
+                gameObject.SetActive(true);
+            if (!enabled)
+                enabled = true;
             TryCreateBGMPlayer();
             Addressables.LoadAssetAsync<TextAsset>("config.SoundManager").Completed += OnLoadConfigureDone;
         }
@@ -60,6 +67,7 @@ namespace ER
             {
                 Debug.LogError("加载音频配置文件失败!");
             }
+            MonoLoader.InitCallback();
         }
         /// <summary>
         /// 读取指定音频作为缓存
@@ -84,12 +92,29 @@ namespace ER
         /// <param name="clipName"></param>
         public void Load(string clipName)
         {
-            Addressables.LoadAssetAsync<AudioClip>(clipName).Completed+=(handle)=>
+            if(UseResourceIndexer)
             {
-                AudioClip clip = handle.Result;
-                clips[clipName] = clip;
-            };
-            
+                if(!GameResource.Instance.LoadedExist(clipName, GameResource.ResourceType.AudioClip))
+                {
+                    GameResource.Instance.Load(GameResource.ResourceType.AudioClip,()=>
+                    {
+                        clips[clipName] = GameResource.Instance.GetAudioClip(clipName);
+                    }, clipName);
+                }
+                else
+                {
+                    clips[clipName] = GameResource.Instance.GetAudioClip(clipName);
+                }
+                
+            }
+            else
+            {
+                Addressables.LoadAssetAsync<AudioClip>(clipName).Completed += (handle) =>
+                {
+                    AudioClip clip = handle.Result;
+                    clips[clipName] = clip;
+                };
+            }
         }
         /// <summary>
         /// 尝试在主摄像机上添加BGM播放器
@@ -147,12 +172,25 @@ namespace ER
         /// <param name="playMode">播放模式</param>
         /// <param name="effect">效果</param>
         /// <returns></returns>
-        public AudioPlayer CreatePlayer(string clipName,AudioPlayer.PlayMode playMode = AudioPlayer.PlayMode.Single, AudioPlayer.Effect effect = AudioPlayer.Effect.None)
+        public AudioPlayer CreatePlayer(string clipName,AudioPlayer.PlayMode playMode = AudioPlayer.PlayMode.SingleHide, AudioPlayer.Effect effect = AudioPlayer.Effect.None)
         {
             AudioPlayer player = GetAudioPlayer();
             player.Clip = clips[clipName];
             player.Mode = playMode;
             player.AudioEffect = effect;
+            return player;
+        }
+        /// <summary>
+        /// 播放一次音效, 并自动销毁
+        /// </summary>
+        /// <returns></returns>
+        public AudioPlayer Shoot(string clipName)
+        {
+            AudioPlayer player = GetAudioPlayer();
+            player.Clip = clips[clipName];
+            player.Mode = AudioPlayer.PlayMode.SingleHide;
+            player.AudioEffect = AudioPlayer.Effect.None;
+            player.Play();
             return player;
         }
 
@@ -164,7 +202,25 @@ namespace ER
         {
 
         }
-
+        /// <summary>
+        /// 填充唱片组, 根据唱片组提供的资源名称填充具体的资源对象
+        /// </summary>
+        public void FillAudioClipGroup(AudioClipGroup group)
+        {
+            for (int i=0;i<group.infos.Length;i++)
+            {
+                group.infos[i].clip = clips[group.infos[i].clipName];
+            }
+        }
+        /// <summary>
+        /// 获取指定资源的对象
+        /// </summary>
+        /// <param name="clipName"></param>
+        /// <returns></returns>
+        public AudioClip GetClip(string clipName)
+        {
+            return clips[clipName];
+        }
         public SoundManager() 
         { 
             

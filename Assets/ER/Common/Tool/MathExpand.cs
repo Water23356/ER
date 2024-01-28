@@ -244,5 +244,20 @@ namespace ER
         {
             return new Color(color.r, color.g, color.b, alpha);
         }
+        /// <summary>
+        /// 返回贝赛尔曲线插值
+        /// </summary>
+        /// <param name="start">起点</param>
+        /// <param name="end">终点</param>
+        /// <param name="k">控制点: 控制变化位置, 最后曲线将经过 起点终点和k点</param>
+        /// <param name="t">最后返回x=t对应的y值, t 必须在0~1之间</param>
+        /// <returns></returns>
+        public static float QuadraticBezierInterpolate(Vector2 start,Vector2 end,Vector2 k,float t)
+        {
+            t = Mathf.Max(t, 0);
+            t = Mathf.Min(t, 1);
+            return Mathf.Pow(1 - t, 2) * start.y + 2 * (1 - t) * t * k.y + Mathf.Pow(t, 2) * end.y;
+
+        }
     }
 }

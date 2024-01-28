@@ -6,6 +6,8 @@ namespace P2
 {
     public class Test:MonoBehaviour
     {
+        public RandomPlayer player;
+
         [ContextMenu("加载音频管理器")]
         public void Func_1()
         {
@@ -24,16 +26,24 @@ namespace P2
             SoundManager.Instance.Load("sounds.sound_5");
             SoundManager.Instance.Load("sounds.sound_6");
             SoundManager.Instance.Load("sounds.sound_7");
+            SoundManager.Instance.Load("sounds.sound_8");
+
+            SoundManager.Instance.Load("sounds.punch_1");
+            SoundManager.Instance.Load("sounds.punch_2");
+            SoundManager.Instance.Load("sounds.punch_3");
+            SoundManager.Instance.Load("sounds.punch_4");
+            SoundManager.Instance.Load("sounds.punch_5");
+
         }
         [ContextMenu("播放 背景音乐_1")]
         public void Func_3()
         {
             SoundManager.Instance.PlayBGM("sounds.sound_1");
         }
-        [ContextMenu("播放 背景音乐_2")]
+        [ContextMenu("播放 背景音乐_5")]
         public void Func_4()
         {
-            SoundManager.Instance.PlayBGM("sounds.sound_2");
+            SoundManager.Instance.PlayBGM("sounds.sound_5");
         }
         [ContextMenu("播放 背景音乐_3")]
         public void Func_5()
@@ -49,6 +59,43 @@ namespace P2
         public void Func_7()
         {
             SoundManager.Instance.StopBGM();
+        }
+        [ContextMenu("播放 音乐_5")]
+        public void Func_8()
+        {
+            SoundManager.Instance.Shoot("sounds.sound_5");
+        }
+        [ContextMenu("添加音乐列表")]
+        public void Func_9()
+        {
+            player.AddClip("sounds.punch_1", 1);
+            player.AddClip("sounds.punch_2", 1);
+            player.AddClip("sounds.punch_3", 1);
+            player.AddClip("sounds.punch_4", 1);
+            player.AddClip("sounds.punch_5", 1);
+        }
+        [ContextMenu("播放 随机音乐")]
+        public void Func_10()
+        {
+            loop = true;
+            timer = 1f;
+        }
+        bool loop = false;
+        float timer = 0f;
+        private void Update()
+        {
+            if(loop)
+            {
+                if(timer>0)
+                {
+                    timer-=Time.deltaTime;
+                }
+                else
+                {
+                    timer = 1f;
+                    player.Play();
+                }
+            }
         }
     }
 }

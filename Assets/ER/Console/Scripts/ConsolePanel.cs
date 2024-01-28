@@ -1,5 +1,6 @@
 ﻿using ER.Control;
 using ER.Parser;
+using ER.Template;
 using System.Collections.Generic;
 using System.Text;
 using TMPro;
@@ -7,7 +8,7 @@ using UnityEngine;
 
 namespace ER
 {
-    public class ConsolePanel : MonoControlPanel
+    public class ConsolePanel : MonoControlPanel,MonoInit
     {
         #region 单例封装
 
@@ -337,6 +338,15 @@ namespace ER
                     }
                 }
             }
+        }
+
+        public void Init()
+        {
+            if (!gameObject.activeSelf)
+                gameObject.SetActive(true);
+            if (!enabled)
+                enabled = true;
+            MonoLoader.InitCallback();
         }
 
         #endregion 内部函数

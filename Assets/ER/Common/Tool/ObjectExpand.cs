@@ -82,7 +82,6 @@ namespace ER
             Console.WriteLine(txt);
         }
 
-
         /// <summary>
         /// 获取此字符串的解析数据
         /// </summary>
@@ -167,7 +166,13 @@ namespace ER
             return false;
         }
 
-
+        public static void Add<T>(this List<T> list, T[] array)
+        {
+            foreach (T item in array)
+            {
+                list.Add(item);
+            }
+        }
 
         /// <summary>
         /// 从外部指定文件中加载图片
@@ -207,7 +212,6 @@ namespace ER
             Sprite sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), Vector2.one * 0.5f);
             return sprite;
         }
-
 
         /// <summary>
         /// 将制定事件响应委托封装成可跳过的时间委托

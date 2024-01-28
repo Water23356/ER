@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ER.Template;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -73,12 +74,46 @@ namespace ER
         /// 最近一次开始计时的点(非实际时间点,仅用作计时参考)
         /// </summary>
         public float last_time;
+        /// <summary>
+        /// 获取一个短暂的(一次性)计时器
+        /// </summary>
+        /// <returns></returns>
+        public static ERTimer GetBriefTimer(string _tag,Action _callback, float limit, UpdateMode updateMode = UpdateMode.Update)
+        {
+            return new ERTimer()
+            {
+                tag=_tag,
+                updateMode = updateMode,
+                destroyMode = DestroyMode.Single,
+                callback=_callback,
+                limit = limit,
+                timer = 0,
+                last_time = 0
+            };
+        }
+        /// <summary>
+        /// 获取一个循环的(重复性)计时器
+        /// </summary>
+        /// <returns></returns>
+        public static ERTimer GetLoopTimer(string _tag, Action _callback, float limit, UpdateMode updateMode = UpdateMode.Update)
+        {
+            return new ERTimer()
+            {
+                tag = _tag,
+                updateMode = updateMode,
+                destroyMode = DestroyMode.Loop,
+                callback = _callback,
+                limit = limit,
+                timer = 0,
+                last_time = 0
+            };
+        }
     }
 
     /// <summary>
     /// 计时器管理器
     /// </summary>
-    public class TimerManager:MonoSingleton<TimerManager>
+    public class TimerManager:MonoSingleton<TimerManager>,MonoInit
     {
         private List<ERTimer> timers = new List<ERTimer>();//所有计时器列表
         private List<ERTimer> timer_update = new List<ERTimer>();//每帧更新的计时器
@@ -193,6 +228,15 @@ namespace ER
         private void FixedUpdate()
         {
             UpdateTimerState(timer_fixedUpdate);
+        }
+
+        public void Init()
+        {
+            if (!gameObject.activeSelf)
+                gameObject.SetActive(true);
+            if (!enabled)
+                enabled = true;
+            MonoLoader.InitCallback();
         }
     }
 }

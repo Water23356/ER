@@ -56,6 +56,7 @@ namespace ER
         private float fade_start = 0f;
         private float fade_end = 1f;
         private float fade_time = 1f;
+        private float fade_k = 1f;
         #endregion
 
         #region 属性
@@ -151,17 +152,19 @@ namespace ER
         /// <param name="start">初始音量</param>
         /// <param name="aim">最终音量</param>
         /// <param name="time">过渡时间</param>
-        public void FadeIn(float start,float aim,float time)
+        public void FadeIn(float start,float aim,float time,float k = 0.95f)
         {
             fade_start = start;
             fade_end = aim;
             fade_time = time;
+            fade_k = k;
             fading = true;
             timer = 0f;
             source.volume = fade_start;
             callback = null;
             enabled = true;
             gameObject.SetActive(true);
+            source.Play();
         }
         /// <summary>
         /// 淡出结束音频
@@ -169,11 +172,12 @@ namespace ER
         /// <param name="start">初始音量</param>
         /// <param name="aim">最终音量</param>
         /// <param name="time">过渡时间</param>
-        public void FadeOut(float start, float aim, float time)
+        public void FadeOut(float start, float aim, float time,float k = 0.05f)
         {
             fade_start = start;
             fade_end = aim;
             fade_time = time;
+            fade_k= k;
             fading = true;
             timer = 0f;
             source.volume = fade_start;
@@ -212,7 +216,7 @@ namespace ER
 
         private void FadeOutCheck()
         {
-            if(source.clip.length - source.time <= autoFadeOutTime)
+            if(source.clip.length - source.time <= autoFadeOutTime && source.isPlaying)
             {
                 FadeOut(Volume,0,autoFadeOutTime);
                 funcAnchor = null;
@@ -244,18 +248,25 @@ namespace ER
         private void Update()
         {
             funcAnchor?.Invoke();
-            if (mode != PlayMode.Loop)
-            {
-                if(source.clip.length - source.time <= autoFadeOutTime)
-                {
-
-                }
-            }
             if (fading)
             {
-                timer += Time.deltaTime;
-                source.volume = Mathf.Lerp(fade_start, fade_end, timer / fade_time);
-                if(timer>=fade_time)
+                if(source.clip.length >= source.time)//未播放结束
+                {
+                    if(source.isPlaying)
+                    {
+                        timer += Time.deltaTime;
+                    }
+                }
+                else
+                {
+                    timer += Time.deltaTime;
+                }
+                source.volume = MathExpand.QuadraticBezierInterpolate(
+                    new Vector2(0, fade_start),
+                    new Vector2(1, fade_end),
+                    new Vector2(fade_k, (fade_start + fade_end) / 10),
+                    timer / fade_time);
+                if (timer>=fade_time)
                 {
                     callback?.Invoke();
                 }

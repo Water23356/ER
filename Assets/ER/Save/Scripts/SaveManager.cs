@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using UnityEngine;
 
 namespace ER.Save
 {
@@ -26,7 +27,10 @@ namespace ER.Save
         /// 存档完毕时触发的事件
         /// </summary>
         public event Action SaveAftEvent;
-
+        /// <summary>
+        /// 当前存档数据
+        /// </summary>
+        public SaveData Data;
         #endregion 事件
 
         /// <summary>
@@ -47,10 +51,13 @@ namespace ER.Save
         {
             if (File.Exists(path))
             {
-                SaveWrapper.Instance.Unpack(File.ReadAllText(path));
+                Data = SaveWrapper.Instance.Unpack(File.ReadAllText(path));
+                SaveAftEvent?.Invoke();
             }
             else
             {
+                Data = null;
+                Debug.LogError("目标文件不存在");
             }
         }
 
@@ -91,9 +98,9 @@ namespace ER.Save
                 path = Path.Combine(savePackPath, saveName + $"({index++}).sav");
             }
             File.Create(path).Close();
-            SavePreEvent.Invoke();
+            SavePreEvent?.Invoke();
             File.WriteAllText(path, SaveWrapper.Instance.Serialize());
-            SaveAftEvent.Invoke();
+            SaveAftEvent?.Invoke();
         }
     }
 }
