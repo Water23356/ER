@@ -113,7 +113,7 @@ namespace ER
     /// <summary>
     /// 计时器管理器
     /// </summary>
-    public class TimerManager:MonoSingleton<TimerManager>,MonoInit
+    public class TimerManager:MonoSingletonAutoCreate<TimerManager>
     {
         private List<ERTimer> timers = new List<ERTimer>();//所有计时器列表
         private List<ERTimer> timer_update = new List<ERTimer>();//每帧更新的计时器

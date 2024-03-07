@@ -1,4 +1,5 @@
 ﻿using ER.Control;
+using ER.UI;
 using System;
 using TMPro;
 using UnityEngine;
@@ -7,34 +8,38 @@ using UnityEngine.UI;
 namespace ER.Shikigami.Message
 {
     /// <summary>
-    /// 基础的对话面板:
-    /// 名称面板, 文本面板, 展示动画, 允许跳过动画
+    /// 对话泡:
+    /// 名称面板, 展示动画, 允许跳过动画
     /// <code>
     /// 式神指令:
+    ///    # SetPosition:
     ///    # OpenDialogPanel:打开面板并注册控制权,即时
     ///    # CloseDialogPanel:关闭面板并注销控制权,即时
-    ///    # SetDialogName:设置名称文本,即时
-    ///         0:(string)名称字符串
     ///    # SetDialogText:设置文本,延时
     ///         0:(string)文本字符串
+    ///         1:(float) 显示完文本后 暂停播放时间(缺省=0)
     ///    # AppendDialogText:额外添加文本,延时
     ///         0:(string)文本字符串
+    ///         1:(float) 显示完文本后 暂停播放时间(缺省=0)
+    ///    # SetPosition:设置UI显示位置,即时
+    ///         0:(float) 位置x
+    ///         1:(float) 位置y
+    ///    # SetOwner:设置UI所属者, 以及位置偏移量
+    ///         0:(string) 所属者的锚点标签, 会根据这个标签获取 Transform 对象并进行绑定
+    ///         1:(float) 位置x偏移量(缺省=0)
+    ///         2:(float) 位置y偏移量(缺省=0)
     /// </code>
     /// </summary>
-    public class BasicDialogPanel : MonoControlPanel, IDialogPanel
+    public class DialogBubble :  MonoBehaviour, IDialogPanel
     {
-        #region 组件
-
-        [SerializeField]
-        private TMP_Text t_name;//名称文本
 
         [SerializeField]
         private TMP_Text t_text;//展示文本
 
         [SerializeField]
         private Animator animator;//自身动画器
-
-        #endregion 组件
+        [SerializeField]
+        private RectTransform self;
 
         #region 私有字段
 
@@ -44,6 +49,9 @@ namespace ER.Shikigami.Message
         private bool display = false;//是否处于正在展示的过程
         private Action<Instruct> callback;//回调函数
         private bool visible = false;//窗口是否可见+
+        private float timer = 0;//暂停播放时间
+        private Transform owner;//对话泡所属对象, 如果存在, 则位置跟随该对象
+        private Vector2 offset;//相对对象的位置偏移量
 
         #endregion 私有字段
 
@@ -81,30 +89,42 @@ namespace ER.Shikigami.Message
                 SetText(text, false);
             }
         }
-        /// <summary>
-        /// 名称文本
-        /// </summary>
-        public string NameText
+        #endregion
+
+        public bool Execute(Instruct ist, Action<Instruct> callback = null)
         {
-            get=>t_name.text;
-            set
-                {
-                t_name.text = value;
-                LayoutRebuilder.ForceRebuildLayoutImmediate(t_name.transform.parent.GetComponent<RectTransform>());
+            this.callback = callback;
+            switch (ist.name)
+            {
+                case "OpenDialogPanel":
+                    OpenPanel();
+                    return true;
+
+                case "CloseDialogPanel":
+                    ClosePanel();
+                    return true;
+
+                case "SetDialogText":
+                    if (ist.marks.Length >= 2)
+                        timer = float.Parse(ist.marks[1]);
+                    else
+                        timer = 0;
+                    SetText(ist.marks[0], true);
+                    return false;
+
+                case "AppendDialogText":
+                    if (ist.marks.Length >= 2)
+                        timer = float.Parse(ist.marks[1]);
+                    else
+                        timer = 0;
+                    Append(ist.marks[0], true);
+                    return false;
+
+                default:
+                    Debug.LogError("未知指令:" + ist.name);
+                    return true;
             }
         }
-
-        #endregion 属性
-
-        public BasicDialogPanel()
-        {
-            base.handleName = "BasicDialogPanel";
-            base._panelType = IControlPanel.PanelType.Single;
-        }
-
-
-        #region 方法
-
         public void Append(string extra, bool reset = false)
         {
             text += extra;
@@ -121,42 +141,13 @@ namespace ER.Shikigami.Message
             visible = false;
         }
 
-        public bool Execute(Instruct ist, Action<Instruct> callback = null)
-        {
-            this.callback = callback;
-            switch (ist.name)
-            {
-                case "OpenDialogPanel":
-                    OpenPanel();
-                    return true;
-
-                case "CloseDialogPanel":
-                    ClosePanel();
-                    return true;
-
-                case "SetDialogName":
-                    NameText = ist.marks[0];
-                    return true;
-
-                case "SetDialogText":
-                    SetText(ist.marks[0], true);
-                    return false;
-
-                case "AppendDialogText":
-                    Append(ist.marks[0], true);
-                    return false;
-
-                default:
-                    Debug.LogError("未知指令:" + ist.name);
-                    return true;
-            }
-        }
-
         public void OpenPanel()
         {
             gameObject.SetActive(true);
+            Action close = ()=>UIAnimator.Instance.AddAnimation(self, UIAnimator.AnimationType.BoxClose_Left);
+            UIAnimator.Instance.AddAnimation(t_text.rectTransform, UIAnimator.AnimationType.FadeOut);
+
             animator.SetBool("enable", true);
-            ControlManager.Instance.RegisterPower(this);
             visible = true;
         }
 
@@ -174,10 +165,25 @@ namespace ER.Shikigami.Message
         {
             progress = Math.Min(progress + countF, text.Length);
             t_text.text = text.Substring(0, progress);
+            LayoutRebuilder.ForceRebuildLayoutImmediate(self);//强制刷新自身布局, 防止UI大小不匹配字符长度
+
             if (progress == text.Length)//意为文本展示完毕
             {
                 display = false;
             }
+            if(timer > 0)
+            {
+                Invoke("_CallBack", timer);
+            }
+            else
+            {
+                _CallBack();
+            }
+        }
+
+        private void _CallBack()
+        {
+            callback?.Invoke(null);//调用回调函数
         }
 
         private void SkipToEnd()
@@ -202,27 +208,9 @@ namespace ER.Shikigami.Message
                 }
             }
         }
-        private void Update()
-        {
-            if (Input.GetButtonDown("Submit"))//动画播放中确认跳过动画
-            {
-                if(display)
-                    SkipToEnd();
-                else
-                    callback?.Invoke(null);//调用回调函数
-            }
-        }
-
-        private void OnDisable()
-        {
-            ControlManager.Instance.UnregisterPower(this);
-        }
-
         public void SetPanelDisable()
         {
             gameObject.SetActive(false);
         }
-
-        #endregion 方法
     }
 }

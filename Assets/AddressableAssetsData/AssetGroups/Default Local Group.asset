@@ -57,6 +57,16 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d936b7cb25b55a04c9f4471287c763dc
+    m_Address: config.ResourceIndexer
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2ed3cdd7be3aa9b46a9482abc11f833a
+    m_Address: Assets/StreamingAssets/spell/spell_1.ykr
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 123161ea5d65fe34aade44c61dbc5369, type: 2}
   m_SchemaSet:

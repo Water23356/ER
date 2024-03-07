@@ -1,0 +1,2 @@
+﻿[indexer]
+UI.text = @res\text\UItxt.txt

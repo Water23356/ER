@@ -266,6 +266,18 @@ namespace ER.Entity2D
             }
             Debug.LogError($"未找到指定动作：{actionName}");
         }
+        /// <summary>
+        /// 获取指定动作的状态
+        /// </summary>
+        /// <param name="actionName"></param>
+        public MDAction.ActionState GetActionState(string actionName)
+        {
+            if(actions.TryGetValue(actionName,out MDAction action))
+            {
+                return action.State;
+            }
+            return MDAction.ActionState.Disable;
+        }
 
         #endregion 动作管理
 

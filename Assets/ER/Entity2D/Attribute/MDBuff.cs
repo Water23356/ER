@@ -137,6 +137,13 @@ namespace ER.Entity2D
         public event Action<ATBuffManager> ExitEvent;
 
         #endregion 事件
+        public MDBuff() { }
+        public MDBuff(BuffSetInfo info)
+        {
+            defTime = info.defTime;
+            time = defTime;
+            level =info.level;
+        }
 
         #region 效果
 
@@ -193,4 +200,13 @@ namespace ER.Entity2D
 
         #endregion 效果
     }
+
+    public struct BuffSetInfo
+    {
+        public string buffName;
+        public float defTime;
+        public int level;
+        public Dictionary<string, object> infos;
+    }
 }
+

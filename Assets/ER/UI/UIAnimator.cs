@@ -45,7 +45,12 @@ namespace ER.UI
         /// <summary>
         /// 动画进度(0~1)
         /// </summary>
+        /// 
         public float progress;
+        /// <summary>
+        /// 额外标记
+        /// </summary>
+        public Dictionary<string,object> marks = new Dictionary<string,object>();
 
         public UIAnimationInfo Copy()
         {
@@ -62,7 +67,7 @@ namespace ER.UI
         }
     }
 
-    public class UIAnimator : MonoSingleton<UIAnimator>
+    public class UIAnimator : MonoSingletonAutoCreate<UIAnimator>
     {
         public enum AnimationType
         {
@@ -110,6 +115,22 @@ namespace ER.UI
             /// 下向盒子动画（关闭）
             /// </summary>
             BoxClose_Bottom,
+            /// <summary>
+            /// 左向盒子动画(关闭), 强制修改大小
+            /// </summary>
+            BoxClose_Left_F,
+            /// <summary>
+            /// 右向盒子动画(关闭), 强制修改大小
+            /// </summary>
+            BoxClose_Right_F,
+            /// <summary>
+            /// 上向盒子动画(关闭), 强制修改大小
+            /// </summary>
+            BoxClose_Top_F,
+            /// <summary>
+            /// 下向盒子动画(关闭), 强制修改大小
+            /// </summary>
+            BoxClose_Bottom_F,
 
             /// <summary>
             /// 淡出动画(仅限 Image 和 TMP_Text)
@@ -327,6 +348,22 @@ namespace ER.UI
             }
         }
 
+        private void BoxAnimation_Left_Close_F(UIAnimationInfo info)
+        {
+            info.transform.offsetMax = new Vector2( (float)info.marks["size_x"] * (1 - info.progress),info.transform.offsetMax.y);
+        }
+        private void BoxAnimation_Right_Close_F(UIAnimationInfo info)
+        {
+            info.transform.offsetMin = new Vector2((float)info.marks["size_x"] * (1 - info.progress), info.transform.offsetMin.y);
+        }
+        private void BoxAnimation_Top_Close_F(UIAnimationInfo info)
+        {
+            info.transform.offsetMin = new Vector2(info.transform.offsetMin.x,(float)info.marks["size_y"] * (1 - info.progress));
+        }
+        private void BoxAnimation_Bottom_Close_F(UIAnimationInfo info)
+        {
+            info.transform.offsetMax = new Vector2(info.transform.offsetMax.x, (float)info.marks["size_y"] * (1 - info.progress));
+        }
         #endregion 内部函数
 
         #region Unity
@@ -389,6 +426,23 @@ namespace ER.UI
 
                         case AnimationType.FadeOut:
                             FadeOutAnimation(info);
+                            break;
+
+                        case AnimationType.BoxClose_Left_F:
+                            info.marks["size_x"] = info.transform.sizeDelta.x;
+                            info.marks["size_y"] = info.transform.sizeDelta.y;
+                            break;
+                        case AnimationType.BoxClose_Right_F:
+                            info.marks["size_x"] = info.transform.sizeDelta.x;
+                            info.marks["size_y"] = info.transform.sizeDelta.y;
+                            break;
+                        case AnimationType.BoxClose_Top_F:
+                            info.marks["size_x"] = info.transform.sizeDelta.x;
+                            info.marks["size_y"] = info.transform.sizeDelta.y;
+                            break;
+                        case AnimationType.BoxClose_Bottom_F:
+                            info.marks["size_x"] = info.transform.sizeDelta.x;
+                            info.marks["size_y"] = info.transform.sizeDelta.y;
                             break;
                     }
                     if (info.progress >= 1)
