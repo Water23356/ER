@@ -23,7 +23,7 @@
         /// </summary>
         /// <param name="registryName"></param>
         /// <param name="settings"></param>
-        public void Set(string registryName, object settings);
+        public void SetSettings(string registryName, object settings);
         /// <summary>
         /// 保存当前设置信息(写入外部设置文件)
         /// </summary>
