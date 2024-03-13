@@ -92,7 +92,9 @@ namespace ER
         /// <param name="registryName"></param>
         public void PlayBGM(string registryName)
         {
-            bgmPlayer.Play(GR.Get<AudioResource>(registryName).Value);
+            AudioResource resource = GR.Get<AudioResource>(registryName);
+            Debug.Log("null:"+(resource == null));
+            bgmPlayer.Play(resource.Value);
         }
         /// <summary>
         /// 创建一个播放器

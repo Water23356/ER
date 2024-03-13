@@ -16,7 +16,7 @@ namespace ER.Resource
     /// 资源索引器, 将资源注册名 转化为 地址或者url
     /// 外部资源使用@作为前缀标识
     /// </summary>
-    public class ResourceIndexer:MonoSingleton<ResourceIndexer>,MonoInit
+    public class ResourceIndexer:Singleton<ResourceIndexer>,MonoInit
     {
         /// <summary>
         /// 子索引器缓存:  (资源包名:资源包所在的绝对路径)

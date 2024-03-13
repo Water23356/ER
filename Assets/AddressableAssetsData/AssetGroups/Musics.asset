@@ -18,42 +18,42 @@ MonoBehaviour:
   m_GUID: 144f4df26788cf34ba7b6cea2ed875a8
   m_SerializeEntries:
   - m_GUID: e946492d8691dae4e9b46d7525616496
-    m_Address: sounds.sound_1
+    m_Address: wav/sound_1
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 1200bccf43d90f74f808f811320cae84
-    m_Address: sounds.sound_2
+    m_Address: wav/sound_2
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 107c68d0240d7844d83991c62d6888d0
-    m_Address: sounds.sound_3
+    m_Address: wav/sound_3
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 2877a1d4617efd048b7a536d05de4226
-    m_Address: sounds.sound_7
+    m_Address: wav/sound_4
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: db957890cec2a3f48acb3e677bc003c5
-    m_Address: sounds.sound_5
+    m_Address: wav/sound_5
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 6fefde4c29612ae47ba4d6ddbb4f05d3
-    m_Address: sounds.sound_6
+    m_Address: wav/sound_6
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 0969de7a323f73b48bc88ba98071779d
-    m_Address: sounds.sound_8
+    m_Address: wav/sound_7
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 94ab0aa076d08084f82a27f7f3f87e41
-    m_Address: sounds.sound_4
+    m_Address: wav/sound_8
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
