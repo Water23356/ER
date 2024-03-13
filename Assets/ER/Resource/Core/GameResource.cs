@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
+using UnityEngine.InputSystem;
 using UnityEngine.Networking;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using static ER.Resource.GameResource;
@@ -17,93 +18,6 @@ namespace ER.Resource
     /// </summary>
     public static class GR
     {
-        public static void Clear()
-        {
-            GameResource.Instance.Clear();
-        }
-
-        public static void UnLoad(params string[] keys)
-        {
-            GameResource.Instance.Unload(keys);
-        }
-
-        public static void Load(ResourceType type, Action callback = null, params string[] keys)
-        {
-            GameResource.Instance.Load(type, callback, keys);
-        }
-
-        public static void ELoad(ResourceType type, Action callback = null, params string[] keys)
-        {
-            GameResource.Instance.ELoad(type, callback, keys);
-        }
-
-        public static Sprite GetSprite(string key)
-        {
-            return GameResource.Instance.GetSprite(key);
-        }
-
-        public static string GetText(string key)
-        {
-            return GameResource.Instance.GetText(key);
-        }
-
-        public static AudioClip GetAudioClip(string key)
-        {
-            return GameResource.Instance.GetAudioClip(key);
-        }
-
-        public static string GetTextPart(string key_all)
-        {
-            return GameResource.Instance.GetTextPart(key_all);
-        }
-
-        public static string GetTextPart(string sectionName, string key)
-        {
-            return GameResource.Instance.GetTextPart(sectionName, key);
-        }
-    }
-
-    /// <summary>
-    /// 游戏资源: 用于 管理 和 缓存 游戏所需要的各种资源
-    /// #1: 使用资源注册名 访问指定资源
-    /// #2: 返回封装后的资源
-    /// #3: 注册名: 资源头:模组名:地址名
-    /// #4: 文本等效资源头, 列表中资源类型将会以指定资源的形式加载
-    /// #5: 不属于 wav,txt,img 且没有填写等效资源头 的资源默 认以txt形式加载
-    /// </summary>
-    public class GameResource : MonoSingletonAutoCreate<GameResource>
-    {
-        /// <summary>
-        /// 资源类型
-        /// </summary>
-        public enum ResourceType
-        {
-            /// <summary>
-            /// 文本资源
-            /// </summary>
-            Text,
-
-            /// <summary>
-            /// 图片资源
-            /// </summary>
-            Sprite,
-
-            /// <summary>
-            /// 音频资源
-            /// </summary>
-            AudioClip,
-
-            /// <summary>
-            /// 任意资源
-            /// </summary>
-            Any,
-        }
-
-        private Dictionary<string,SpriteResource> sprites = new Dictionary<string, SpriteResource> ();//缓存的sprite资源
-        private Dictionary<string, TextResource> texts = new Dictionary<string, TextResource>();//缓存的文本资源(未加工)
-        private Dictionary<string, AudioResource> audios = new Dictionary<string, AudioResource>();//缓存的audioclip资源
-
-        private List<LoadProgress> loadProgresses = new List<LoadProgress>();//资源加载任务表
         /// <summary>
         /// 判断是否是资源注册名
         /// </summary>
@@ -120,7 +34,7 @@ namespace ER.Resource
         /// <returns></returns>
         public static string GetModName(string registryName)
         {
-            string[] parts = registryName.Split (':');  
+            string[] parts = registryName.Split(':');
             return parts[1];
         }
         /// <summary>
@@ -141,50 +55,152 @@ namespace ER.Resource
         public static string GetAddressAll(string registryName)
         {
             string[] parts = registryName.Split(':');
-            return ERinbone.Combine(parts[0],parts[2]);
+            return ERinbone.Combine(parts[0], parts[2]);
         }
 
 
+
         /// <summary>
-        /// 清除所有资源缓存
+        /// 添加资源加载器
         /// </summary>
-        public void Clear()
+        /// <param name="loader"></param>
+        public static void AddLoader(IResourceLoader loader)
         {
-            sprites.Clear();
-            texts.Clear();
-            audios.Clear();
+            GameResource.Instance.AddLoader(loader);
+        }
+        /// <summary>
+        /// 移除指定资源头的加载器
+        /// </summary>
+        /// <param name="head"></param>
+        public static void RemoveLoader(string head)
+        {
+            GameResource.Instance.RemoveLoader(head);
+        }
+        /// <summary>
+        /// 移除所有资源加载器
+        /// </summary>
+        public static void RemoveLoaderAll()
+        {
+            GameResource.Instance.RemoveLoaderAll();
+        }
+        /// <summary>
+        /// 加载指定资源
+        /// </summary>
+        /// <param name="callback">资源组加载完毕后回调</param>
+        /// <param name="check">是否启用重复性检查, 若启用则会跳过加载已经在缓存中的资源</param>
+        /// <param name="registryName"></param>
+        public static void Load(Action callback, bool check, params string[] registryName)
+        {
+            GameResource.Instance.Load(callback,check, registryName);
+        }
+        /// <summary>
+        /// 强制加载指定资源
+        /// </summary>
+        /// <param name="callback">资源组加载完毕后回调</param>
+        /// <param name="registryName">注册名</param>
+        public static void LoadForce(Action callback, params string[] registryName)
+        {
+            GameResource.Instance.LoadForce(callback, registryName);
+        }
+
+        /// <summary>
+        /// 清除所有资源缓存(除了强制加载的资源)
+        /// </summary>
+        public static void Clear()
+        {
+            GameResource.Instance.Clear();
+        }
+        /// <summary>
+        /// 强制移除所有资源缓存
+        /// </summary>
+        public static void ClearForce()
+        {
+            GameResource.Instance.ClearForce();
         }
 
         /// <summary>
         /// 卸载资源缓存
-        /// 特别的: 不支持卸载单独的文本片段资源, 如果需要, 请使用该资源的 sectionName
         /// </summary>
         /// <param name="keys"></param>
-        public void Unload(params string[] keys)
+        public static void Unload(params string[] registryName)
         {
-            foreach (string key in keys)
-            {
-                if (texts.ContainsKey(key))
-                {
-                    texts.Remove(key);
-                }
-                if (sprites.ContainsKey(key))
-                {
-                    sprites.Remove(key);
-                }
-                if (audios.ContainsKey(key))
-                {
-                    audios.Remove(key);
-                }
-            }
+            GameResource.Instance.Unload(registryName);
+        }
+        /// <summary>
+        /// 判断指定资源是否已经加载
+        /// </summary>
+        /// <param name="registryName"></param>
+        /// <returns></returns>
+        public static bool IsLoaded(string registryName)
+        {
+            return GameResource.Instance.IsLoaded(registryName);
+        }
+        /// <summary>
+        /// 获取指定资源
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="registryName"></param>
+        /// <returns></returns>
+        public static IResource Get(string registryName)
+        {
+            return GameResource.Instance.Get(registryName);
+        }
+        /// <summary>
+        /// 获取指定资源
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="registryName"></param>
+        /// <returns></returns>
+        public static T Get<T>(string registryName) where T : class, IResource
+        {
+            return GameResource.Instance.Get<T>(registryName);
         }
 
+    }
+
+    /// <summary>
+    /// 游戏资源: 用于 管理 和 缓存 游戏所需要的各种资源
+    /// #1: 使用资源注册名 访问指定资源
+    /// #2: 返回封装后的资源
+    /// #3: 注册名: 资源头:模组名:地址名
+    /// #4: 文本等效资源头, 列表中资源类型将会以指定资源的形式加载
+    /// #5: 不属于 wav,txt,img 且没有填写等效资源头 的资源默 认以txt形式加载
+    /// </summary>
+    public class GameResource : Singleton<GameResource>
+    {
+        private Dictionary<string, IResourceLoader> loaders = new Dictionary<string, IResourceLoader>();//资源加载器 资源头:加载器对象
+        private List<LoadProgress> loadProgresses = new List<LoadProgress>();//资源加载任务表
+
         /// <summary>
-        /// 将制定资源组加入缓存
+        /// 添加资源加载器
         /// </summary>
-        /// <param name="callback">整个资源组加载完毕后回调</param>
-        /// <param name="registryName">资源注册名</param>
-        public void Load(Action callback = null, params string[] registryName)
+        /// <param name="loader"></param>
+        public void AddLoader(IResourceLoader loader)
+        {
+            loaders.Add(loader.Head,loader);
+        }
+        /// <summary>
+        /// 移除指定资源头的加载器
+        /// </summary>
+        /// <param name="head"></param>
+        public void RemoveLoader(string head)
+        {
+            loaders.Remove(head);
+        }
+        /// <summary>
+        /// 移除所有资源加载器
+        /// </summary>
+        public void RemoveLoaderAll()
+        {
+            loaders.Clear();
+        }
+        /// <summary>
+        /// 加载指定资源
+        /// </summary>
+        /// <param name="callback">资源组加载完毕后回调</param>
+        /// <param name="check">是否启用重复性检查, 若启用则会跳过加载已经在缓存中的资源</param>
+        /// <param name="registryName"></param>
+        public void Load(Action callback,bool check,params string[] registryName)
         {
             if (registryName.Length == 0)
             {
@@ -194,7 +210,7 @@ namespace ER.Resource
             Action progressAdd = null;//子回调函数
             if (callback != null)
             {
-                for(int i=0;i<loadProgresses.Count;i++)//清空加载任务列表中已经完成的任务表
+                for (int i = 0; i < loadProgresses.Count; i++)//清空加载任务列表中已经完成的任务表
                 {
                     if (loadProgresses[i].done)
                     {
@@ -214,440 +230,163 @@ namespace ER.Resource
                     progress.AddProgress();
                 };
             }
-            LoadResource(progressAdd, registryName);
-        }
-        private void LoadResource(Action callback, params string[] registryName)
-        {
-            for(int i=0;i< registryName.Length;i++)
+            for(int i=0;i< registryName.Length;i++)//逐个加载资源
             {
-                bool defRes;
-                string res_path = ResourceIndexer.Instance.Convert(registryName[i],out defRes);//获取资源路径
-                switch(GetTypeName(registryName[i]))
+                string head = GR.GetTypeName(registryName[i]);
+                if(loaders.TryGetValue(head,out IResourceLoader loader))
                 {
-                    case "wav":
-                        LoadAudio(defRes, res_path, callback);
-                        break;
-                    case "img":
-                        LoadSprite(defRes,res_path,callback);
-                        break;
-                    case "txt":
-                    default:
-                        LoadText(defRes, res_path, callback);
-                        break;
-                }
-            }
-        }
-        private void LoadText(bool defRes,string loadPath,Action callback)
-        {
-
-        }
-        private void LoadSprite(bool defRes, string loadPath, Action callback)
-        {
-
-        }
-        private void LoadAudio(bool defRes, string loadPath, Action callback)
-        {
-
-        }
-
-
-        /// <summary>
-        /// 加载资源缓存
-        /// 在加载之前, 会检查该资源是否已经在缓存内(匹配资源键名), 这将避免重复加载同一资源
-        /// </summary>
-        public void ELoad(ResourceType type, Action callback = null, params string[] keys)
-        {
-            List<string> load = new List<string>();
-            foreach (string key in keys)
-            {
-                if (!LoadedExist(key))
-                {
-                    load.Add(key);
-                }
-            }
-            Load(type, callback, load.ToArray());
-        }
-
-        /// <summary>
-        /// 将文本解析为 文本片段, 并写入 ini资源缓存
-        /// </summary>
-        /// <param name="txt"></param>
-        private void TextParseToINI(string txt)
-        {
-            INIParser parser = new INIParser();
-            parser.ParseINIText(txt);
-            string[] sections = parser.GetSectionKeys();
-            foreach (var sec in sections)
-            {
-                var dic = parser.GetSection(sec);
-                foreach (var item in dic)
-                {
-                    if(!kvText.ContainsKey(sec))
+                    if(check)
                     {
-                        kvText[sec] = new Dictionary<string, string>();
+                        loader.ELoad(registryName[i], callback);
                     }
-                    kvText[sec][item.Key] = item.Value;
-                }
-            }
-        }
-
-        private void LoadText(Action callback, string[] keys)
-        {
-            foreach (var key in keys)
-            {
-                if (ResourceIndexer.Instance.TryGetURL(key, out string url))
-                {
-                    if (url.StartsWith('@'))//@开头的url表示游戏内部资源, 使用 Addressables 加载
+                    else
                     {
-                        Addressables.LoadAssetAsync<TextAsset>(url).Completed += (handle) =>
-                        {
-                            Debug.Log("进度增加");
-                            if (handle.Status == AsyncOperationStatus.Succeeded)
-                            {
-                                texts[key] = handle.Result.text;
-                            }
-                            else
-                            {
-                                Debug.LogError("加载默认资源失败!");
-                            }
-                            callback?.Invoke();
-                        };
-
-                    }
-                    else// 外部资源使用特殊方法加载
-                    {
-                        StartCoroutine(LoadFileText(key, url, callback));
+                        loader.Load(registryName[i], callback);
                     }
                 }
-                else
+                else//如果没有找到加载器则报错
                 {
-                    callback?.Invoke();
+                    Debug.LogWarning($"缺失 {head} 资源加载器, <{registryName[i]}>资源加载失败");
+                    progressAdd?.Invoke();
                 }
             }
         }
-
-        private void LoadINI(Action callback, string[] keys)
+        /// <summary>
+        /// 强制加载指定资源
+        /// </summary>
+        /// <param name="callback">资源组加载完毕后回调</param>
+        /// <param name="registryName">注册名</param>
+        public void LoadForce(Action callback, params string[] registryName)
         {
-            foreach (var key in keys)
+            if (registryName.Length == 0)
             {
-                Debug.Log("检查key是否存在:"+(key));
-                if (ResourceIndexer.Instance.TryGetURL(key, out string url))
+                callback?.Invoke();
+                return;
+            }
+            Action progressAdd = null;//子回调函数
+            if (callback != null)
+            {
+                for (int i = 0; i < loadProgresses.Count; i++)//清空加载任务列表中已经完成的任务表
                 {
-                    if (url.StartsWith('@'))//@开头的url表示游戏内部资源, 使用 Addressables 加载
+                    if (loadProgresses[i].done)
                     {
-                        Addressables.LoadAssetAsync<TextAsset>("url").Completed += (handle) =>
-                        {
-                            Debug.Log("进度增加");
-                            if (handle.Status == AsyncOperationStatus.Succeeded)
-                            {
-                                TextParseToINI(handle.Result.text);
-                            }
-                            else
-                            {
-                                Debug.LogError("加载默认资源失败!");
-                            }
-                            callback?.Invoke();
-                        };
-                    }
-                    else// 外部资源使用特殊方法加载
-                    {
-                        Debug.Log("加载INI资源");
-                        StartCoroutine(LoadFileINI(key, url, callback));
+                        loadProgresses.RemoveAt(i);
+                        i--;
                     }
                 }
-                else
+                //创建新的加载任务表
+                LoadProgress progress = new LoadProgress();
+                progress.loaded = 0;
+                progress.count = registryName.Length;
+                progress.callback = callback;
+                progress.done = false;
+                loadProgresses.Add(progress);
+                progressAdd = () =>
                 {
-                    callback?.Invoke();
-                }
+                    progress.AddProgress();
+                };
             }
-        }
-
-        private void LoadAudioClip(Action callback, string[] keys)
-        {
-            foreach (var key in keys)
+            for (int i = 0; i < registryName.Length; i++)//逐个加载资源
             {
-                if (ResourceIndexer.Instance.TryGetURL(key, out string url))
+                string head = GR.GetTypeName(registryName[i]);
+                if (loaders.TryGetValue(head, out IResourceLoader loader))
                 {
-                    if (url.StartsWith('@'))//@开头的url表示游戏内部资源, 使用 Addressables 加载
-                    {
-                        Addressables.LoadAssetAsync<AudioClip>("url").Completed += (handle) =>
-                        {
-                            Debug.Log("进度增加");
-                            if (handle.Status == AsyncOperationStatus.Succeeded)
-                            {
-                                clips[key] = handle.Result;
-                            }
-                            else
-                            {
-                                Debug.LogError("加载默认资源失败!");
-                            }
-                            callback?.Invoke();
-                        };
-                    }
-                    else// 外部资源使用特殊方法加载
-                    {
-                        if (url.EndsWith(".wav"))
-                        {
-                            StartCoroutine(LoadFileAudioClip(key, url, AudioType.WAV, callback));
-                        }
-                        else if (url.EndsWith(".ogg"))
-                        {
-                            StartCoroutine(LoadFileAudioClip(key, url, AudioType.OGGVORBIS, callback));
-                        }
-                    }
+                    loader.LoadForce(registryName[i], callback);
                 }
-                else
+                else//如果没有找到加载器则报错
                 {
-                    callback?.Invoke();
-                }
-            }
-        }
-
-        private void LoadSprite(Action callback, string[] keys)
-        {
-            foreach (var key in keys)
-            {
-                if (ResourceIndexer.Instance.TryGetURL(key, out string url))
-                {
-                    if (url.StartsWith('@'))//@开头的url表示游戏内部资源, 使用 Addressables 加载
-                    {
-                        Addressables.LoadAssetAsync<Texture2D>("url").Completed += (handle) =>
-                        {
-                            Debug.Log("进度增加");
-                            if (handle.Status == AsyncOperationStatus.Succeeded)
-                            {
-                                sprites[key] = handle.Result.TextureToSprite();
-                            }
-                            else
-                            {
-                                Debug.LogError("加载默认资源失败!");
-                            }
-                            callback?.Invoke();
-                        };
-                    }
-                    else// 外部资源使用特殊方法加载
-                    {
-                        StartCoroutine(LoadFileSprite(key, url, callback));
-                    }
-                }
-                else
-                {
-                    callback?.Invoke();
+                    Debug.LogWarning($"缺失 {head} 资源加载器, <{registryName[i]}>资源加载失败");
+                    progressAdd?.Invoke();
                 }
             }
         }
 
         /// <summary>
-        /// 加载文本资源
+        /// 清除所有资源缓存(除了强制加载的资源)
         /// </summary>
-        /// <param name="url"></param>
-        /// <returns></returns>
-        private IEnumerator LoadFileText(string key, string url, Action callback)
+        public void Clear()
         {
-            Debug.Log("加载文本(LoadFileText)");
-            UnityWebRequest request = UnityWebRequest.Get(url);
-            yield return request.SendWebRequest();
-            if (request.result == UnityWebRequest.Result.Success)
+           foreach(var pair in loaders)
             {
-                texts[key] = request.downloadHandler.text;
+                pair.Value.Clear();
             }
-            else
+        }
+        /// <summary>
+        /// 强制移除所有资源缓存
+        /// </summary>
+        public void ClearForce()
+        {
+            foreach (var pair in loaders)
             {
-                Debug.Log(request.error);
+                pair.Value.ClearForce();
             }
-
-            Debug.Log("进度增加");
-            callback?.Invoke();
         }
 
         /// <summary>
-        /// 加载指定INI资源
+        /// 卸载资源缓存
         /// </summary>
-        /// <param name="key"></param>
-        /// <param name="url"></param>
-        /// <param name="callback"></param>
-        /// <returns></returns>
-        private IEnumerator LoadFileINI(string key, string url, Action callback)
+        /// <param name="keys"></param>
+        public void Unload(params string[] registryName)
         {
-            Debug.Log("加载文本(LoadFileINI):"+url);
-            UnityWebRequest request = UnityWebRequest.Get(url);
-            yield return request.SendWebRequest();
-            if (request.result == UnityWebRequest.Result.Success)
+            for (int i = 0; i < registryName.Length; i++)//逐个加载资源
             {
-                TextParseToINI(request.downloadHandler.text);
-            }
-            else
-            {
-                Debug.Log(request.error);
-            }
-            Debug.Log("进度增加");
-            callback?.Invoke();
-        }
-
-        /// <summary>
-        /// 加载音频资源
-        /// </summary>
-        /// <param name="url"></param>
-        /// <param name="audioType"></param>
-        /// <returns></returns>
-        private IEnumerator LoadFileAudioClip(string key, string url, AudioType audioType, Action callback)
-        {
-            Debug.Log("加载音频(LoadFileAudioClip)");
-            UnityWebRequest request = UnityWebRequestMultimedia.GetAudioClip(url, audioType);
-            yield return request.SendWebRequest();
-            if (request.result == UnityWebRequest.Result.Success)
-            {
-                clips[key] = DownloadHandlerAudioClip.GetContent(request);
-            }
-            else
-            {
-                Debug.Log(request.error);
-            }
-            Debug.Log("进度增加");
-            callback?.Invoke();
-        }
-
-        /// <summary>
-        /// 加载图片资源
-        /// </summary>
-        /// <returns></returns>
-        private IEnumerator LoadFileSprite(string key, string url, Action callback)
-        {
-            Debug.Log("加载图片(LoadFileSprite)");
-            UnityWebRequest request = UnityWebRequestTexture.GetTexture(url);
-            yield return request.SendWebRequest();
-            if (request.result == UnityWebRequest.Result.Success)
-            {
-                sprites[key] = DownloadHandlerTexture.GetContent(request).TextureToSprite();
-            }
-            else
-            {
-                Debug.Log(request.error);
-            }
-            Debug.Log("进度增加");
-            callback?.Invoke();
-        }
-
-        /// <summary>
-        /// 获取指定sprite资源
-        /// </summary>
-        /// <param name="key"></param>
-        /// <returns></returns>
-        public Sprite GetSprite(string key)
-        {
-            if (sprites.TryGetValue(key, out Sprite sp))
-            {
-                return sp;
-            }
-            return null;
-        }
-
-        /// <summary>
-        /// 获取指定文本资源
-        /// </summary>
-        /// <param name="key"></param>
-        /// <returns></returns>
-        public string GetText(string key)
-        {
-            if (texts.TryGetValue(key, out string st))
-            {
-                return st;
-            }
-            return null;
-        }
-
-        /// <summary>
-        /// 获取指定音频资源
-        /// </summary>
-        /// <param name="key"></param>
-        /// <returns></returns>
-        public AudioClip GetAudioClip(string key)
-        {
-            if (clips.TryGetValue(key, out AudioClip ac))
-            {
-                return ac;
-            }
-            return null;
-        }
-
-        /// <summary>
-        /// 获取指定文本片段(ini中的 key-value pair)
-        /// 键(全称) = 节段名 + 键名
-        /// </summary>
-        /// <param name="key_all">片段资源键(全称)</param>
-        /// <returns></returns>
-        public string GetTextPart(string key_all)
-        {
-            string[] keys = key_all.Split('.');
-            return GetTextPart(keys[0], keys[1]);
-        }
-
-        /// <summary>
-        /// 获取指定文本片段
-        /// </summary>
-        /// <param name="sectionName"></param>
-        /// <param name="key"></param>
-        /// <returns></returns>
-        public string GetTextPart(string sectionName, string key)
-        {
-            if (kvText.TryGetValue(sectionName, out var dic))
-            {
-                if (dic.TryGetValue(key, out string part))
+                string head = GR.GetTypeName(registryName[i]);
+                if (loaders.TryGetValue(head, out IResourceLoader loader))
                 {
-                    return part;
+                    loader.Unload(registryName[i]);
+                }
+                else//如果没有找到加载器则报错
+                {
+                    Debug.LogWarning($"缺失 {head} 资源加载器, <{registryName[i]}>资源卸载失败");
                 }
             }
-            return null;
         }
-
         /// <summary>
         /// 判断指定资源是否已经加载
-        /// 特别的: 如果检测一个单独的资源片段是否加载, 则会检测它所在的section是否加载
         /// </summary>
-        /// <param name="key"></param>
-        /// <param name="type"></param>
+        /// <param name="registryName"></param>
         /// <returns></returns>
-        public bool LoadedExist(string key, ResourceType type = ResourceType.Any)
+        public bool IsLoaded(string registryName)
         {
-            switch (type)
+            string head = GR.GetTypeName(registryName);
+            if (loaders.TryGetValue(head, out IResourceLoader loader))
             {
-                case ResourceType.Text:
-                    return texts.ContainsKey(key);
-
-                case ResourceType.Sprite:
-                    return sprites.ContainsKey(key);
-
-                case ResourceType.AudioClip:
-                    return clips.ContainsKey(key);
-
-                case ResourceType.INI:
-                    return TextPartContains(key);
-
-                case ResourceType.Any:
-                default:
-                    return texts.ContainsKey(key) || sprites.ContainsKey(key) || clips.ContainsKey(key) || TextPartContains(key);
+                return loader.Exist(registryName);
+            }
+            else//如果没有找到加载器则报错
+            {
+                Debug.LogWarning($"缺失 {head} 资源加载器, 在判断<{registryName}>资源时失败");
+                return false;
             }
         }
-
         /// <summary>
-        /// 判断指定文本片段资源是否已经加载
+        /// 获取指定资源
         /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="registryName"></param>
         /// <returns></returns>
-        private bool TextPartContains(string key)
+        public IResource Get(string registryName)
         {
-            string[] keys = key.Split('.');
-            return kvText.ContainsKey(keys[0]);
+            string head = GR.GetTypeName(registryName);
+            if (loaders.TryGetValue(head, out IResourceLoader loader))
+            {
+                return loader.Get(registryName);
+            }
+            else//如果没有找到加载器则报错
+            {
+                Debug.LogWarning($"缺失 {head} 资源加载器, 在获取<{registryName}>资源时失败");
+                return null;
+            }
         }
-
         /// <summary>
-        /// 获取文本片段资源键(全称)
+        /// 获取指定资源
         /// </summary>
-        /// <param name="sectionName">节段名称</param>
-        /// <param name="keyName">键名</param>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="registryName"></param>
         /// <returns></returns>
-        public static string GetINIKeyAll(string sectionName, string keyName)
+        public T Get<T>(string registryName) where T : class, IResource
         {
-            return sectionName + "." + keyName;
+            return Get(registryName) as T;
         }
     }
 

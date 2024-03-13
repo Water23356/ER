@@ -1,5 +1,6 @@
 ﻿using ER.Parser;
 using ER.Resource;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -11,6 +12,7 @@ namespace ER.ResourcePacker
 {
     /// <summary>
     /// 设置语言包的面板
+    /// 语言包资源名 txt:erinebone:ui_language
     /// </summary>
     public class PackagePanel : MonoSingleton<PackagePanel>
     {
@@ -113,7 +115,7 @@ namespace ER.ResourcePacker
 
         #region 属性
 
-        private static string UITextResourceKey = "UI_language";
+        private static string UITextResourceKey = "txt:erinebone:ui_language";
 
         /// <summary>
         /// 资源包文件夹路径
@@ -128,10 +130,11 @@ namespace ER.ResourcePacker
         private bool draging = false;//正在拖拽
         private List<Region> regions = new List<Region>();//检测区域对象池
 
+        private Dictionary<string, string> lang = new Dictionary<string, string>();
+
         #endregion 属性
 
         #region 公开方法
-        
 
         /// <summary>
         /// 显示设置面板
@@ -148,6 +151,8 @@ namespace ER.ResourcePacker
             //更新UI文本
             void UITextInit()
             {
+                TextResource txt = GR.Get<TextResource>(UITextResourceKey);
+                lang = JsonConvert.DeserializeObject<Dictionary<string, string>>(txt.Value);
                 UpdateUIText(titleAssetText, "asset_list", "Available Resources");
                 UpdateUIText(titleLoadText, "load_list", "Resources to be Applied");
                 UpdateUIText(warningText, "text_warning", "Warning: The language pack and game version do not match and may not function properly");
@@ -157,7 +162,7 @@ namespace ER.ResourcePacker
 
                 DisplayDefaultInfo();
             }
-            GameResource.Instance.ELoad(GameResource.ResourceType.INI, UITextInit, UITextResourceKey);
+            GR.Load(UITextInit, true, UITextResourceKey);
         }
 
         [ContextMenu("关闭面板")]
@@ -174,64 +179,72 @@ namespace ER.ResourcePacker
         /// <param name="info"></param>
         public void UpdateInfoDisplay(ResourcePackInfo info, Sprite sprite)
         {
-            
             infoImage.sprite = sprite;
 
-            void UIUpdate()
+            TextResource txt = GR.Get<TextResource>(UITextResourceKey);
+            lang = JsonConvert.DeserializeObject<Dictionary<string, string>>(txt.Value);
+            string title;
+            string author;
+            string version;
+            string description;
+
+            if (!lang.TryGetValue("text_info_title", out title))
             {
-
-                string title = GameResource.Instance.GetTextPart(UITextResourceKey, "text_info_title");
-                string author = GameResource.Instance.GetTextPart(UITextResourceKey, "text_info_author"); ;
-                string version = GameResource.Instance.GetTextPart(UITextResourceKey, "text_info_version");
-                string description = GameResource.Instance.GetTextPart(UITextResourceKey, "text_info_description");
-
-                if (title == null || title == string.Empty) { title = "Title"; }
-                if (author == null || author == string.Empty) { author = "Author"; }
-                if (version == null || version == string.Empty) { version = "Version"; }
-                if (description == null || description == string.Empty) { description = "Description"; }
-                StringBuilder sb = new StringBuilder();
-
-                sb.Append("<b>");
-                sb.Append(title);
-                sb.Append(": </b>");
-                sb.Append(info.PackName);
-                titleText.text = sb.ToString();
-                sb.Clear();
-
-                sb.Append("<b>");
-                sb.Append(author);
-                sb.Append(": </b>");
-                sb.Append(info.PackAuthor);
-                authorText.text = sb.ToString();
-                sb.Clear();
-
-                sb.Append("<b>");
-                sb.Append(version);
-                sb.Append(": </b>");
-                sb.Append(info.PackVersion);
-                versionText.text = sb.ToString();
-                sb.Clear();
-
-                sb.Append("<b>");
-                sb.Append(description);
-                sb.Append(": </b>");
-                sb.Append(info.PackDescription);
-                descriptionText.text = sb.ToString();
-
-                LayoutRebuilder.ForceRebuildLayoutImmediate(InfosPanel);//强制刷新竖直布局, 不刷新会有显示bug
-                if (IsMateVersion())
-                {
-                    versionText.color = Color.green;
-                    warningText.gameObject.SetActive(false);
-                }
-                else
-                {
-                    versionText.color = Color.red;
-                    warningText.gameObject.SetActive(true);
-                }
+                title = "Title";
+            }
+            if (!lang.TryGetValue("text_info_author", out author))
+            {
+                author = "Author";
+            }
+            if (!lang.TryGetValue("text_info_version", out version))
+            {
+                version = "Version";
+            }
+            if (!lang.TryGetValue("text_info_description", out description))
+            {
+                description = "Description";
             }
 
-            GameResource.Instance.ELoad(GameResource.ResourceType.INI, UIUpdate, UITextResourceKey);
+            StringBuilder sb = new StringBuilder();
+
+            sb.Append("<b>");
+            sb.Append(title);
+            sb.Append(": </b>");
+            sb.Append(info.PackName);
+            titleText.text = sb.ToString();
+            sb.Clear();
+
+            sb.Append("<b>");
+            sb.Append(author);
+            sb.Append(": </b>");
+            sb.Append(info.PackAuthor);
+            authorText.text = sb.ToString();
+            sb.Clear();
+
+            sb.Append("<b>");
+            sb.Append(version);
+            sb.Append(": </b>");
+            sb.Append(info.PackVersion);
+            versionText.text = sb.ToString();
+            sb.Clear();
+
+            sb.Append("<b>");
+            sb.Append(description);
+            sb.Append(": </b>");
+            sb.Append(info.PackDescription);
+            descriptionText.text = sb.ToString();
+
+            LayoutRebuilder.ForceRebuildLayoutImmediate(InfosPanel);//强制刷新竖直布局, 不刷新会有显示bug
+            if (IsMateVersion())
+            {
+                versionText.color = Color.green;
+                warningText.gameObject.SetActive(false);
+            }
+            else
+            {
+                versionText.color = Color.red;
+                warningText.gameObject.SetActive(true);
+            }
         }
 
         /// <summary>
@@ -324,14 +337,15 @@ namespace ER.ResourcePacker
             ResourcePackInfo[] packs = GetLoadPack();
             Debug.Log($"packs count:{packs.Length}");
 
+            //CustomRIndexerPath
+
             //更新自定资源包加载 配置文件
-            INIWriter writer = new INIWriter();
-            writer.AddSection("url");
+            Dictionary<string, string> txt = new Dictionary<string, string>();
             foreach (var pack in packs)
             {
-                writer.AddPair("url", pack.PackName, pack.PackPath);
+                txt.Add(pack.PackName, pack.PackPath);
             }
-            writer.Save(ResourceIndexer.custom_config_path);
+            File.WriteAllText(ERinbone.CustomRIndexerPath, JsonConvert.SerializeObject(txt));
 
             //重启资源索引器 并 清空当前资源管理器的资源缓存
             ResourceIndexer.Instance.Init();
@@ -361,35 +375,24 @@ namespace ER.ResourcePacker
 
             //重新读取 自定义资源包 的配置文件
             //并复原这些资源包的信息
-            if (File.Exists(ResourceIndexer.custom_config_path))
+            INIParser parser = new INIParser();
+            Dictionary<string, string> urls = JsonConvert.DeserializeObject<Dictionary<string, string>>(File.ReadAllText(ERinbone.CustomRIndexerFile.FullName));
+            ResourcePackInfo[] history = new ResourcePackInfo[urls.Count];
+            int i = 0;
+            foreach (var url in urls)
             {
-                INIParser parser = new INIParser();
-                parser.ParseINIFile(ResourceIndexer.custom_config_path);
-                Dictionary<string, string> urls = parser.GetSection("url");
-                ResourcePackInfo[] history = new ResourcePackInfo[urls.Count];
-                int i = 0;
-                foreach (var url in urls)
-                {
-                    history[i] = ResourcePack.GetInfo(url.Value);
-                    i++;
-                }
-                for (i = 0; i < history.Length; i++)
-                {
-                    pitems.Add(Instantiate(LoadItemPrefab, LoadPanel.transform).GetComponent<PackItem>());
-                }
-                for (i = 0; i < pitems.Count; i++)
-                {
-                    Debug.Log($"childCount:{LoadPanel.transform.childCount} ,i:{i},history:{history.Length}");
-                    pitems[i].UpdateInfo(history[i]);
-                }
+                history[i] = ResourcePack.GetInfo(url.Value);
+                i++;
             }
-            else
+            for (i = 0; i < history.Length; i++)
             {
-                INIWriter writer = new INIWriter();
-                writer.AddSection("url");
-                writer.Save(ResourceIndexer.custom_config_path);
+                pitems.Add(Instantiate(LoadItemPrefab, LoadPanel.transform).GetComponent<PackItem>());
             }
-
+            for (i = 0; i < pitems.Count; i++)
+            {
+                Debug.Log($"childCount:{LoadPanel.transform.childCount} ,i:{i},history:{history.Length}");
+                pitems[i].UpdateInfo(history[i]);
+            }
         }
 
         /// <summary>
@@ -575,10 +578,14 @@ namespace ER.ResourcePacker
 
         private string GetText(string keyName, string defaultValue)
         {
-            string txt = GameResource.Instance.GetTextPart(GameResource.GetINIKeyAll(UITextResourceKey, keyName));
-            if (txt == null || txt == string.Empty)
+            if (lang.TryGetValue(keyName, out string rt))
+            {
+                return rt;
+            }
+            else
+            {
                 return defaultValue;
-            return txt;
+            }
         }
 
         #endregion 内部方法

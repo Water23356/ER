@@ -110,6 +110,25 @@ namespace ER
         {
             get => Combine(CustomConfigPath, "resource_indexer.json");
         }
+        /// <summary>
+        /// 用户自定义资源索引器配置文件信息
+        /// </summary>
+        public static FileInfo CustomRIndexerFile
+        {
+            get
+            {
+                FileInfo fileInfo = new FileInfo(CustomRIndexerPath);
+                if (!fileInfo.Exists)
+                {
+                    if (!Directory.Exists(CustomConfigPath))
+                    {
+                        Directory.CreateDirectory(CustomConfigPath);
+                    }
+                    fileInfo.Create();
+                }
+                return fileInfo;
+            }
+        }
 
         /// <summary>
         /// 预设存档文件夹路径

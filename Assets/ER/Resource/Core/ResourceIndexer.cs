@@ -32,6 +32,7 @@ namespace ER.Resource
         public void Init()
         {
             dic.Clear();
+            LoadIndexer();
         }
         /// <summary>
         /// 加载内部和外部索引器
