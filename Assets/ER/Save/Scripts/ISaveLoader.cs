@@ -3,7 +3,7 @@
     /// <summary>
     /// 存档还原类
     /// </summary>
-    public interface SaveLoader
+    public interface ISaveLoader
     {
         /// <summary>
         /// 根据存档数据还原对象

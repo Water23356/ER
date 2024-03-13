@@ -1,4 +1,4 @@
-﻿using ER.ResourcePacker;
+﻿using ER.Resource;
 
 namespace ER.ItemStorage
 {

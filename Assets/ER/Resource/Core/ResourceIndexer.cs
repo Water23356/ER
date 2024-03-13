@@ -8,22 +8,14 @@ using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 
-namespace ER.ResourcePacker
+namespace ER.Resource
 {
     /// <summary>
-    /// 资源索引器, 将资源键名 转化为 url
-    /// 默认配置文件(资源包地址): ERinbone.Combine (ini)
-    ///     默认资源键值对所在 节名: indexer
-    /// 自定义资源加载配置文件路径 Application.streamingAssetsPath + "\config\res_indexer.ini" (ini)
-    ///     额外加载的 资源包 url所在 节名: url
-    /// 默认资源(游戏内部资源)地址命名以 @开头, 非内部资源(外部的拓展资源) 不以@开头, 而为实际url
+    /// 资源索引器, 将资源注册名 转化为 地址或者url
+    /// 外部资源使用@作为前缀标识
     /// </summary>
     public class ResourceIndexer:MonoSingleton<ResourceIndexer>,MonoInit
     {
-        /// <summary>
-        /// 默认配置文件(资源包地址)
-        /// </summary>
-        public static string config_address => "config.ResourceIndexer";
         /// <summary>
         /// 自定义资源加载配置文件路径
         /// </summary>
@@ -37,7 +29,6 @@ namespace ER.ResourcePacker
         public void Init()
         {
             dic.Clear();
-            Addressables.LoadAssetAsync<TextAsset>(config_address).Completed += OnLoadConfigureDone;
         }
         /// <summary>
         /// 加载默认索引器, 并根据预设额外加载资源索引器

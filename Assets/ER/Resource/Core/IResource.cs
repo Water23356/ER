@@ -1,6 +1,8 @@
-﻿using UnityEngine;
+﻿// Ignore Spelling: color
 
-namespace ER.ResourcePacker
+using UnityEngine;
+
+namespace ER.Resource
 {
     /// <summary>
     /// 资源接口

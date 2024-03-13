@@ -1,4 +1,5 @@
 ﻿using ER.Parser;
+using ER.Resource;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;

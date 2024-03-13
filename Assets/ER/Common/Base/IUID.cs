@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Ignore Spelling: Deserialize UID obj uuid IUID
+
+using System;
 using System.Collections.Generic;
 
 namespace ER
@@ -36,17 +38,17 @@ namespace ER
             return !(left == right);
         }
 
-        public UID(string className, int hashcode, long timecode = -1)
+        public UID(string className, int hashCode, long timeCode = -1)
         {
             this.className = className;
-            hashCode = hashcode;
-            if (timecode < 0)
+            this.hashCode = hashCode;
+            if (timeCode < 0)
             {
                 this.timeCode = ((DateTimeOffset)DateTime.UtcNow).ToUnixTimeMilliseconds();
             }
             else 
             {
-                this.timeCode = timecode;
+                this.timeCode = timeCode;
             }
         }
         /// <summary>
@@ -72,6 +74,8 @@ namespace ER
         {
             return $"{className}:{hashCode}:{timeCode}";
         }
+        public override int GetHashCode() { return base.GetHashCode(); }
+        public override bool Equals(object obj) { return base.Equals(obj); }
     }
     /// <summary>
     /// 持久化存储数据信息

@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Ignore Spelling: obj
+
+using System;
 using System.IO;
 using UnityEngine;
 

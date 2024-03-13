@@ -6,16 +6,15 @@ using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.Networking;
 using UnityEngine.ResourceManagement.AsyncOperations;
-using static ER.ResourcePacker.GameResource;
+using static ER.Resource.GameResource;
 
-namespace ER.ResourcePacker
+namespace ER.Resource
 {
     /// <summary>
     /// 游戏资源(GameResource 的静态替身), 没有额外作用, 只是方便调用
     /// </summary>
     public static class GR
     {
-        
         public static void Clear()
         {
             GameResource.Instance.Clear();
@@ -64,7 +63,10 @@ namespace ER.ResourcePacker
 
     /// <summary>
     /// 游戏资源: 用于 管理 和 缓存 游戏所需要的各种资源
-    /// #1: 使用资源键 访问指定资源
+    /// #1: 使用资源注册名 访问指定资源
+    /// #2: 返回封装后的资源
+    /// #3: 注册名: 资源头:模组名:地址名
+    /// #4: 文本等效资源头, 列表中资源类型将会以文本资源的形式加载
     /// </summary>
     public class GameResource : MonoSingletonAutoCreate<GameResource>
     {
@@ -89,20 +91,14 @@ namespace ER.ResourcePacker
             AudioClip,
 
             /// <summary>
-            /// ini键值对
-            /// </summary>
-            INI,
-
-            /// <summary>
             /// 任意资源
             /// </summary>
             Any,
         }
 
-        private Dictionary<string, Sprite> sprites = new Dictionary<string, Sprite>();//缓存的sprite资源
-        private Dictionary<string, string> texts = new Dictionary<string, string>();//缓存的文本资源(未加工)
-        private Dictionary<string, AudioClip> clips = new Dictionary<string, AudioClip>();//缓存的audioclip资源
-        private Dictionary<string, Dictionary<string, string>> kvText = new Dictionary<string, Dictionary<string, string>>();
+        private Dictionary<string,SpriteResource> sprites = new Dictionary<string, SpriteResource> ();//缓存的sprite资源
+        private Dictionary<string, TextResource> texts = new Dictionary<string, TextResource>();//缓存的文本资源(未加工)
+        private Dictionary<string, AudioResource> audios = new Dictionary<string, AudioResource>();//缓存的audioclip资源
         //缓存的键值对资源(文本资源)(已加工)  section 和 key 不能包含  ,因为 .作为分隔符号, 如果需要请使用 dot 代替 .
         // kvText 本质和 texts 相同, 不过多出加工成片段的步骤
         // kvText资源 只能一个文件一个文件的加载, 不允许仅加载单独 文本片段
@@ -119,8 +115,7 @@ namespace ER.ResourcePacker
         {
             sprites.Clear();
             texts.Clear();
-            clips.Clear();
-            kvText.Clear();
+            audios.Clear();
         }
 
         /// <summary>
