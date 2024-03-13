@@ -13,7 +13,7 @@ namespace ER
         /// <summary>
         /// 资源名称
         /// </summary>
-        public string clipName;
+        public string registryName;
 
         /// <summary>
         /// 音频资源
@@ -77,11 +77,11 @@ namespace ER
         /// </summary>
         /// <param name="clip"></param>
         /// <param name="weight"></param>
-        public void AddClip(string clipName, AudioClip clip, float weight)
+        public void AddClip(string registryName, AudioClip clip, float weight)
         {
             clips.Add(new RandomClipInfo
             {
-                clipName = clipName,
+                registryName = registryName,
                 clip = clip,
                 weight = weight
             });
@@ -93,12 +93,12 @@ namespace ER
         /// </summary>
         /// <param name="clip"></param>
         /// <param name="weight"></param>
-        public void AddClip(string clipName, float weight)
+        public void AddClip(string registryName, float weight)
         {
             clips.Add(new RandomClipInfo
             {
-                clipName = clipName,
-                clip = SoundManager.Instance.GetClip(clipName),
+                registryName = registryName,
+                clip = SoundManager.Instance.GetClip(registryName),
                 weight = weight
             });
             UpdateAnchor();
@@ -113,7 +113,7 @@ namespace ER
         {
             clips.Add(new RandomClipInfo
             {
-                clipName = string.Empty,
+                registryName = string.Empty,
                 clip = clip,
                 weight = weight
             });
