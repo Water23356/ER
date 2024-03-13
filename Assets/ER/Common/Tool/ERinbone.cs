@@ -82,7 +82,7 @@ namespace ER
         /// </summary>
         public static string CustomSettingsPath
         {
-            get => Combine(Application.streamingAssetsPath, "config/settings.json");
+            get => Combine(CustomConfigPath, "settings.json");
         }
         /// <summary>
         /// 获取用户设置文件信息
@@ -102,6 +102,13 @@ namespace ER
                 }
                 return fileInfo;
             }
+        }
+        /// <summary>
+        /// 用户自定义资源索引器配置文件地址
+        /// </summary>
+        public static string CustomRIndexerPath
+        {
+            get => Combine(CustomConfigPath, "resource_indexer.json");
         }
 
         /// <summary>

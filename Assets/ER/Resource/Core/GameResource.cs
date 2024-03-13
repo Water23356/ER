@@ -2,6 +2,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.Networking;
@@ -66,7 +68,8 @@ namespace ER.Resource
     /// #1: 使用资源注册名 访问指定资源
     /// #2: 返回封装后的资源
     /// #3: 注册名: 资源头:模组名:地址名
-    /// #4: 文本等效资源头, 列表中资源类型将会以文本资源的形式加载
+    /// #4: 文本等效资源头, 列表中资源类型将会以指定资源的形式加载
+    /// #5: 不属于 wav,txt,img 且没有填写等效资源头 的资源默 认以txt形式加载
     /// </summary>
     public class GameResource : MonoSingletonAutoCreate<GameResource>
     {
@@ -99,14 +102,48 @@ namespace ER.Resource
         private Dictionary<string,SpriteResource> sprites = new Dictionary<string, SpriteResource> ();//缓存的sprite资源
         private Dictionary<string, TextResource> texts = new Dictionary<string, TextResource>();//缓存的文本资源(未加工)
         private Dictionary<string, AudioResource> audios = new Dictionary<string, AudioResource>();//缓存的audioclip资源
-        //缓存的键值对资源(文本资源)(已加工)  section 和 key 不能包含  ,因为 .作为分隔符号, 如果需要请使用 dot 代替 .
-        // kvText 本质和 texts 相同, 不过多出加工成片段的步骤
-        // kvText资源 只能一个文件一个文件的加载, 不允许仅加载单独 文本片段
-        //第一层 key  表示 sectionName
-        //第二次 key  表示 keyName
-        // sectionName + . + keyName 即为该资源的全键
 
-        private List<LoadProgress> loadProgresses = new List<LoadProgress>();
+        private List<LoadProgress> loadProgresses = new List<LoadProgress>();//资源加载任务表
+        /// <summary>
+        /// 判断是否是资源注册名
+        /// </summary>
+        /// <param name="str"></param>
+        /// <returns></returns>
+        public static bool IsRegistryName(string str)
+        {
+            return Regex.IsMatch(str, @"^[a-z_\/]+:[a-z_\/]+:[a-z_\/]+$");
+        }
+        /// <summary>
+        /// 获取资源注册名的模组名
+        /// </summary>
+        /// <param name="registryName"></param>
+        /// <returns></returns>
+        public static string GetModName(string registryName)
+        {
+            string[] parts = registryName.Split (':');  
+            return parts[1];
+        }
+        /// <summary>
+        /// 获取注册名的资源头
+        /// </summary>
+        /// <param name="registryName"></param>
+        /// <returns></returns>
+        public static string GetTypeName(string registryName)
+        {
+            string[] parts = registryName.Split(':');
+            return parts[0];
+        }
+        /// <summary>
+        /// 获取注册名的全路径
+        /// </summary>
+        /// <param name="registryName"></param>
+        /// <returns></returns>
+        public static string GetAddressAll(string registryName)
+        {
+            string[] parts = registryName.Split(':');
+            return ERinbone.Combine(parts[0],parts[2]);
+        }
+
 
         /// <summary>
         /// 清除所有资源缓存
@@ -135,35 +172,29 @@ namespace ER.Resource
                 {
                     sprites.Remove(key);
                 }
-                if (clips.ContainsKey(key))
+                if (audios.ContainsKey(key))
                 {
-                    clips.Remove(key);
-                }
-                if (kvText.ContainsKey(key))
-                {
-                    kvText.Remove(key);
+                    audios.Remove(key);
                 }
             }
         }
 
         /// <summary>
-        /// 加载资源缓存;
-        /// 特别的: 不支持加载单独的文本片段资源, 如果需要加载 请使用该资源的 sectionName
+        /// 将制定资源组加入缓存
         /// </summary>
-        /// <param name="type">加载资源限定的类型</param>
-        /// <param name="callback">回调函数, 资源加载完毕触发</param>
-        /// <param name="keys"></param>
-        public void Load(ResourceType type, Action callback = null, params string[] keys)
+        /// <param name="callback">整个资源组加载完毕后回调</param>
+        /// <param name="registryName">资源注册名</param>
+        public void Load(Action callback = null, params string[] registryName)
         {
-            if (keys.Length == 0)
+            if (registryName.Length == 0)
             {
                 callback?.Invoke();
                 return;
             }
-            Action progressAdd = null;
+            Action progressAdd = null;//子回调函数
             if (callback != null)
             {
-                for(int i=0;i<loadProgresses.Count;i++)
+                for(int i=0;i<loadProgresses.Count;i++)//清空加载任务列表中已经完成的任务表
                 {
                     if (loadProgresses[i].done)
                     {
@@ -171,45 +202,54 @@ namespace ER.Resource
                         i--;
                     }
                 }
-                Debug.Log("回调函数确认: "+ loadProgresses.Count);
+                //创建新的加载任务表
                 LoadProgress progress = new LoadProgress();
                 progress.loaded = 0;
-                progress.count = keys.Length;
+                progress.count = registryName.Length;
                 progress.callback = callback;
                 progress.done = false;
                 loadProgresses.Add(progress);
                 progressAdd = () =>
                 {
-                    Debug.Log("回调触发");
                     progress.AddProgress();
                 };
             }
-
-            Debug.Log("加载资源:"+type+"数量:"+keys.Length);
-            switch (type)
+            LoadResource(progressAdd, registryName);
+        }
+        private void LoadResource(Action callback, params string[] registryName)
+        {
+            for(int i=0;i< registryName.Length;i++)
             {
-                case ResourceType.Text:
-                    LoadText( progressAdd, keys);
-                    break;
-
-                case ResourceType.INI:
-                    LoadINI( progressAdd, keys);
-                    break;
-
-                case ResourceType.Sprite:
-                    LoadSprite( progressAdd, keys);
-                    break;
-
-                case ResourceType.AudioClip:
-                    LoadAudioClip( progressAdd, keys);
-
-                    break;
-
-                default:
-                    Debug.LogError("错误资源类型");
-                    break;
+                bool defRes;
+                string res_path = ResourceIndexer.Instance.Convert(registryName[i],out defRes);//获取资源路径
+                switch(GetTypeName(registryName[i]))
+                {
+                    case "wav":
+                        LoadAudio(defRes, res_path, callback);
+                        break;
+                    case "img":
+                        LoadSprite(defRes,res_path,callback);
+                        break;
+                    case "txt":
+                    default:
+                        LoadText(defRes, res_path, callback);
+                        break;
+                }
             }
         }
+        private void LoadText(bool defRes,string loadPath,Action callback)
+        {
+
+        }
+        private void LoadSprite(bool defRes, string loadPath, Action callback)
+        {
+
+        }
+        private void LoadAudio(bool defRes, string loadPath, Action callback)
+        {
+
+        }
+
 
         /// <summary>
         /// 加载资源缓存
