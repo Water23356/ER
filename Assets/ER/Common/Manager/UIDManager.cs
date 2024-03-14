@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using ER.Save;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -6,15 +7,10 @@ using System.IO;
 namespace ER
 {
     /// <summary>
-    /// 全局uid对象管理器
+    /// 全局uid对象管理器, 需要初始化设定 SavePath (仍需要优化)
     /// </summary>
-    public class UIDManger:Singleton<UIDManger>
+    public class UIDManager:Singleton<UIDManager>
     {
-        /// <summary>
-        /// 持久化存储路径
-        /// </summary>
-        public static string SavePath = string.Empty;
-
         private Dictionary<UID, IUID> items = new Dictionary<UID, IUID>();
         /// <summary>
         /// 注册uuid对象
@@ -109,7 +105,7 @@ namespace ER
         /// <summary>
         /// 将uid对象持久化存储
         /// </summary>
-        public void Save()
+        public void Save(string savePath)
         {
             List<ObjectUIDInfo> datas = new List<ObjectUIDInfo>();
             foreach (var item in items)
@@ -121,12 +117,12 @@ namespace ER
                 }
             }
             string text = JsonConvert.SerializeObject(datas);
-            File.WriteAllText(SavePath,text);
+            File.WriteAllText(savePath, text);
         }
         /// <summary>
         /// 获取存储信息并复原这些uid对象(需要子类实现)
         /// </summary>
-        public virtual void Load()
+        public virtual void Load(string savePath)
         {
             //ObjectUIDInfo[] datas = LoadUIDInfo();
             //接下来通过 datas[i] 中的uuid信息判断该 信息属于哪一个 IUID 的派生类,
@@ -136,16 +132,11 @@ namespace ER
         /// 读取储存在本地的uid信息
         /// </summary>
         /// <returns></returns>
-        protected ObjectUIDInfo[] LoadUIDInfo()
+        protected ObjectUIDInfo[] LoadUIDInfo(string savePath)
         {
-            string text = File.ReadAllText(SavePath);
+            string text = File.ReadAllText(savePath);
             ObjectUIDInfo[] datas = JsonConvert.DeserializeObject<ObjectUIDInfo[]>(text);
             return datas;
-        }
-        public UIDManger():base()
-        {
-            if(SavePath==string.Empty)
-                SavePath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
         }
 
 

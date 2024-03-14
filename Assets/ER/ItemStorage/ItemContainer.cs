@@ -9,13 +9,14 @@ namespace ER.ItemStorage
     /// </summary>
     public class ItemContainer:IUID
     {
+        private string tag;//容器标签: 可用于标记 玩家背包, 仓库, 临时仓库 等
         private IItemStack[] stacks;//存储物品堆
         private int stackCount;//存入物品堆的数量
         private UID uuid;
         /// <summary>
         /// 类名
         /// </summary>
-        public static string ClassName => nameof(ItemContainer);
+        public string ClassName => nameof(ItemContainer);
         /// <summary>
         /// 容器中物品堆的数量
         /// </summary>
@@ -47,6 +48,10 @@ namespace ER.ItemStorage
         }
 
         public UID UUID => uuid;
+        /// <summary>
+        /// 容器标签
+        /// </summary>
+        public string Tag { get => tag; set => tag = value; }
 
         /// <summary>
         /// 获取指定索引位置上的物品堆, 如果不存在或者没有物品则返回null
@@ -157,6 +162,17 @@ namespace ER.ItemStorage
         public void Set(IItemStack stack, int index)
         {
             stacks[index] = stack;
+        }
+        /// <summary>
+        /// 交换两个格子上的物品
+        /// </summary>
+        /// <param name="origin"></param>
+        /// <param name="aim"></param>
+        public void Set(int origin,int aim)
+        {
+            IItemStack stack = stacks[origin];
+            stacks[origin] = stacks[aim];
+            stacks[aim] = stack;
         }
 
         public ObjectUIDInfo Serialize()

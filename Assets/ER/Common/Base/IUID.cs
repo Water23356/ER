@@ -5,6 +5,9 @@ using System.Collections.Generic;
 
 namespace ER
 {
+    /// <summary>
+    /// uid标记
+    /// </summary>
     public class UID
     {
         /// <summary>
@@ -103,15 +106,33 @@ namespace ER
         /// </summary>
         public static ObjectUIDInfo Empty => new ObjectUIDInfo() { uuid=null,data=null};
 
+        public ObjectUIDInfo(string _uuid)
+        {
+            uuid = _uuid;
+            data = new Dictionary<string, object>();
+        }
+        public ObjectUIDInfo(UID uid)
+        {
+            uuid = uid.ToString();
+            data = new Dictionary<string, object>();
+        }
+
     }
 
     /// <summary>
     /// 唯一标识符接口:
     /// 标识符规则:
     /// 类型标识:对象哈希值:创建对象时的时间戳
+    /// 
+    /// - 如果你的对象需要使用 uid 进行管理请实现该接口
+    /// - 你可以使用 this.Registry() 将自身对象注册进 UID管理器 (拓展方法)
     /// </summary>
     public interface IUID
     {
+        /// <summary>
+        /// 类型名称(用于uid管理)
+        /// </summary>
+        public string ClassName { get; }
         /// <summary>
         /// 唯一标识符
         /// </summary>

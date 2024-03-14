@@ -255,7 +255,7 @@ namespace ER
         /// <param name="obj"></param>
         public static void Registry(this IUID obj)
         {
-            UIDManger.Instance.Registry(obj);
+            UIDManager.Instance.Registry(obj);
         }
         /// <summary>
         /// 将该uid对象从管理器中注销
@@ -263,7 +263,7 @@ namespace ER
         /// <param name="obj"></param>
         public static void Unregistry(this IUID obj)
         {
-            UIDManger.Instance.Unregistry(obj);
+            UIDManager.Instance.Unregistry(obj);
         }
     }
 }
