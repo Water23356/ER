@@ -9,22 +9,21 @@ using UnityEngine.ResourceManagement.AsyncOperations;
 
 namespace ER.Resource
 {
-    public class AudioLoader : IResourceLoader
+    public class LoadTaskLoader : IResourceLoader
     {
-        private Dictionary<string, AudioResource> dic = new Dictionary<string, AudioResource>();//资源缓存 注册名:资源
-        private HashSet<string> force_load = new HashSet<string>();//用于记录被强制加载的资源的注册名
-        private string head = "wav";
+        private Dictionary<string, LoadTaskResource> dic = new Dictionary<string, LoadTaskResource>(); //资源缓存 注册名:资源
+        private HashSet<string> force_load = new HashSet<string>(); //用于记录被强制加载的资源的注册名
+        private string head = "pack";
+
         public string Head
         {
             get => head;
             set => head = value;
         }
 
-
-
         public void Clear()
         {
-            Dictionary<string, AudioResource> _dic = new Dictionary<string, AudioResource>();
+            Dictionary<string, LoadTaskResource> _dic = new Dictionary<string, LoadTaskResource>();
             foreach (var res in dic)
             {
                 if (force_load.Contains(res.Key))
@@ -55,14 +54,15 @@ namespace ER.Resource
             return force_load.ToArray();
         }
 
-        public void ELoad(string registryName, Action callback, bool skipConvert=false)
+        public void ELoad(string registryName, Action callback, bool skipConvert = false)
         {
-            if(!dic.ContainsKey(registryName))
+            if (!dic.ContainsKey(registryName))
             {
                 Load(registryName, callback, skipConvert);
             }
         }
-        public async void Load(string registryName, Action callback, bool skipConvert=false)
+
+        public async void Load(string registryName, Action callback, bool skipConvert = false)
         {
             bool defRes;
 
@@ -87,11 +87,11 @@ namespace ER.Resource
             }
             if (defRes)
             {
-                Addressables.LoadAssetAsync<AudioClip>(url).Completed += (handle) =>
+                Addressables.LoadAssetAsync<TextAsset>(url).Completed += (handle) =>
                 {
                     if (handle.Status == AsyncOperationStatus.Succeeded)
                     {
-                        dic[registryName] = new AudioResource(registryName, handle.Result);
+                        dic[registryName] = new LoadTaskResource(registryName, handle.Result.text);
                     }
                     else
                     {
@@ -102,11 +102,11 @@ namespace ER.Resource
             }
             else
             {
-                UnityWebRequest request = UnityWebRequestMultimedia.GetAudioClip(url, AudioType.WAV);
+                UnityWebRequest request = UnityWebRequest.Get(url);
                 await Task.Run(request.SendWebRequest);
                 if (request.result == UnityWebRequest.Result.Success)
                 {
-                    dic[registryName] = new AudioResource(registryName, DownloadHandlerAudioClip.GetContent(request));
+                    dic[registryName] = new LoadTaskResource(registryName, request.downloadHandler.text);
                 }
                 else
                 {
@@ -115,9 +115,10 @@ namespace ER.Resource
                 callback?.Invoke();
             }
         }
+
         public void LoadForce(string registryName, Action callback, bool skipConvert = false)
         {
-            Load(registryName, callback,skipConvert);
+            Load(registryName, callback, skipConvert);
             force_load.Add(registryName);
         }
 

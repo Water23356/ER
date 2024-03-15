@@ -396,7 +396,6 @@ namespace ER.Resource
             }
             return progress;
         }
-
         /// <summary>
         /// 清除所有资源缓存(除了强制加载的资源)
         /// </summary>
@@ -417,7 +416,6 @@ namespace ER.Resource
                 pair.Value.ClearForce();
             }
         }
-
         /// <summary>
         /// 卸载资源缓存
         /// </summary>
@@ -484,6 +482,49 @@ namespace ER.Resource
         public T Get<T>(string registryName) where T : class, IResource
         {
             return Get(registryName) as T;
+        }
+        /// <summary>
+        /// 获取指定资源类型的所有已被加载的资源
+        /// </summary>
+        /// <param name="head"></param>
+        /// <returns></returns>
+        public IResource[] GetAll(string head)
+        {
+            if (loaders.TryGetValue(head, out IResourceLoader loader))
+            {
+                return loader.GetAll();
+            }
+            else//如果没有找到加载器则报错
+            {
+                Debug.LogWarning($"缺失 {head} 资源加载器, 加载资源失败");
+                return null;
+            }
+        }
+        /// <summary>
+        /// 获取指定资源类型的所有已被加载的资源
+        /// </summary>
+        /// <param name="head"></param>
+        /// <returns></returns>
+        public T[] GetAll<T>(string head) where T : class, IResource
+        {
+            return GetAll(head) as T[];
+        }
+        /// <summary>
+        /// 获取指定资源类型所有被加载的资源注册名
+        /// </summary>
+        /// <param name="head"></param>
+        /// <returns></returns>
+        public string[] GetAllRegistryName(string head)
+        {
+            if (loaders.TryGetValue(head, out IResourceLoader loader))
+            {
+                return loader.GetAllRegistryName();
+            }
+            else//如果没有找到加载器则报错
+            {
+                Debug.LogWarning($"缺失 {head} 资源加载器, 加载资源失败");
+                return null;
+            }
         }
         /// <summary>
         /// 添加加载任务(批量加载资源)
