@@ -178,6 +178,33 @@ namespace ER.Resource
         {
             return GameResource.Instance.Get<T>(registryName);
         }
+        /// <summary>
+        /// 获取指定资源类型的所有已被加载的资源
+        /// </summary>
+        /// <param name="head"></param>
+        /// <returns></returns>
+        public static IResource[] GetAll(string head)
+        {
+            return GameResource.Instance.GetAll(head);
+        }
+        /// <summary>
+        /// 获取指定资源类型的所有已被加载的资源
+        /// </summary>
+        /// <param name="head"></param>
+        /// <returns></returns>
+        public static T[] GetAll<T>(string head) where T : class, IResource
+        {
+            return GameResource.Instance.GetAll<T>(head);
+        }
+        /// <summary>
+        /// 获取指定资源类型所有被加载的资源注册名
+        /// </summary>
+        /// <param name="head"></param>
+        /// <returns></returns>
+        public static string[] GetAllRegistryName(string head)
+        {
+            return GameResource.Instance.GetAllRegistryName(head);
+        }
 
         /// <summary>
         /// 添加加载任务(批量加载资源)

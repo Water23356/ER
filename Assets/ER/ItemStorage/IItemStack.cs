@@ -31,6 +31,10 @@ namespace ER.ItemStorage
         /// 堆叠上限
         /// </summary>
         public int AmountMax { get; set; }
+        /// <summary>
+        /// 拓展属性
+        /// </summary>
+        public Dictionary<string, object> Infos { get; set; }
 
     }
 }

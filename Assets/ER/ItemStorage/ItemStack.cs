@@ -1,4 +1,6 @@
 ﻿using ER.Resource;
+using System.Collections.Generic;
+using Unity.VisualScripting;
 
 namespace ER.ItemStorage
 {
@@ -11,9 +13,10 @@ namespace ER.ItemStorage
         private int amount;//当前堆叠数量
         private bool stackable;//物品堆是否可堆叠
         private int amountMax;//物品堆的堆叠上限
+        private Dictionary<string, object> infos;
 
 
-        public IItemResource Resource 
+        public IItemResource Resource
         {
             get => resource;
             set
@@ -26,16 +29,18 @@ namespace ER.ItemStorage
             }
         }
         public int Amount { get => amount; set => amount = value; }
-        public string DisplayName { get => displayName; set => displayName=value; }
-        public DescriptionInfo[] Descriptions { get => descriptions; set => descriptions=value; }
+        public string DisplayName { get => displayName; set => displayName = value; }
+        public DescriptionInfo[] Descriptions { get => descriptions; set => descriptions = value; }
 
         public bool Stackable { get => stackable; set => stackable = value; }
 
-        public int AmountMax { get => amountMax; set => amountMax=value; }
+        public int AmountMax { get => amountMax; set => amountMax = value; }
 
         public UID UUID => uuid;
 
         public string ClassName => nameof(ItemStack);
+
+        public Dictionary<string, object> Infos { get => infos; set => infos = value; }
 
         public void Deserialize(ObjectUIDInfo data)
         {
