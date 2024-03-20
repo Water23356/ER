@@ -6,7 +6,7 @@ namespace ER.Template
     /// <summary>
     /// 初始化加载器, 非显性单例, 不要重复创建实例, 完成初始化加载后自动销毁物体
     /// </summary>
-    public class MonoLoader:MonoBehaviour
+    public class MonoLoader : MonoBehaviour
     {
         private static MonoLoader instance;
         [Tooltip("初始化组件顺序 - Awake 顺序 - 必须实现于 MonoInit")]
@@ -27,13 +27,14 @@ namespace ER.Template
                 MonoBehaviour cp = components[0];
                 components.RemoveAt(0);
                 MonoInit mi = cp as MonoInit;
-                if(mi != null)
+                if (mi != null)
                 {
+                    Debug.Log($"初始化:{mi.GetType().Name}, 剩余 {components.Count} 项目");
                     mi.Init();
                 }
                 else
                 {
-                    Destroy(gameObject);
+                    Debug.LogError("错误初始化加载器");
                 }
             }
             else
