@@ -67,81 +67,83 @@ namespace ER.UI
         }
     }
 
+    public enum AnimationType
+    {
+        /// <summary>
+        /// 无动画
+        /// </summary>
+        None = 0,
+
+        /// <summary>
+        /// 左向盒子动画（打开）
+        /// </summary>
+        BoxOpen_Left,
+
+        /// <summary>
+        /// 右向盒子动画（打开）
+        /// </summary>
+        BoxOpen_Right,
+
+        /// <summary>
+        /// 上向盒子动画（打开）
+        /// </summary>
+        BoxOpen_Top,
+
+        /// <summary>
+        /// 下向盒子动画（打开）
+        /// </summary>
+        BoxOpen_Bottom,
+
+        /// <summary>
+        /// 左向盒子动画（关闭）
+        /// </summary>
+        BoxClose_Left,
+
+        /// <summary>
+        /// 右向盒子动画（关闭）
+        /// </summary>
+        BoxClose_Right,
+
+        /// <summary>
+        /// 上向盒子动画（关闭）
+        /// </summary>
+        BoxClose_Top,
+
+        /// <summary>
+        /// 下向盒子动画（关闭）
+        /// </summary>
+        BoxClose_Bottom,
+        /// <summary>
+        /// 左向盒子动画(关闭), 强制修改大小
+        /// </summary>
+        BoxClose_Left_F,
+        /// <summary>
+        /// 右向盒子动画(关闭), 强制修改大小
+        /// </summary>
+        BoxClose_Right_F,
+        /// <summary>
+        /// 上向盒子动画(关闭), 强制修改大小
+        /// </summary>
+        BoxClose_Top_F,
+        /// <summary>
+        /// 下向盒子动画(关闭), 强制修改大小
+        /// </summary>
+        BoxClose_Bottom_F,
+
+        /// <summary>
+        /// 淡出动画(仅限 Image 和 TMP_Text)
+        /// </summary>
+        FadeOut,
+
+        /// <summary>
+        /// 淡入动画(仅限 Image 和 TMP_Text)
+        /// </summary>
+        FadeIn,
+    }
+
     public class UIAnimator : MonoSingletonAutoCreate<UIAnimator>
     {
-        public enum AnimationType
-        {
-            /// <summary>
-            /// 无动画
-            /// </summary>
-            None = 0,
-
-            /// <summary>
-            /// 左向盒子动画（打开）
-            /// </summary>
-            BoxOpen_Left,
-
-            /// <summary>
-            /// 右向盒子动画（打开）
-            /// </summary>
-            BoxOpen_Right,
-
-            /// <summary>
-            /// 上向盒子动画（打开）
-            /// </summary>
-            BoxOpen_Top,
-
-            /// <summary>
-            /// 下向盒子动画（打开）
-            /// </summary>
-            BoxOpen_Bottom,
-
-            /// <summary>
-            /// 左向盒子动画（关闭）
-            /// </summary>
-            BoxClose_Left,
-
-            /// <summary>
-            /// 右向盒子动画（关闭）
-            /// </summary>
-            BoxClose_Right,
-
-            /// <summary>
-            /// 上向盒子动画（关闭）
-            /// </summary>
-            BoxClose_Top,
-
-            /// <summary>
-            /// 下向盒子动画（关闭）
-            /// </summary>
-            BoxClose_Bottom,
-            /// <summary>
-            /// 左向盒子动画(关闭), 强制修改大小
-            /// </summary>
-            BoxClose_Left_F,
-            /// <summary>
-            /// 右向盒子动画(关闭), 强制修改大小
-            /// </summary>
-            BoxClose_Right_F,
-            /// <summary>
-            /// 上向盒子动画(关闭), 强制修改大小
-            /// </summary>
-            BoxClose_Top_F,
-            /// <summary>
-            /// 下向盒子动画(关闭), 强制修改大小
-            /// </summary>
-            BoxClose_Bottom_F,
-
-            /// <summary>
-            /// 淡出动画(仅限 Image 和 TMP_Text)
-            /// </summary>
-            FadeOut,
-
-            /// <summary>
-            /// 淡入动画(仅限 Image 和 TMP_Text)
-            /// </summary>
-            FadeIn,
-        }
+        
 
         #region 属性
 
@@ -378,7 +380,6 @@ namespace ER.UI
                 {
                     if (info.transform == null)
                     {
-                        Debug.Log("移除移除移除移除移除移除移除移除");
                         dest.Add(info.transform);
                         continue;
                     }
