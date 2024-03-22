@@ -88,7 +88,7 @@ namespace ER.UI
         /// </summary>
         public void OpenPanel()
         {
-            UIAnimator.Instance.AddAnimation(trf, UIAnimator.AnimationType.BoxOpen_Bottom, Opened);
+            UIAnimator.Instance.AddAnimation(trf, AnimationType.BoxOpen_Bottom, Opened);
             UIAnimator.Instance.GetAnimationInfo(trf).speed = animation_speed;
             UIAnimator.Instance.StartAnimation(trf);
             charIndex = 0;
@@ -105,7 +105,7 @@ namespace ER.UI
         public void ClosePanel()
         {
             text.color = new Color(0, 0, 0, 0);
-            UIAnimator.Instance.AddAnimation(trf, UIAnimator.AnimationType.BoxClose_Top, Closed);
+            UIAnimator.Instance.AddAnimation(trf, AnimationType.BoxClose_Top, Closed);
             UIAnimator.Instance.GetAnimationInfo(trf).speed = animation_speed;
             UIAnimator.Instance.StartAnimation(trf);
         }

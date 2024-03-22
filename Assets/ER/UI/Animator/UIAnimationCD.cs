@@ -128,13 +128,15 @@ namespace ER.UI.Animator
             }
         }
        /// <summary>
-       /// 访问指定动画变量
+       /// 访问指定动画变量, 若不存在则设定为默认值
        /// </summary>
        /// <param name="key"></param>
        /// <returns></returns>
-        public object GetVar(string key)
+        public object GetVar(string key,object def_value)
         {
-            return vars[key];
+            if (vars.TryGetValue(key, out var value)) return value;
+            SetVar(key, def_value);
+            return def_value;
         }
         /// <summary>
         /// 设置指定动画变量的值

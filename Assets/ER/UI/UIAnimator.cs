@@ -20,7 +20,7 @@ namespace ER.UI
         /// <summary>
         /// 动画类型
         /// </summary>
-        public UIAnimator.AnimationType type;
+        public AnimationType type;
 
         /// <summary>
         /// 回调函数

@@ -33,7 +33,11 @@ namespace ER.UI.Animator
         /// <param name="cd"></param>
         public void StartPlay(UIAnimationCD cd)
         {
-            if (!cds.ContainsValue(cd)) return;
+            if (!cds.ContainsValue(cd))
+            {
+                Debug.LogWarning($"该cd未注册无法直接播放:{cd.Tag}");
+                return;
+            }
             if (wait_cds.Contains(cd))
             {
                 wait_cds.Remove(cd);
@@ -48,7 +52,29 @@ namespace ER.UI.Animator
         {
             cds.Remove(cd_tag);
         }
-
+        /// <summary>
+        /// 添加播放器
+        /// </summary>
+        /// <param name="player"></param>
+        public void AddPlayer(IUIPlayer player)
+        {
+            players[player.Type] = player;
+        }
+        /// <summary>
+        /// 移除播放器
+        /// </summary>
+        /// <param name="tag"></param>
+        public void RemovePlayer(string tag)
+        {
+            players.Remove(tag);
+        }
+        /// <summary>
+        /// 移除所有播放器
+        /// </summary>
+        public void ClearPlayer()
+        {
+            players.Clear();
+        }
 
 
         private void LateUpdate()
@@ -57,8 +83,10 @@ namespace ER.UI.Animator
             move.Clear();
             float delta = Time.deltaTime;
 
+            Debug.Log("cd数:"+playing_cds.Count);
             foreach (var cd in playing_cds)
             {
+                Debug.Log("正在播放:" + cd.Tag);
                 if (players.TryGetValue(cd.Type, out IUIPlayer player))
                 {
                     if (!player.Update(cd, delta)) return;

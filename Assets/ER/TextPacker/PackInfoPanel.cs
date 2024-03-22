@@ -105,33 +105,33 @@ namespace ER.TextPacker
             versionText.color = versionText.color.ModifyAlpha(0);
             authorText.color = authorText.color.ModifyAlpha(0);
 
-            cd_panel.type = UIAnimator.AnimationType.BoxOpen_Left;
+            cd_panel.type = AnimationType.BoxOpen_Left;
             cd_panel.callBack = () =>
             {
                 UIAnimator.Instance.StartAnimation(cd_text_1_fade);
                 UIAnimator.Instance.StartAnimation(cd_text_2_fade);
                 UIAnimator.Instance.StartAnimation(cd_text_3_fade);
             };
-            cd_text_1_fade.type = UIAnimator.AnimationType.FadeIn;
+            cd_text_1_fade.type = AnimationType.FadeIn;
             cd_text_1_fade.callBack = null;
-            cd_text_2_fade.type = UIAnimator.AnimationType.FadeIn;
-            cd_text_3_fade.type = UIAnimator.AnimationType.FadeIn;
+            cd_text_2_fade.type = AnimationType.FadeIn;
+            cd_text_3_fade.type = AnimationType.FadeIn;
 
             UIAnimator.Instance.StartAnimation(cd_panel);
         }
 
         public void ClosePanel()
         {
-            cd_panel.type = UIAnimator.AnimationType.BoxClose_Right;
+            cd_panel.type = AnimationType.BoxClose_Right;
             cd_panel.callBack = () => { gameObject.SetActive(false); };
 
-            cd_text_1_fade.type = UIAnimator.AnimationType.FadeOut;
+            cd_text_1_fade.type = AnimationType.FadeOut;
             cd_text_1_fade.callBack = () =>
             {
                 UIAnimator.Instance.StartAnimation(cd_panel);
             };
-            cd_text_2_fade.type = UIAnimator.AnimationType.FadeOut;
-            cd_text_3_fade.type = UIAnimator.AnimationType.FadeOut;
+            cd_text_2_fade.type = AnimationType.FadeOut;
+            cd_text_3_fade.type = AnimationType.FadeOut;
 
             UIAnimator.Instance.StartAnimation(cd_text_1_fade);
             UIAnimator.Instance.StartAnimation(cd_text_2_fade);
