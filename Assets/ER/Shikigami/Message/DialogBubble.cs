@@ -144,8 +144,6 @@ namespace ER.Shikigami.Message
         public void OpenPanel()
         {
             gameObject.SetActive(true);
-            Action close = ()=>UIAnimator.Instance.AddAnimation(self, AnimationType.BoxClose_Left);
-            UIAnimator.Instance.AddAnimation(t_text.rectTransform, AnimationType.FadeOut);
 
             animator.SetBool("enable", true);
             visible = true;

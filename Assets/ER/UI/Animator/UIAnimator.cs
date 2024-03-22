@@ -16,6 +16,16 @@ namespace ER.UI.Animator
 
         private List<UIAnimationCD> dest = new List<UIAnimationCD>();//待销毁的cd
         private List<UIAnimationCD> move = new List<UIAnimationCD>();//待移动回 wait_cds 的cd
+        /// <summary>
+        /// 获取一个CD的注册键
+        /// </summary>
+        /// <param name="rtf"></param>
+        /// <param name="tag"></param>
+        /// <returns></returns>
+        public static string GetKey(UIAnimationCD cd)
+        {
+            return cd.Owner.GetHashCode().ToString()+":"+cd.Tag;
+        }
 
         /// <summary>
         /// 将碟子注册入表
@@ -23,7 +33,7 @@ namespace ER.UI.Animator
         /// <param name="cd"></param>
         public void Register(UIAnimationCD cd)
         {
-            cds[cd.Tag] = cd;
+            cds[GetKey(cd)] = cd;
             wait_cds.Add(cd);
         }
 
@@ -48,9 +58,9 @@ namespace ER.UI.Animator
         /// 注销指定动画碟子
         /// </summary>
         /// <param name="cd_tag"></param>
-        private void Unregister(string cd_tag)
+        private void Unregister(UIAnimationCD cd)
         {
-            cds.Remove(cd_tag);
+            cds.Remove(GetKey(cd));
         }
         /// <summary>
         /// 添加播放器
@@ -104,7 +114,7 @@ namespace ER.UI.Animator
 
             for(int i=0;i<dest.Count;i++)
             {
-                Unregister(dest[i].Tag);
+                Unregister(dest[i]);
                 playing_cds.Remove(dest[i]);
             }
             for (int i = 0; i < move.Count; i++)

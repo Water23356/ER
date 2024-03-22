@@ -147,8 +147,14 @@ namespace ER.UI.Animator
         {
             vars[key]=value;
         }
-        
-
+        /// <summary>
+        /// 设置回调函数
+        /// </summary>
+        /// <param name="callback"></param>
+        public void SetCallback(Action callback)
+        {
+            this.callback = callback;
+        }
     }
 
     public static class UIAnimatorExpand

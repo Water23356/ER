@@ -7,6 +7,7 @@ using UnityEngine.UI;
 
 namespace ER.UI
 {
+    /*
     public class UIAnimationInfo
     {
         public enum animation
@@ -468,5 +469,5 @@ namespace ER.UI
         }
 
         #endregion Unity
-    }
+    }*/
 }

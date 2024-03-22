@@ -21,6 +21,9 @@ namespace Assets.ER.UI.Animator.Players
     /// - 盒子打开动画: box_open
     ///     * dir_open: 方向(Dir4)
     ///     * speed: 动画速度(float)
+    /// - 盒子关闭动画: box_close
+    ///     * dir_close: 方向(Dir4)
+    ///     * speed: 动画速度(float)
     /// </summary>
     public class BoxPlayer : IUIPlayer
     {
@@ -72,32 +75,40 @@ namespace Assets.ER.UI.Animator.Players
         {
             Dir4 dir = (Dir4)cd["dir_open"];
             float speed = (float)cd["speed"];
-            float prograss = (float)cd.GetVar("open_prograss",0f);
+            float progress = (float)cd.GetVar("open_progress",0f);
 
-            float delta_prograss = Math.Min(speed * deltaTime, 1 - prograss);
+            float delta_progress = Math.Min(speed * deltaTime, 1 - progress);
+            progress += delta_progress;
+            cd.SetVar("open_progress", progress);
 
-            prograss += deltaTime;
-            cd.SetVar("open_prograss", prograss);
+            Vector2 start;
+            Vector2 end;
 
             switch (dir)
             {
                 case Dir4.Up:
-                    cd.Owner.anchorMax = new Vector2(cd.Owner.anchorMax.x,prograss);
+                    start= new Vector2(cd.Owner.anchorMax.x, 0);
+                    end = new Vector2(cd.Owner.anchorMax.x, 1);
+                    cd.Owner.anchorMax =  Vector2.Lerp(start, end, progress);
                     break;
                 case Dir4.Left:
-                    cd.Owner.anchorMin = new Vector2(1-prograss, cd.Owner.anchorMax.y);
+                    start = new Vector2(1, cd.Owner.anchorMax.y);
+                    end = new Vector2(0, cd.Owner.anchorMax.y);
+                    cd.Owner.anchorMin = Vector2.Lerp(start, end, progress);
                     break;
                 case Dir4.Right:
-                    cd.Owner.anchorMax = new Vector2( prograss, cd.Owner.anchorMax.y);
+                    start = new Vector2(0, cd.Owner.anchorMax.y);
+                    end = new Vector2(1, cd.Owner.anchorMax.y);
+                    cd.Owner.anchorMax = Vector2.Lerp(start, end, progress);
                     break;
                 case Dir4.Down:
-                    cd.Owner.anchorMin = new Vector2(cd.Owner.anchorMax.x, 1-prograss);
+                    start = new Vector2(cd.Owner.anchorMax.x, 1);
+                    end = new Vector2(cd.Owner.anchorMax.x, 0);
+                    cd.Owner.anchorMin = Vector2.Lerp(start, end, progress);
                     break;
             }
 
-            cd.SetVar("open_prograss", prograss);
-
-            if (prograss >= 1)
+            if (progress >= 1)
             {
                 cd.Done();
             }
@@ -105,34 +116,42 @@ namespace Assets.ER.UI.Animator.Players
 
         private void CloseBox(UIAnimationCD cd, float deltaTime)//盒子关闭动画
         {
-            Dir4 dir = (Dir4)cd["dir_open"];
+            Dir4 dir = (Dir4)cd["dir_close"];
             float speed = (float)cd["speed"];
-            float prograss = (float)cd.GetVar("open_prograss", 0);
+            float progress = (float)cd.GetVar("open_progress", 0);
 
-            float delta_prograss = Math.Min(speed * deltaTime, 1 - prograss);
+            float delta_progress = Math.Min(speed * deltaTime, 1 - progress);
+            progress += delta_progress;
+            cd.SetVar("open_progress", progress);
 
-            prograss += deltaTime;
-            cd.SetVar("open_prograss", prograss);
+            Vector2 start;
+            Vector2 end;
 
             switch (dir)
             {
                 case Dir4.Up:
-                    cd.Owner.anchorMin = new Vector2(cd.Owner.anchorMax.x, prograss);
+                    start = new Vector2(cd.Owner.anchorMax.x, 0);
+                    end = new Vector2(cd.Owner.anchorMax.x, 1);
+                    cd.Owner.anchorMin = Vector2.Lerp(start, end, progress);
                     break;
                 case Dir4.Left:
-                    cd.Owner.anchorMax = new Vector2(1 - prograss, cd.Owner.anchorMax.y);
+                    start = new Vector2(1, cd.Owner.anchorMax.y);
+                    end = new Vector2(0, cd.Owner.anchorMax.y);
+                    cd.Owner.anchorMax = Vector2.Lerp(start, end, progress);
                     break;
                 case Dir4.Right:
-                    cd.Owner.anchorMin = new Vector2(prograss, cd.Owner.anchorMax.y);
+                    start = new Vector2(0, cd.Owner.anchorMax.y);
+                    end = new Vector2(1, cd.Owner.anchorMax.y);
+                    cd.Owner.anchorMin = Vector2.Lerp(start, end, progress);
                     break;
                 case Dir4.Down:
-                    cd.Owner.anchorMax = new Vector2(cd.Owner.anchorMax.x, 1 - prograss);
+                    start = new Vector2(cd.Owner.anchorMax.x, 1);
+                    end = new Vector2(cd.Owner.anchorMax.x, 0);
+                    cd.Owner.anchorMax = Vector2.Lerp(start, end, progress);
                     break;
             }
 
-            cd.SetVar("open_prograss", prograss);
-
-            if (prograss >= 1)
+            if (progress >= 1)
             {
                 cd.Done();
             }
