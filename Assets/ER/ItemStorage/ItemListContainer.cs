@@ -1,17 +1,14 @@
 ﻿using System.Collections.Generic;
+using System.Drawing;
 using UnityEngine;
-using ER;
 
 namespace ER.ItemStorage
 {
-    /// <summary>
-    /// 物品容器
-    /// </summary>
-    public class ItemContainer:IUID
+    public class ItemListContainer: IUID
     {
+
         private string tag;//容器标签: 可用于标记 玩家背包, 仓库, 临时仓库 等
-        private IItemStack[] stacks;//存储物品堆
-        private int stackCount;//存入物品堆的数量
+        private List<IItemStack> stacks = new List<IItemStack>();
         private UID uuid;
         /// <summary>
         /// 类名
@@ -20,32 +17,7 @@ namespace ER.ItemStorage
         /// <summary>
         /// 容器中物品堆的数量
         /// </summary>
-        public int StackCount => stackCount;
-
-        /// <summary>
-        /// 容器大小:
-        /// 重设大小将会导致内容清空!
-        /// </summary>
-        public int Size
-        {
-            get
-            {
-                return stacks.Length;
-            }
-            set
-            {
-                if (value <= 0)
-                {
-                    stacks = new IItemStack[0];
-                }
-                else
-                {
-                    stacks = new IItemStack[value];
-                    stacks.InitDefault(null);
-                    stackCount = 0;
-                }
-            }
-        }
+        public int StackCount => stacks.Count;
 
         public UID UUID => uuid;
         /// <summary>
@@ -59,10 +31,10 @@ namespace ER.ItemStorage
         /// <param name="index"></param>
         /// <param name="dispel">是否移除该物品堆</param>
         /// <returns></returns>
-        public IItemStack GetStack(int index,bool dispel = false)
+        public IItemStack GetStack(int index, bool dispel = false)
         {
             IItemStack stack = stacks[index];
-            if(dispel)
+            if (dispel)
             {
                 stacks[index] = null;
             }
@@ -83,7 +55,7 @@ namespace ER.ItemStorage
         /// <returns></returns>
         public bool Contains(IItemStack stack)
         {
-            for (int i = 0; i < Size; i++)
+            for (int i = 0; i < stacks.Count; i++)
             {
                 if (stacks[i] == stack)
                 {
@@ -104,30 +76,6 @@ namespace ER.ItemStorage
         }
 
         /// <summary>
-        /// 获取第一个空格子索引,
-        /// 返回-1, 表示没有空格
-        /// </summary>
-        /// <returns></returns>
-        public int GetFirstEmpty()
-        {
-            for (int i = 0; i < Size; i++)
-            {
-                if (Contains(i)) continue;
-                return i;
-            }
-            return -1;
-        }
-
-        /// <summary>
-        /// 判断该容器是否已经装满
-        /// </summary>
-        /// <returns></returns>
-        public bool IsFull()
-        {
-            return StackCount >= Size;
-        }
-
-        /// <summary>
         /// 添加物品, 优先堆叠, 如果不可堆叠则在新空栏添加
         /// </summary>
         /// <param name="stack"></param>
@@ -135,10 +83,10 @@ namespace ER.ItemStorage
         /// <returns></returns>
         public IItemStack Append(IItemStack stack)
         {
-            for(int i=0;i<stacks.Length;i++)//尝试堆叠物品
+            for (int i = 0; i < stacks.Count; i++)//尝试堆叠物品
             {
-                IItemStack aim = stacks[i]; 
-                if (aim==null) continue;
+                IItemStack aim = stacks[i];
+                if (aim == null) continue;
                 if (aim.IsSameStack(stack) && !aim.IsFull())
                 {
                     int add = aim.AmountMax - aim.Amount;
@@ -157,23 +105,18 @@ namespace ER.ItemStorage
             if (stack.Amount == 0) return null;//如果堆叠完毕则直接返回null
             while (stack.Amount > 0)
             {
-                int index = GetFirstEmpty();
-                if(index==-1)//表示没有空位了, 直接跳出检测返回剩余数量
-                {
-                    break;
-                }
                 IItemStack newstack = stack.Copy();
                 int empty = newstack.AmountMax - newstack.Amount;
                 if (empty > 0)//表示数量在上限以下, 直接转移剩余数量
                 {
                     stack.Amount = 0;
-                    stacks[index] = newstack;
+                    stacks.Add(newstack);
                 }
                 else//仅转移amountMax大小的数量
                 {
                     newstack.Amount = newstack.AmountMax;
                     stack.Amount -= newstack.Amount;
-                    stacks[index] = newstack;
+                    stacks.Add(newstack);
                 }
             }
             return stack;
@@ -185,25 +128,7 @@ namespace ER.ItemStorage
         /// <returns>如果添加失败则返回false</returns>
         public bool Add(IItemStack stack)
         {
-            if (stackCount >= Size) return false;
-            int index = GetFirstEmpty();
-            stacks[index] = stack;
-            stackCount++;
-            return true;
-        }
-
-        /// <summary>
-        /// 向容器指定位置添加物新的物品堆
-        /// </summary>
-        /// <param name="stack"></param>
-        /// <param name="index"></param>
-        /// <returns>如果添加失败则返回false</returns>
-        public bool Add(IItemStack stack, int index)
-        {
-            if (stackCount >= Size) return false;
-            if (Contains(index)) return false;
-            stacks[index] = stack;
-            stackCount++;
+            stacks.Add(stack);
             return true;
         }
         /// <summary>
@@ -220,7 +145,7 @@ namespace ER.ItemStorage
         /// </summary>
         /// <param name="origin"></param>
         /// <param name="aim"></param>
-        public void Set(int origin,int aim)
+        public void Set(int origin, int aim)
         {
             IItemStack stack = stacks[origin];
             stacks[origin] = stacks[aim];
@@ -229,8 +154,7 @@ namespace ER.ItemStorage
         public ObjectUIDInfo Serialize()
         {
             Dictionary<string, object> dt = new Dictionary<string, object>();
-            dt["stackCount"] = stackCount;
-            string[] uids = new string[stacks.Length];
+            string[] uids = new string[stacks.Count];
             for (int i = 0; i < uids.Length; i++)
             {
                 if (stacks[i] == null)
@@ -260,17 +184,15 @@ namespace ER.ItemStorage
             }
             uuid = uid;
             string[] uids = (string[])data.data["stacks"];
-            Size = uids.Length;
-            for(int i=0;i<Size;i++)
+            for (int i = 0; i < uids.Length; i++)
             {
                 if (uids[i] == string.Empty) continue;
-                stacks[i] = (IItemStack)UIDManager.Instance.Get(UID.Parse(uids[i]));
+                stacks.Add((IItemStack)UIDManager.Instance.Get(UID.Parse(uids[i])));
             }
-            stackCount = (int)data.data["stackCount"];
             this.Registry();
         }
 
-        public ItemContainer()
+        public ItemListContainer()
         {
             uuid = new UID(ClassName, GetHashCode());
             this.Registry();

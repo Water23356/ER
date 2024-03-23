@@ -1,5 +1,6 @@
 ﻿using ER.Resource;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.VisualScripting;
 
 namespace ER.ItemStorage
@@ -82,6 +83,55 @@ namespace ER.ItemStorage
             data.data["stackable"] = stackable;
             data.data["amountMax"] = amountMax;
             return data;
+        }
+
+        public IItemStack Copy()
+        {
+            DescriptionInfo[] des = new DescriptionInfo[descriptions.Length];
+            for(int i=0;i<des.Length;i++)
+            {
+                des[i] = descriptions[i];
+            }
+            Dictionary<string, object> _infos = new Dictionary<string, object>();
+            foreach(var info in infos)
+            {
+                _infos.Add(info.Key, info.Value);
+            }
+            return new ItemStack()
+            {
+                resource = resource,
+                displayName = displayName,
+                descriptions = des,
+                amount = amount,
+                stackable = stackable,
+                infos = _infos
+            };
+        }
+
+        public virtual bool IsSameStack(IItemStack stack)
+        {
+            if(stackable==stack.Stackable  && resource ==stack.Resource 
+                && displayName == stack.DisplayName && descriptions.Length == stack.Descriptions.Length
+                && infos.Count == stack.Infos.Count)
+            {
+                for(int i=0;i<descriptions.Length;i++)
+                {
+                    if (!stack.Descriptions.Contains(descriptions[i])) return true;
+                }
+                foreach(var pair in infos)
+                {
+                    if(stack.Infos.TryGetValue(pair.Key,out object value))
+                    {
+                        if (pair.Value != value) return false;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                return true;
+            }
+            return false;
         }
 
         public ItemStack()

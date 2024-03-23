@@ -1817,7 +1817,7 @@ GameObject:
   - component: {fileID: 969099826}
   - component: {fileID: 969099829}
   m_Layer: 5
-  m_Name: LanguageSelectPanel
+  m_Name: PackagePanel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1893,29 +1893,29 @@ MonoBehaviour:
   m_GameObject: {fileID: 969099824}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e7dfc98e8f2ca66438f2b08abc39dbab, type: 3}
+  m_Script: {fileID: 11500000, guid: c9455574ad67b2e4a97fdd8c47c7088f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   ItemPrefab: {fileID: 1482426876319262420, guid: 83dd04a8b77338349b5fd20343b1a52b, type: 3}
   RegionPrefab: {fileID: 1548982467143257104, guid: aea9c38b01aaaf044ac08b372a081429, type: 3}
   LoadItemPrefab: {fileID: 8724712538686006875, guid: 3c053b21fd603bb43926d2f050ce265d, type: 3}
-  InfosPanel: {fileID: 940587554}
-  AssetPanel: {fileID: 1920629142}
-  LoadPanel: {fileID: 1037827094}
-  infoImage: {fileID: 672375560}
-  titleText: {fileID: 716379465}
-  versionText: {fileID: 1527233052}
-  authorText: {fileID: 2093190726}
-  descriptionText: {fileID: 1886149565}
-  infoPanel: {fileID: 7260294296027209013}
-  region: {fileID: 1847647779}
-  ApplyButton: {fileID: 1054243297}
-  CancelButton: {fileID: 1408438412}
-  OpenFolderButton: {fileID: 1366651014}
-  RefrashButton: {fileID: 1548176057}
-  warningText: {fileID: 640531798}
-  titleAssetText: {fileID: 1195417814}
-  titleLoadText: {fileID: 1896039055}
+  InfosPanel: {fileID: 0}
+  AssetPanel: {fileID: 0}
+  LoadPanel: {fileID: 0}
+  infoImage: {fileID: 0}
+  titleText: {fileID: 0}
+  versionText: {fileID: 0}
+  authorText: {fileID: 0}
+  descriptionText: {fileID: 0}
+  infoPanel: {fileID: 0}
+  region: {fileID: 0}
+  ApplyButton: {fileID: 0}
+  CancelButton: {fileID: 0}
+  OpenFolderButton: {fileID: 0}
+  RefrashButton: {fileID: 0}
+  warningText: {fileID: 0}
+  titleAssetText: {fileID: 0}
+  titleLoadText: {fileID: 0}
   catchRegion: {fileID: 0}
   DefImage: {fileID: 0}
   PacksPath: 
@@ -3627,17 +3627,6 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 1195652959557751234, guid: aea9c38b01aaaf044ac08b372a081429, type: 3}
   m_PrefabInstance: {fileID: 1847647777}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1847647779 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 8696909560087053131, guid: aea9c38b01aaaf044ac08b372a081429, type: 3}
-  m_PrefabInstance: {fileID: 1847647777}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 579700d8bc126d54f84602146ef17d26, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1886149562
 GameObject:
   m_ObjectHideFlags: 0
@@ -5229,13 +5218,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f06dcb57e3ddb204c8f37fc73061aae1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  image: {fileID: 4439593337057306464}
-  titleText: {fileID: 6000258453178397590}
-  versionText: {fileID: 573346577649675043}
-  authorText: {fileID: 7635251577736011586}
-  Background: {fileID: 5927775397614063862}
-  animation_speed: 3
-  animation_text_speed: 9
 --- !u!222 &7342769537629659806
 CanvasRenderer:
   m_ObjectHideFlags: 0
