@@ -8,7 +8,7 @@ using UnityEngine.UI;
 
 namespace ER.UI
 {
-    public class ValueImageBar : HandlerBase
+    public sealed class ValueImageBar : HandlerBase
     {
         #region 组件 |属性
 

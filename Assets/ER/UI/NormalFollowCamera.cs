@@ -30,11 +30,11 @@ namespace ER.UI
         /// </summary>
         public float step = 5;
 
-        private void Awake()
+        protected virtual void Awake()
         {
         }
 
-        private void Update()
+        protected virtual void Update()
         {
             if (follow)
             {

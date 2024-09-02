@@ -8,7 +8,7 @@ using UnityEngine.UI;
 
 namespace ER.UI
 {
-    public class ValueSliderBar : HandlerBase
+    public sealed class ValueSliderBar : HandlerBase
     {
         #region 组件 |属性
 

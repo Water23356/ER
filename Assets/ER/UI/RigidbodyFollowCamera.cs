@@ -129,7 +129,7 @@ namespace ER.UI
 
         #region Unity
 
-        private void Update()
+        protected virtual void Update()
         {
             if (shaking)
             {

@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace ER.UI
 {
-    public class ValueBar : MonoBehaviour
+    public sealed class ValueBar : MonoBehaviour
     {
         #region 组件
 
