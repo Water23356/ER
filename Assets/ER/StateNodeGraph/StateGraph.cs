@@ -1,9 +1,9 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 namespace ER.StateNodeGraph
 {
-    [CreateAssetMenu(fileName = "StateGraph", menuName = "游戏核心资产/敌人行为状态图")]
+    [CreateAssetMenu(fileName = "StateGraph", menuName = "ER/行为状态图")]
     public class StateGraph : ScriptableObject
     {
         public List<StateKeyPair> nodes = new List<StateKeyPair>();
