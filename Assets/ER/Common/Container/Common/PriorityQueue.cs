@@ -146,6 +146,8 @@ namespace ER
             return default(T);
         }
 
+        public LinkedListNode<T> FirtNode=>values.First;
+
         public IEnumerator<T> GetEnumerator()
         {
             foreach (var value in values)

@@ -595,7 +595,8 @@ namespace ER
         /// <returns></returns>
         public static Vector2 Rotate(this Vector2 dir, float angle)
         {
-            return new Vector2(dir.x * MathF.Cos(angle) - dir.y * MathF.Sin(angle), dir.x * MathF.Sin(angle) + dir.y * MathF.Cos(angle));
+            float rad = angle * Mathf.Deg2Rad;
+            return new Vector2(dir.x * MathF.Cos(rad) - dir.y * MathF.Sin(rad), dir.x * MathF.Sin(rad) + dir.y * MathF.Cos(rad));
         }
 
         /// <summary>
@@ -688,6 +689,51 @@ namespace ER
                 // 使用自定义的替换规则进行替换
                 return replaceFunction(word);
             });
+        }
+
+        /// <summary>
+        /// 取线段 ab 内, 距离C为指定值的点
+        /// </summary>
+        public static Vector2[] FindPointsOnLineSegment(Vector2 A,Vector2 B,Vector2 C,float r)
+        {
+            List<Vector2> result = new List<Vector2>(2);
+
+            // 线段 AB 的向量
+            Vector2 AB = B - A;
+
+            // 求解 t 对应的二次方程的系数 a, b, c
+            float a = AB.x * AB.x + AB.y * AB.y;
+            float b = 2 * (AB.x * (A.x - C.x) + AB.y * (A.y - C.y));
+            float c = (A.x - C.x) * (A.x - C.x) + (A.y - C.y) * (A.y - C.y) - r * r;
+
+            // 计算判别式 Δ = b^2 - 4ac
+            float discriminant = b * b - 4 * a * c;
+
+            if (discriminant < 0)
+            {
+                // 没有实数解，说明没有满足条件的点
+                return result.ToArray();
+            }
+
+            // 计算两个解 t1 和 t2
+            float sqrtDiscriminant = Mathf.Sqrt(discriminant);
+            float t1 = (-b + sqrtDiscriminant) / (2 * a);
+            float t2 = (-b - sqrtDiscriminant) / (2 * a);
+
+            // 验证 t1 和 t2 是否在 [0, 1] 范围内
+            if (t1 >= 0 && t1 <= 1)
+            {
+                Vector2 point1 = (1 - t1) * A + t1 * B;
+                result.Add(point1);
+            }
+
+            if (t2 >= 0 && t2 <= 1)
+            {
+                Vector2 point2 = (1 - t2) * A + t2 * B;
+                result.Add(point2);
+            }
+
+            return result.ToArray();
         }
     }
 }

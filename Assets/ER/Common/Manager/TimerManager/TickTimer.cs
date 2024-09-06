@@ -2,6 +2,7 @@
 
 namespace ER
 {
+    [Serializable]
     /// <summary>
     /// 刻计时器
     /// </summary>

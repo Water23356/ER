@@ -52,7 +52,12 @@ namespace ER
             /// <summary>
             /// 不销毁且循环运行
             /// </summary>
-            Loop
+            Loop,
+
+            /// <summary>
+            /// 运行后自动
+            /// </summary>
+            Disable,
         }
 
         #endregion 枚举定义
@@ -92,6 +97,7 @@ namespace ER
 
         private float realTimeRecord;
         private float realDeltaTime;
+
         public static float RealDeltaTime
         {
             get
@@ -120,6 +126,11 @@ namespace ER
             timerNeedRemoveds.Add(tag);
         }
 
+        public void UnregisterTimer(BaseTimer timer)
+        {
+            timers.Remove(timer);
+        }
+
         /// <summary>
         /// 注册一个计时器(tick)
         /// </summary>
@@ -139,6 +150,11 @@ namespace ER
         public void UnregisterTicker(string tag)
         {
             tickerNeedRemovedss.Add(tag);
+        }
+
+        public void UnregisterTicker(TickTimer timer)
+        {
+            tickers.Remove(timer);
         }
 
         /// <summary>
@@ -357,6 +373,11 @@ namespace ER
                             }
                             timer.timer = timer.limitTime;
                             break;
+
+                        case DestroyMode.Disable:
+                            timer.timer = timer.limitTime;
+                            timer.updateMode = UpdateMode.None;
+                            break;
                     }
                 }
             }
@@ -413,6 +434,11 @@ namespace ER
                             }
                             tickTimer.ticks = tickTimer.limitTick;
                             break;
+
+                        case DestroyMode.Disable:
+                            tickTimer.ticks = tickTimer.limitTick;
+                            tickTimer.updateMode = UpdateMode.None;
+                            break;
                     }
                 }
             }
@@ -438,6 +464,11 @@ namespace ER
         private void FixedUpdate()
         {
             UpdateTicker();
+        }
+
+        private void OnDestroy()
+        {
+            
         }
     }
 }
