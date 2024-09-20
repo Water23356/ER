@@ -14,7 +14,7 @@ namespace Dev
         /// <summary>
         /// 资源注册名
         /// </summary>
-        public string registryName { get; }
+        public RegistryName registryName { get; }
         /// <summary>
         /// 获取原始资源
         /// </summary>

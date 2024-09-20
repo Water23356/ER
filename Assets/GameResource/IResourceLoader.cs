@@ -24,7 +24,7 @@ namespace Dev
         /// <param name="regName">资源注册名</param>
         /// <param name="callback">加载完毕后的回调</param>
         /// <param name="skipConvert">是否跳过url重定向</param>
-        public void Load(RegistryName regName, Action callback, bool skipConvert = false);
+        public void Load(RegistryName regName, Action callback);
 
         /// <summary>
         /// 卸载该类型的所有资源缓存
@@ -61,6 +61,6 @@ namespace Dev
         /// 获取所有已经被加载的资源名称
         /// </summary>
         /// <returns></returns>
-        public string[] GetAllRegName();
+        public RegistryName[] GetAllRegName();
     }
 }

@@ -1,4 +1,4 @@
-﻿
+﻿using Dev;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -9,10 +9,11 @@ using UnityEngine.ResourceManagement.AsyncOperations;
 
 namespace ER.Resource
 {
-    public abstract class AsyncResourceLoader<T>:MonoBehaviour,IResourceLoader where T:class,IResource
+    public abstract class AsyncResourceLoader<T> : MonoBehaviour, IResourceLoader where T : class, IResource
     {
         protected Dictionary<string, LoadLabel> dic = new Dictionary<string, LoadLabel>();//资源缓存 注册名:资源
         protected HashSet<string> force_load = new HashSet<string>();//用于记录被强制加载的资源的注册名
+
         [SerializeField]
         protected string head = "res";
 
@@ -64,13 +65,13 @@ namespace ER.Resource
             }
             else if (res.loadType == LoadType.ByUnityRequest)
             {
-
             }
             else
             {
                 Debug.LogError("错误加载枚举");
             }
         }
+
         public bool Exist(string registryName)
         {
             return dic.ContainsKey(registryName);
@@ -78,38 +79,40 @@ namespace ER.Resource
 
         public virtual IResource Get(string registryName)
         {
-            if(dic.TryGetValue(registryName, out var res))
+            if (dic.TryGetValue(registryName, out var res))
             {
                 return res.content;
             }
             return null;
         }
+
+        /// <summary>
+        /// UnityWebRequest 加载资源封装对象使用该方法
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="res"></param>
+        protected void UCreateResource(string key, T res)
+        {
+            dic[key] = new LoadLabel()
+            {
+                content = res,
+                loadType = LoadType.ByUnityRequest
+            };
+        }
+
         /// <summary>
         /// 使用Addressable 加载资源封装对象使用该方法
         /// </summary>
         /// <param name="key"></param>
         /// <param name="res"></param>
         /// <param name="handle"></param>
-        protected void ACreateResource(string key,T res,AsyncOperationHandle handle)
+        protected void ACreateResource(string key, T res, AsyncOperationHandle handle)
         {
             dic[key] = new LoadLabel()
             {
-                 content = res,
-                 loadType = LoadType.ByAddressable,
-                 handle =   handle,
-            };
-        }
-        /// <summary>
-        /// UnityWebRequest 加载资源封装对象使用该方法
-        /// </summary>
-        /// <param name="key"></param>
-        /// <param name="res"></param>
-        protected void UCreateResource(string key,T res)
-        {
-            dic[key]=new LoadLabel()
-            {
                 content = res,
-                loadType = LoadType.ByUnityRequest
+                loadType = LoadType.ByAddressable,
+                handle = handle,
             };
         }
 
@@ -129,6 +132,7 @@ namespace ER.Resource
                 callback?.Invoke();
             }
         }
+
         public void Load(string registryName, Action callback, bool skipConvert = false)
         {
             bool defRes;
@@ -161,9 +165,11 @@ namespace ER.Resource
                 StartCoroutine(GetRequest(url, registryName, callback));
             }
         }
+
         protected abstract void LoadWithAddressable(string url, string registryName, Action callback);
+
         protected abstract IEnumerator GetRequest(string url, string registryName, Action callback);
-        
+
         public void LoadForce(string registryName, Action callback, bool skipConvert = false)
         {
             Load(registryName, callback, skipConvert);
@@ -186,9 +192,9 @@ namespace ER.Resource
         {
             IResource[] resources = new IResource[dic.Count];
             int i = 0;
-            foreach(var res in  dic.Values)
+            foreach (var res in dic.Values)
             {
-                resources[i]=res.content;
+                resources[i] = res.content;
                 i++;
             }
 
@@ -205,12 +211,12 @@ namespace ER.Resource
             GR.AddLoader(this);
         }
 
-
         protected enum LoadType
         {
             ByUnityRequest,
             ByAddressable
         }
+
         protected struct LoadLabel
         {
             public LoadType loadType;
