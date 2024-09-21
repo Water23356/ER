@@ -4,6 +4,9 @@ using UnityEngine;
 
 namespace ER.STG
 {
+    /// <summary>
+    /// 线绘制器
+    /// </summary>
     public class ProjectilePrinterForLine : RoleAction, ILineGetter
     {
         [DisplayLabel("弹幕初速度")]
@@ -54,7 +57,7 @@ namespace ER.STG
 
         private bool Comaperer(Vector2 a, Vector2 b)
         {
-            return (a).magnitude > (b).magnitude;//距离远的放前面
+            return (a).magnitude > (b).magnitude; // 距离远的放前面
         }
 
         private void AddLineNode(Vector2 pa, Vector2 pb)
@@ -76,21 +79,20 @@ namespace ER.STG
                 GetNodeFromLine(line);
             }
 
-            //分层
+            // 分层
             printPos.Clear();
             var node = Queue.FirtNode;
-            var cellDis = shootCD * Time.fixedDeltaTime * speed;//单元绘制层长度
+            var cellDis = shootCD * Time.fixedDeltaTime * speed; // 单元绘制层长度
             for (int i = maxLayer - 1; i > 0; i--)
             {
-                float limitDis = cellDis * i;//获取限定长度
+                float limitDis = cellDis * i; // 获取限定长度
 
                 List<Vector2> layerPos = new List<Vector2>();
                 if (node == null) break;
                 var dis = node.Value.magnitude;
-                //把该层的点加入
+                // 把该层的点加入
                 while (dis >= limitDis)
                 {
-                    //Debug.Log($"layerPos: {layerPos!=null} node: {node!=null}");
                     layerPos.Add(node.Value);
                     node = node.Next;
                     if (node == null) break;
@@ -103,14 +105,14 @@ namespace ER.STG
         private void GetMaxLayer()
         {
             float maxDistance = 0;
-            for (int i = 0; i < lines.Count; i++)
+            foreach (var line in lines)
             {
-                for (int k = 0; k < lines[i].Count; k++)
+                foreach (var point in line)
                 {
-                    maxDistance = Mathf.Max(maxDistance, lines[i][k].magnitude);
+                    maxDistance = Mathf.Max(maxDistance, point.magnitude);
                 }
             }
-            maxLayer = Mathf.CeilToInt(maxDistance / (shootCD * Time.fixedDeltaTime * speed));//最大层数
+            maxLayer = Mathf.CeilToInt(maxDistance / (shootCD * Time.fixedDeltaTime * speed)); // 最大层数
         }
 
         /// <summary>
@@ -121,7 +123,7 @@ namespace ER.STG
         {
             if (line.Count < 2) return;
 
-            //先获取全部要绘制的点
+            // 先获取全部要绘制的点
             for (int i = 1; i < line.Count; i++)
             {
                 AddLineNode(line[i - 1], line[i]);
@@ -151,8 +153,8 @@ namespace ER.STG
 
         public override void ActionEffect()
         {
-            lineSetter.UpdateSetLine();//更新绘制点
-            GetShootPoints();//更新绘制方法
+            lineSetter.UpdateSetLine(); // 更新绘制点
+            GetShootPoints(); // 更新绘制方法
 
             tickCounter = 0;
             layer = 0;
@@ -187,7 +189,7 @@ namespace ER.STG
 
         public void SetLines(Line[] lines)
         {
-            this.lines.Add(lines);
+            this.lines.AddRange(lines);
             GetShootPoints();
         }
     }

@@ -29,13 +29,13 @@ namespace ER.STG
             };
         }
 
-        public void Shoot(Vector2 dir, float speed, Color color)
-        {
-            ProjectileManager.Instance.Shoot(Owner.transform.position, dir * speed, color);
-        }
         public void Shoot(Vector2 speed,Color color)
         {
-            ProjectileManager.Instance.Shoot(Owner.transform.position, speed, color);
+            ProjectileManager.Instance.ShootSin(Owner.transform.position, speed, color);
+        }
+        public void Shoot(Vector2 speed,Vector2 offsetPos,Color color)
+        {
+            ProjectileManager.Instance.Shoot((Vector2)Owner.transform.position+offsetPos, speed, color);
         }
 
 
@@ -58,7 +58,7 @@ namespace ER.STG
 
         public void Execute()
         {
-            Debug.Log($"计时器状态: {Timer.updateMode} ticks: {Timer.counter}");
+            //Debug.Log($"计时器状态: {Timer.updateMode} ticks: {Timer.counter}");
             if (Timer.updateMode == TimerManager.UpdateMode.None)
             {
                 Timer.updateMode = TimerManager.UpdateMode.ScaledTime;

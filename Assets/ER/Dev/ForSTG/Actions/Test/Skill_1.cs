@@ -5,6 +5,9 @@ using UnityEngine;
 
 namespace ER.STG.Actions
 {
+    /// <summary>
+    /// 圆弧弹幕扫荡
+    /// </summary>
     public class Skill_1 : RoleAction
     {
         //private readonly string poolName = "pool:projectile";
@@ -45,7 +48,7 @@ namespace ER.STG.Actions
                 var dir = Vector2.up.Rotate(angle);
                 if (selfTimer % slot.shootCD == 0)
                 {
-                    Shoot(dir, slot.speed, slot.color);
+                    Shoot(dir*slot.speed, slot.color);
                 }
             }
 
