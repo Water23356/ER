@@ -1,6 +1,7 @@
 ﻿using ER.Entity2D;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -734,6 +735,23 @@ namespace ER
             }
 
             return result.ToArray();
+        }
+
+        /// <summary>
+        /// 检查程序集中所有的类型, 处理被指定 特性 修饰的类型
+        /// </summary>
+        /// <param name="attributeType"></param>
+        /// <param name="handler"></param>
+        public static void HandleType(Type attributeType, Action<Type> handler)
+        {
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            foreach (var type in assembly.GetTypes())
+            {
+                if (type.GetCustomAttributes(attributeType, false).Length > 0)
+                {
+                    handler.Invoke(type);
+                }
+            }
         }
     }
 }

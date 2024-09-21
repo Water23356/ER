@@ -1,4 +1,5 @@
-﻿using ER;
+﻿using Dev;
+using ER;
 using ER.ForEditor;
 using ER.GUI;
 using ER.Resource;
@@ -6,6 +7,7 @@ using ER.SceneManager;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using GameResource = Dev.GameResource;
 
 /// <summary>
 /// 游戏初始化总监视器, 单例(勿重复创建实例)
@@ -47,8 +49,8 @@ public class InitMonitor : MonoBehaviour
     public SettingGroupResource settingGroup;
 
     [Header("初始化器")]
-    [DisplayLabel("资源加载器初始化")]
-    public PackLoadInit packInit;
+    [DisplayLabel("游戏资源管理器")]
+    public GameResource gameResource;
 
     [DisplayLabel("资源初始化")]
     public ResourceLoadInit resourceLoadInit;
@@ -135,7 +137,7 @@ public class InitMonitor : MonoBehaviour
         if (progress == 1)
         {
             progressPanel.SetStatusTxt("Initializing Resource Loader");
-            packInit.Init(null);
+            gameResource.FixedAllResourceLoader();
         }
         else if (progress == 2)
         {

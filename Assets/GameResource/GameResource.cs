@@ -1,9 +1,59 @@
+using ER;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Dev
 {
-    public class GameResource
+    public static class GR
+    {
+        public static void ELoad(string regName)
+        {
+            GameResource.Instance.ELoad(regName);
+        }
+
+        public static void Load(string regName)
+        {
+            GameResource.Instance.Load(regName);
+        }
+
+        public static void UnLoad(string regName)
+        {
+            GameResource.Instance.UnLoad(regName);
+        }
+
+        public static bool IsLoaded(string regName)
+        {
+            return GameResource.Instance.IsLoaded(regName);
+        }
+
+        public static void Clear()
+        {
+            GameResource.Instance.Clear();
+        }
+
+        public static IRegisterResource Get(string regName)
+        {
+            return GameResource.Instance.Get(regName);
+        }
+
+        public static T Get<T>(string regName) where T : IRegisterResource
+        {
+            return GameResource.Instance.Get<T>(regName);
+        }
+
+        public static IRegisterResource[] GetAll(string head)
+        {
+            return GameResource.Instance.GetAll(head);
+        }
+
+        public static IResourceLoader GetLoader(string head)
+        {
+            return GameResource.Instance.GetLoader(head);
+        }
+    }
+
+    public class GameResource : MonoBehaviour
     {
         private static GameResource instance;
 
@@ -16,6 +66,36 @@ namespace Dev
         }
 
         private Dictionary<string, IResourceLoader> loaders = new Dictionary<string, IResourceLoader>();
+
+        private void Awake()
+        {
+            if (instance == null)
+            {
+                instance = this;
+                DontDestroyOnLoad(gameObject);
+            }
+            else
+            {
+                Destroy(gameObject);
+            }
+        }
+
+        public void FixedAllResourceLoader()
+        {
+            Utils.HandleType(typeof(NeededLoaderAttribute), (type) =>
+            {
+                if (type.IsSubclassOf(typeof(MonoBehaviour)) && type.GetInterfaces().Contains(typeof(IResourceLoader)))
+                {
+                    var loader = (IResourceLoader)gameObject.AddComponent(type);
+                    RegisterLoader(loader);
+                }
+            });
+        }
+
+        public void RegisterLoader(IResourceLoader loader)
+        {
+            loaders[loader.Head] = loader;
+        }
 
         public void ELoad(string regName)
         {

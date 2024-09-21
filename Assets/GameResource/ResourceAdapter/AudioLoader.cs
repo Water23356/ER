@@ -7,6 +7,7 @@ using UnityEngine.ResourceManagement.AsyncOperations;
 
 namespace Dev
 {
+    [NeededLoader]
     public class AudioLoader : BaseResourceLoader<AudioResource>
     {
         private AudioType m_audioType = AudioType.MPEG;
@@ -31,7 +32,7 @@ namespace Dev
                 var clip = DownloadHandlerAudioClip.GetContent(request);
                 UCreateResource(regName, new AudioResource(regName, clip));
             }
-
+            callback?.Invoke();
             request.Dispose();
         }
 

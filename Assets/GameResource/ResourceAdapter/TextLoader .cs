@@ -7,6 +7,7 @@ using UnityEngine.ResourceManagement.AsyncOperations;
 
 namespace Dev
 {
+    [NeededLoader]
     public class TextLoader : BaseResourceLoader<TextResource>
     {
         public TextLoader() : base("text")
@@ -27,6 +28,7 @@ namespace Dev
                 string text = request.downloadHandler.text;
                 UCreateResource(regName,new TextResource(regName,text));
             }
+            callback?.Invoke();
             request.Dispose();
         }
 

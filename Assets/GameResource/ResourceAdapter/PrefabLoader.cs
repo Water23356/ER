@@ -7,6 +7,7 @@ using UnityEngine.ResourceManagement.AsyncOperations;
 
 namespace Dev
 {
+    [NeededLoader]
     public class PrefabLoader : BaseResourceLoader<PrefabResource>
     {
         public PrefabLoader() : base("prefab")
@@ -39,6 +40,7 @@ namespace Dev
                 UCreateResource(regName,new PrefabResource(regName,prefab));
                 content.Unload(false);
             }
+            callback?.Invoke(); 
             request.Dispose();
 
         }

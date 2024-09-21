@@ -245,6 +245,13 @@
       "dependencies": {},
       "url": "https://packages.unity.cn"
     },
+    "com.unity.settings-manager": {
+      "version": "2.0.1",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {},
+      "url": "https://packages.unity.cn"
+    },
     "com.unity.shadergraph": {
       "version": "14.0.11",
       "depth": 1,

@@ -7,6 +7,7 @@ using UnityEngine.ResourceManagement.AsyncOperations;
 
 namespace Dev
 {
+    [NeededLoader]
     public class SpriteLoader : BaseResourceLoader<SpriteResource>
     {
         public SpriteLoader() : base("sprite")
@@ -28,6 +29,7 @@ namespace Dev
                 var sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
                 UCreateResource(regName,new SpriteResource(regName,sprite));
             }
+            callback?.Invoke();
             request.Dispose();
         }
 
