@@ -7,15 +7,19 @@ using UnityEngine.ResourceManagement.AsyncOperations;
 
 namespace Dev
 {
-    public class SpriteLoader : BaseResourceLoader<SpriteResource>
+    public class AudioLoader : BaseResourceLoader<AudioResource>
     {
-        public SpriteLoader() : base("sprite")
+        private AudioType m_audioType = AudioType.MPEG;
+
+        public AudioType audioType { get => m_audioType; set => m_audioType = value; }
+
+        public AudioLoader() : base("audio")
         {
         }
 
         protected override IEnumerator GetRequest(string url, RegistryName regName, Action callback)
         {
-            UnityWebRequest request = UnityWebRequestTexture.GetTexture(url);
+            UnityWebRequest request = UnityWebRequestMultimedia.GetAudioClip(url, audioType);// 注意限定的
             yield return request.SendWebRequest();
 
             if (request.result == UnityWebRequest.Result.ConnectionError || request.result == UnityWebRequest.Result.ProtocolError)
@@ -24,21 +28,21 @@ namespace Dev
             }
             else
             {
-                var texture = DownloadHandlerTexture.GetContent(request);
-                var sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
-                UCreateResource(regName,new SpriteResource(regName,sprite));
+                var clip = DownloadHandlerAudioClip.GetContent(request);
+                UCreateResource(regName, new AudioResource(regName, clip));
             }
+
             request.Dispose();
         }
 
         protected override void LoadWithAddressable(string url, RegistryName regName, Action callback)
         {
-            var handle = Addressables.LoadAssetAsync<Sprite>(url);
+            var handle = Addressables.LoadAssetAsync<AudioClip>(url);
             handle.Completed += (obj) =>
             {
                 if (handle.Status == AsyncOperationStatus.Succeeded)
                 {
-                    SpriteResource res = new SpriteResource(regName, obj.Result);
+                    AudioResource res = new AudioResource(regName, obj.Result);
                     ACreateResource(regName, res, handle);
                 }
                 else

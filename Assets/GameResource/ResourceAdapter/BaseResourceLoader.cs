@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ER.ForEditor;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,11 +14,23 @@ namespace Dev
         [SerializeField]
         private string m_head = "base";
 
+        [SerializeField]
+        [DisplayLabel("默认资源")]
+        private RegistryName defaultRegName = new RegistryName("base:default");//默认资源名
+
+        private T defaultResource;//默认资源
+
         private Dictionary<RegistryName, LoadLabel> dic = new Dictionary<RegistryName, LoadLabel>();
         public string Head { get => m_head; set => m_head = value; }
+        public RegistryName DefaultRegName { get => defaultRegName; set => defaultRegName = value; }
+
+        /// <summary>
+        /// 默认资源(加载后永远不会被卸载)
+        /// </summary>
+        public T Default { get => defaultResource; }
 
         public BaseResourceLoader(string head)
-        { m_head = head; }
+        { m_head = head; defaultRegName.Head = head; }
 
         public void Clear()
         {
@@ -50,13 +63,13 @@ namespace Dev
             }
         }
 
-        public IRegisterResource Get(RegistryName regName)
+        public virtual IRegisterResource Get(RegistryName regName)
         {
             if (dic.TryGetValue(regName, out var res))
             {
                 return res.content;
             }
-            return null;
+            return Default;
         }
 
         public IRegisterResource[] GetAll()
@@ -129,11 +142,18 @@ namespace Dev
         /// <param name="res"></param>
         protected void UCreateResource(RegistryName key, T res)
         {
-            dic[key] = new LoadLabel()
+            if (defaultResource == null && key == defaultRegName)
             {
-                content = res,
-                loadType = LoadType.ByUnityRequest
-            };
+                defaultResource = res;
+            }
+            else
+            {
+                dic[key] = new LoadLabel()
+                {
+                    content = res,
+                    loadType = LoadType.ByUnityRequest
+                };
+            }
         }
 
         /// <summary>
@@ -144,12 +164,19 @@ namespace Dev
         /// <param name="handle"></param>
         protected void ACreateResource(RegistryName key, T res, AsyncOperationHandle handle)
         {
-            dic[key] = new LoadLabel()
+            if (defaultResource == null && key == defaultRegName)
             {
-                content = res,
-                loadType = LoadType.ByAddressable,
-                handle = handle,
-            };
+                defaultResource = res;
+            }
+            else
+            {
+                dic[key] = new LoadLabel()
+                {
+                    content = res,
+                    loadType = LoadType.ByAddressable,
+                    handle = handle,
+                };
+            }
         }
 
         protected abstract void LoadWithAddressable(string url, RegistryName regName, Action callback);

@@ -7,15 +7,15 @@ using UnityEngine.ResourceManagement.AsyncOperations;
 
 namespace Dev
 {
-    public class SpriteLoader : BaseResourceLoader<SpriteResource>
+    public class TextLoader : BaseResourceLoader<TextResource>
     {
-        public SpriteLoader() : base("sprite")
+        public TextLoader() : base("text")
         {
         }
 
         protected override IEnumerator GetRequest(string url, RegistryName regName, Action callback)
         {
-            UnityWebRequest request = UnityWebRequestTexture.GetTexture(url);
+            UnityWebRequest request = UnityWebRequest.Get(url);
             yield return request.SendWebRequest();
 
             if (request.result == UnityWebRequest.Result.ConnectionError || request.result == UnityWebRequest.Result.ProtocolError)
@@ -24,21 +24,20 @@ namespace Dev
             }
             else
             {
-                var texture = DownloadHandlerTexture.GetContent(request);
-                var sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
-                UCreateResource(regName,new SpriteResource(regName,sprite));
+                string text = request.downloadHandler.text;
+                UCreateResource(regName,new TextResource(regName,text));
             }
             request.Dispose();
         }
 
         protected override void LoadWithAddressable(string url, RegistryName regName, Action callback)
         {
-            var handle = Addressables.LoadAssetAsync<Sprite>(url);
+            var handle = Addressables.LoadAssetAsync<TextAsset>(url);
             handle.Completed += (obj) =>
             {
                 if (handle.Status == AsyncOperationStatus.Succeeded)
                 {
-                    SpriteResource res = new SpriteResource(regName, obj.Result);
+                    TextResource res = new TextResource(regName, obj.Result.text);
                     ACreateResource(regName, res, handle);
                 }
                 else

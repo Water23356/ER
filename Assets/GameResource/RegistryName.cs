@@ -3,18 +3,23 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
 
 namespace Dev
 {
+    [Serializable]
     public struct RegistryName
     {
+        [SerializeField]
         private string head;
+        [SerializeField]
         private string module;
+        [SerializeField]
         private string path;
 
-        public string Head { get => head; private set => head = value; }
-        public string Module { get => module; private set => module = value; }
-        public string Path { get => path; private set => path = value; }
+        public string Head { get => head; set => head = value; }
+        public string Module { get => module; set => module = value; }
+        public string Path { get => path; set => path = value; }
 
         public RegistryName(string originText)
         {
@@ -56,6 +61,25 @@ namespace Dev
         public override string ToString()
         {
             return string.Join(":", Head, Module, Path);
+        }
+
+        public override bool Equals(object obj)
+        {
+            return base.Equals(obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
+
+        public static bool operator ==(RegistryName a, RegistryName b)
+        {
+            return a.Equals(b);
+        }
+        public static bool operator !=(RegistryName a, RegistryName b)
+        {
+            return !a.Equals(b);
         }
     }
 }

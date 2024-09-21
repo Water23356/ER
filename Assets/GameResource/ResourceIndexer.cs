@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Dev
 {
@@ -29,14 +28,21 @@ namespace Dev
 
         public void Modify(string key, string url)
         {
-            dic[key] = url;
+            RegistryName rName = new RegistryName(key);
+            dic[rName] = url;
+        }
+
+        public void Modify(RegistryName regName, string url)
+        {
+            dic[regName] = url;
         }
 
         public void Modify(Dictionary<string, string> moddic)
         {
             foreach (var mod in moddic)
             {
-                Modify(mod.Key, mod.Value);
+                RegistryName rName = new RegistryName(mod.Key);
+                dic[rName] = mod.Value;
             }
         }
 
