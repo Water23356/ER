@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Dev
 {
@@ -30,6 +25,14 @@ namespace Dev
         public static implicit operator GameObject(PrefabResource obj)
         {
             return obj.value;
+        }
+
+        public GameObject Copy
+        {
+            get
+            {
+                return GameObject.Instantiate(value);
+            }
         }
     }
 }

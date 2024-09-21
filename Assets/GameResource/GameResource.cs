@@ -1,12 +1,65 @@
-using ER;
+﻿using ER;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using UnityEngine;
 
 namespace Dev
 {
     public static class GR
     {
+        public static readonly string IGNORE_HEAD = "Assets/res/";
+
+        /// <summary>
+        /// 将一个资产地址转为对应的加载地址
+        /// </summary>
+        /// <param name="address"></param>
+        /// <returns></returns>
+        public static string ADToKey(string assetAddress)
+        {
+            int index = assetAddress.IndexOf('.');
+            string result = assetAddress;
+            if (index >= 0)
+            {
+                result = result.Substring(0, index).Trim();
+            }
+            //Debug.Log("地址: " + assetAddress + " 去尾: " + result);
+            if (result.StartsWith(IGNORE_HEAD)) //去头
+            {
+                result = result.Substring(IGNORE_HEAD.Length);
+            }
+            //Debug.Log("资源加载键: " + result);
+            return result;
+        }
+
+        /// <summary>
+        /// 将资产加载键 转换为 对应的 注册名
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        public static string KeyToRegName(string key)
+        {
+            StringBuilder sb = new StringBuilder();
+            int index = key.IndexOf('/');
+            if (index < 0)
+                return key;
+            sb.Append(key.Substring(0, index));
+            sb.Append(":origin:");
+            sb.Append(key.Substring(index + 1));
+            return sb.ToString();
+        }
+
+        /// <summary>
+        /// 将一个资产地址转为对应的资源名
+        /// </summary>
+        /// <param name="address"></param>
+        /// <returns></returns>
+        public static string ADToRegName(string assetAddress)
+        {
+            string key = ADToKey(assetAddress);
+            return KeyToRegName(key);
+        }
+
         public static void ELoad(string regName)
         {
             GameResource.Instance.ELoad(regName);

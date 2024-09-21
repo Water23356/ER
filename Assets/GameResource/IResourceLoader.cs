@@ -23,7 +23,6 @@ namespace Dev
         /// </summary>
         /// <param name="regName">资源注册名</param>
         /// <param name="callback">加载完毕后的回调</param>
-        /// <param name="skipConvert">是否跳过url重定向</param>
         public void Load(RegistryName regName, Action callback);
 
         /// <summary>
@@ -42,7 +41,7 @@ namespace Dev
         /// </summary>
         /// <param name="regName"></param>
         /// <returns></returns>
-        public bool IsLoaded(RegistryName regName);
+        public bool IsLoaded(RegistryName regName); 
 
         /// <summary>
         /// 取得指定资源

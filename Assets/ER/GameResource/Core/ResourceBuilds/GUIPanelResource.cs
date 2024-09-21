@@ -21,7 +21,7 @@ namespace ER.Resource
         public Vector2 anchorMin;
         public Vector2 anchorMax;
         public int sort;
-        public GUIPanel.GUILayer layer;
+        public GUIPanel.GUILayer layer; 
 
         /// <summary>
         /// 预制体资源对象
