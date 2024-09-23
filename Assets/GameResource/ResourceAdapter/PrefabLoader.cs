@@ -19,7 +19,7 @@ namespace Dev
             DontDestroyOnLoad(gameObject);
         }
 
-        protected override IEnumerator GetRequest(string url, RegistryName regName, Action callback)
+        protected override IEnumerator GetRequest(string url, RegistryName regName, Action<IRegisterResource> callback)
         {
             UnityWebRequest request = UnityWebRequestAssetBundle.GetAssetBundle(url);
             yield return request.SendWebRequest();
@@ -27,6 +27,7 @@ namespace Dev
             if (request.result == UnityWebRequest.Result.ConnectionError || request.result == UnityWebRequest.Result.ProtocolError)
             {
                 Debug.LogError(request.error);
+                callback?.Invoke(null);
             }
             else
             {
@@ -37,15 +38,18 @@ namespace Dev
                 prefab = Instantiate(prefab, transform);//需要提前实例化, 否则释放 content 时会导致数据 prefab 直接丢失
                 prefab.SetActive(false);
 
-                UCreateResource(regName,new PrefabResource(regName,prefab));
+                var res = new PrefabResource(regName, prefab);
+                UCreateResource(regName,res);
                 content.Unload(false);
+
+                callback?.Invoke(res);
             }
-            callback?.Invoke(); 
+            
             request.Dispose();
 
         }
 
-        protected override void LoadWithAddressable(string url, RegistryName regName, Action callback)
+        protected override void LoadWithAddressable(string url, RegistryName regName, Action<IRegisterResource> callback)
         {
             var handle = Addressables.LoadAssetAsync<GameObject>(url);
             handle.Completed += (obj) =>
@@ -54,12 +58,13 @@ namespace Dev
                 {
                     PrefabResource res = new PrefabResource(regName, obj.Result);
                     ACreateResource(regName, res, handle);
+                    callback?.Invoke(res);
                 }
                 else
                 {
                     Debug.LogError($"加载资源失败:{regName}");
+                    callback?.Invoke(null);
                 }
-                callback?.Invoke();
             };
         }
     }

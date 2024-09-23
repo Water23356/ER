@@ -17,11 +17,6 @@ MonoBehaviour:
     m_SerializedData: []
   m_GUID: 810453dfeeeae2f4d882baa684124ef7
   m_SerializeEntries:
-  - m_GUID: 99e019fbd3683eb45b6ea9f4b2cad6ce
-    m_Address: raw/texture/stg/1
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 9a2ac74e68cc60444ad67ad0a05aa915
     m_Address: raw/texture/stg/Enemies
     m_ReadOnly: 0

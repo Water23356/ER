@@ -24,7 +24,7 @@ namespace Dev
 
         private void Start()
         {
-            
+            FixedMetaTable();
         }
         private void FixedMetaTable()
         {
@@ -36,7 +36,7 @@ namespace Dev
             });
         }
 
-        protected override IEnumerator GetRequest(string url, RegistryName regName, Action callback)
+        protected override IEnumerator GetRequest(string url, RegistryName regName, Action<IRegisterResource> callback)
         {
             UnityWebRequest request = UnityWebRequest.Get(url);
             yield return request.SendWebRequest();
@@ -44,6 +44,7 @@ namespace Dev
             if (request.result == UnityWebRequest.Result.ConnectionError || request.result == UnityWebRequest.Result.ProtocolError)
             {
                 Debug.LogError(request.error);
+                callback?.Invoke(null);
             }
             else
             {
@@ -54,17 +55,18 @@ namespace Dev
                     var obj = ScriptableObject.CreateInstance(type);
                     JsonUtility.FromJsonOverwrite(json, obj);
                     UCreateResource(regName, (AssetModifyConfigure)obj);
+                    callback?.Invoke((AssetModifyConfigure)obj);
                 }
                 else
                 {
                     Debug.LogError($"加载资源失败: {regName}");
+                    callback?.Invoke(null);
                 }
             }
-            callback?.Invoke();
             request.Dispose();
         }
 
-        protected override void LoadWithAddressable(string url, RegistryName regName, Action callback)
+        protected override void LoadWithAddressable(string url, RegistryName regName, Action<IRegisterResource> callback)
         {
             var type = GetMetaType(regName.Path);
             if (type != null)
@@ -80,12 +82,13 @@ namespace Dev
                     {
                         Debug.LogError($"加载资源失败:{regName}");
                     }
-                    callback?.Invoke();
+                    callback?.Invoke(obj.Result);
                 };
             }
             else
             {
                 Debug.LogError($"加载资源失败: {regName}");
+                callback?.Invoke(null);
             }
            
         }

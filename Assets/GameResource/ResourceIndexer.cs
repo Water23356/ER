@@ -46,6 +46,14 @@ namespace Dev
             }
         }
 
+        public void Modify(MetaIndexDic indexDic)
+        {
+            foreach (var mod in indexDic.indexes)
+            {
+                dic[new RegistryName(mod.regName)] = mod.loadPath;
+            }
+        }
+
         public static LoadURL Convert(RegistryName regName)
         {
             return Instance.PathConvert(regName);

@@ -1,4 +1,5 @@
 ﻿using ER;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -60,14 +61,24 @@ namespace Dev
             return KeyToRegName(key);
         }
 
-        public static void ELoad(string regName)
+        public static void ELoad(string regName, Action<IRegisterResource> callback = null)
         {
-            GameResource.Instance.ELoad(regName);
+            GameResource.Instance.ELoad(regName, callback);
         }
 
-        public static void Load(string regName)
+        public static void ELoad(RegistryName regName, Action<IRegisterResource> callback = null)
         {
-            GameResource.Instance.Load(regName);
+            GameResource.Instance.ELoad(regName, callback);
+        }
+
+        public static void Load(string regName, Action<IRegisterResource> callback = null)
+        {
+            GameResource.Instance.Load(regName, callback);
+        }
+
+        public static void Load(RegistryName regName, Action<IRegisterResource> callback = null)
+        {
+            GameResource.Instance.Load(regName, callback);
         }
 
         public static void UnLoad(string regName)
@@ -75,7 +86,17 @@ namespace Dev
             GameResource.Instance.UnLoad(regName);
         }
 
+        public static void UnLoad(RegistryName regName)
+        {
+            GameResource.Instance.UnLoad(regName);
+        }
+
         public static bool IsLoaded(string regName)
+        {
+            return GameResource.Instance.IsLoaded(regName);
+        }
+
+        public static bool IsLoaded(RegistryName regName)
         {
             return GameResource.Instance.IsLoaded(regName);
         }
@@ -91,6 +112,11 @@ namespace Dev
         }
 
         public static T Get<T>(string regName) where T : IRegisterResource
+        {
+            return GameResource.Instance.Get<T>(regName);
+        }
+
+        public static T Get<T>(RegistryName regName) where T : IRegisterResource
         {
             return GameResource.Instance.Get<T>(regName);
         }
@@ -150,60 +176,78 @@ namespace Dev
             loaders[loader.Head] = loader;
         }
 
-        public void ELoad(string regName)
+        public void ELoad(string regName, Action<IRegisterResource> callback = null)
         {
-            var key = new RegistryName(regName);
-            var loader = GetLoader(key.Head);
+            ELoad(new RegistryName(regName), callback);
+        }
+
+        public void ELoad(RegistryName regName, Action<IRegisterResource> callback = null)
+        {
+            var loader = GetLoader(regName.Head);
             if (loader != null)
             {
-                if (!loader.IsLoaded(key))
-                    loader.Load(key, null);
+                if (!loader.IsLoaded(regName))
+                    loader.Load(regName, callback);
+                else
+                    callback?.Invoke(loader.Get(regName));
             }
             else
             {
-                Debug.LogError($"在加载 {regName} 时失败: 缺失 {key.Head} 资源加载器!");
+                Debug.LogError($"在加载 {regName} 时失败: 缺失 {regName.Head} 资源加载器!");
             }
         }
 
-        public void Load(string regName)
+        public void Load(string regName, Action<IRegisterResource> callback = null)
         {
-            var key = new RegistryName(regName);
-            var loader = GetLoader(key.Head);
+            Load(new RegistryName(regName));
+        }
+
+        public void Load(RegistryName regName, Action<IRegisterResource> callback = null)
+        {
+            var loader = GetLoader(regName.Head);
             if (loader != null)
             {
-                loader.Load(key, null);
+                loader.Load(regName, callback);
             }
             else
             {
-                Debug.LogError($"在加载 {regName} 时失败: 缺失 {key.Head} 资源加载器!");
+                Debug.LogError($"在加载 {regName} 时失败: 缺失 {regName.Head} 资源加载器!");
             }
         }
 
         public void UnLoad(string regName)
         {
-            var key = new RegistryName(regName);
-            var loader = GetLoader(key.Head);
+            UnLoad(new RegistryName(regName));
+        }
+
+        public void UnLoad(RegistryName regName)
+        {
+            var loader = GetLoader(regName.Head);
             if (loader != null)
             {
-                loader.UnLoad(key);
+                loader.UnLoad(regName);
             }
             else
             {
-                Debug.LogError($"在卸载 {regName} 时失败: 缺失 {key.Head} 资源加载器!");
+                Debug.LogError($"在卸载 {regName} 时失败: 缺失 {regName.Head} 资源加载器!");
             }
         }
 
         public bool IsLoaded(string regName)
         {
-            var key = new RegistryName(regName);
-            var loader = GetLoader(key.Head);
+            return IsLoaded(new RegistryName(regName));
+        }
+
+        public bool IsLoaded(RegistryName regName)
+        {
+            var loader = GetLoader(regName.Head);
             if (loader != null)
             {
-                return loader.IsLoaded(key);
+                return loader.IsLoaded(regName);
             }
             else
             {
-                Debug.LogError($"缺失 {key.Head} 资源加载器!");
+                Debug.LogError($"缺失 {regName.Head} 资源加载器!");
                 return false;
             }
         }
@@ -218,20 +262,24 @@ namespace Dev
 
         public IRegisterResource Get(string regName)
         {
-            var key = new RegistryName(regName);
-            var loader = GetLoader(key.Head);
+            return Get(new RegistryName(regName));
+        }
+
+        public IRegisterResource Get(RegistryName regName)
+        {
+            var loader = GetLoader(regName.Head);
             if (loader != null)
             {
-                return loader.Get(key);
+                return loader.Get(regName);
             }
             else
             {
-                Debug.LogError($"在获取 {regName} 时失败: 缺失 {key.Head} 资源加载器!");
+                Debug.LogError($"在获取 {regName} 时失败: 缺失 {regName.Head} 资源加载器!");
                 return null;
             }
         }
 
-        public T Get<T>(string regName) where T : IRegisterResource
+        public T Get<T>(RegistryName regName) where T : IRegisterResource
         {
             var res = Get(regName);
             if (res is T)
@@ -240,6 +288,11 @@ namespace Dev
             }
             Debug.Log($"在获取 {regName} 时失败: 与预期类型不匹配! 预期类型: {typeof(T).FullName} 实际类型: {res.GetType().FullName}");
             return default(T);
+        }
+
+        public T Get<T>(string regName) where T : IRegisterResource
+        {
+            return Get<T>(new RegistryName(regName));
         }
 
         public IRegisterResource[] GetAll(string head)

@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using UnityEditor;
-using UnityEditor.AddressableAssets.Settings;
-using UnityEditor.AddressableAssets;
 using UnityEngine;
+using static TreeEditor.TextureAtlas;
 
 namespace Dev
 {
@@ -18,6 +18,34 @@ namespace Dev
             if (GUILayout.Button("打开编辑窗口"))
             {
                 DataTableEditorWindow.OpenWindow(table);
+            }
+            if (GUILayout.Button("创建索引表"))
+            {
+                string path = AssetDatabase.GetAssetPath(table);
+                string directory = Path.GetDirectoryName(path);
+                string name = Path.GetFileNameWithoutExtension(path);
+
+                string newTablePath = Path.Combine(directory, name+"_indexer" + ".asset");
+
+                MetaIndexDic dic = AssetDatabase.LoadAssetAtPath<MetaIndexDic>(newTablePath);
+                if (dic == null)
+                {
+                    dic = new MetaIndexDic();
+                    AssetDatabase.CreateAsset(dic, newTablePath);
+                    Debug.Log("已创建索引表: " + newTablePath);
+                }
+                dic.indexes = new MetaIndexDic.Row[table.rows.Count];
+                for (int i = 0; i < dic.indexes.Length; i++)
+                {
+                    dic.indexes[i] = new MetaIndexDic.Row()
+                    {
+                        regName = table.rows[i].regName,
+                        loadPath = table.rows[i].loadPath,
+                    };
+                }
+
+                AssetDatabase.SaveAssets();
+                Debug.Log("已从 " + table.name + " 提取索引到 " + name + ".spriteatlas");
             }
         }
 

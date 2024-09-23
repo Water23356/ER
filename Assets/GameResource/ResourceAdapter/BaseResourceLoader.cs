@@ -11,6 +11,7 @@ namespace Dev
 {
     public abstract class BaseResourceLoader<T> : MonoBehaviour, IResourceLoader where T : IRegisterResource
     {
+        [ReadOnly]
         [SerializeField]
         private string m_head = "base";
 
@@ -95,7 +96,7 @@ namespace Dev
             return dic.ContainsKey(regName);
         }
 
-        public void Load(RegistryName regName, Action callback)
+        public void Load(RegistryName regName, Action<IRegisterResource> callback)
         {
             var path = ResourceIndexer.Convert(regName);
             if (path.state == ResourceIndexer.LoadURL.State.Error)
@@ -179,9 +180,9 @@ namespace Dev
             }
         }
 
-        protected abstract void LoadWithAddressable(string url, RegistryName regName, Action callback);
+        protected abstract void LoadWithAddressable(string url, RegistryName regName, Action<IRegisterResource> callback);
 
-        protected abstract IEnumerator GetRequest(string url, RegistryName regName, Action callback);
+        protected abstract IEnumerator GetRequest(string url, RegistryName regName, Action<IRegisterResource> callback);
 
         public void UnLoad(RegistryName regName)
         {

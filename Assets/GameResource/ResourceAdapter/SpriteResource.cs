@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using ER.Resource;
+using UnityEngine;
 
 namespace Dev
 {
@@ -6,6 +7,30 @@ namespace Dev
     {
         private RegistryName m_registryName;
         public RegistryName registryName => m_registryName;
+        private MetaSprite m_meta;
+
+        public MetaSprite meta
+        {
+            get
+            {
+                if(m_meta == null)
+                {
+                    var regName = registryName;
+                    regName.Head = "meta";
+                    regName.Path = string.Join('/', "sprite", regName.Path);
+
+                    GR.ELoad(regName, (res) =>
+                    {
+                        if(res is MetaSprite)
+                        {
+                            m_meta = (MetaSprite)res;
+                        }
+                    });
+                }
+                return m_meta;
+            }
+            set=>m_meta = value;
+        }
 
         private Sprite value;
 
@@ -27,5 +52,6 @@ namespace Dev
         {
             return obj.value;
         }
+
     }
 }

@@ -23,7 +23,7 @@ namespace Dev
         /// </summary>
         /// <param name="regName">资源注册名</param>
         /// <param name="callback">加载完毕后的回调</param>
-        public void Load(RegistryName regName, Action callback);
+        public void Load(RegistryName regName, Action<IRegisterResource> callback);
 
         /// <summary>
         /// 卸载该类型的所有资源缓存

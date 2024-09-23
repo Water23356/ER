@@ -14,7 +14,7 @@ namespace Dev
         {
         }
 
-        protected override IEnumerator GetRequest(string url, RegistryName regName, Action callback)
+        protected override IEnumerator GetRequest(string url, RegistryName regName, Action<IRegisterResource> callback)
         {
             UnityWebRequest request = UnityWebRequest.Get(url);
             yield return request.SendWebRequest();
@@ -22,17 +22,19 @@ namespace Dev
             if (request.result == UnityWebRequest.Result.ConnectionError || request.result == UnityWebRequest.Result.ProtocolError)
             {
                 Debug.LogError(request.error);
+                callback?.Invoke(null);
             }
             else
             {
                 string text = request.downloadHandler.text;
-                UCreateResource(regName,new TextResource(regName,text));
+                var res = new TextResource(regName, text);
+                UCreateResource(regName, res);
+                callback?.Invoke(res);
             }
-            callback?.Invoke();
             request.Dispose();
         }
 
-        protected override void LoadWithAddressable(string url, RegistryName regName, Action callback)
+        protected override void LoadWithAddressable(string url, RegistryName regName, Action<IRegisterResource> callback)
         {
             var handle = Addressables.LoadAssetAsync<TextAsset>(url);
             handle.Completed += (obj) =>
@@ -41,12 +43,13 @@ namespace Dev
                 {
                     TextResource res = new TextResource(regName, obj.Result.text);
                     ACreateResource(regName, res, handle);
+                    callback?.Invoke(res);
                 }
                 else
                 {
                     Debug.LogError($"加载资源失败:{regName}");
+                    callback?.Invoke(null);
                 }
-                callback?.Invoke();
             };
         }
     }
