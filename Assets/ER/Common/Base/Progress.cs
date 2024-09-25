@@ -33,13 +33,13 @@ namespace ER
         /// <summary>
         /// 是否完成
         /// </summary>
-        public bool Done { get { return done; } }
+        public bool IsDone { get { return done; } }
         /// <summary>
         /// 增加进度
         /// </summary>
         public void AddProgress()
         {
-            if (Done) return;
+            if (IsDone) return;
             current++;
             OnAddProgress?.Invoke(this);
             if (current >= total)

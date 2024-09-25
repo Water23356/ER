@@ -1,9 +1,14 @@
 ﻿using ER;
+using ER.Resource;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
-using ER.Resource;
+
+/* 游戏设置, 这个类一般无需跟着项目更改
+ * 一般也不会直接用这个类读取设置而是使用分类
+ */
+
 public class GameSettings : Singleton<GameSettings>, ISettings
 {
     public const string _DEBUG = "DEBUG";
@@ -16,11 +21,17 @@ public class GameSettings : Singleton<GameSettings>, ISettings
     {
         get { return ERinbone.Combine(Application.streamingAssetsPath, "settings.ini"); }
     }
-    private INIHandler setting_changes; //ini读写器
+
     public static SettingGroupResource settingGroup;
-    private Dictionary<string, Dictionary<string, string>> settings; //用于暂存本地设置
 
     public event Action OnSettingChanged; //当设置发生变更时执行的事件
+
+    #region 组件
+
+    private INIHandler setting_changes; //ini读写器
+    private Dictionary<string, Dictionary<string, string>> settings; //用于暂存本地设置
+
+    #endregion 组件
 
     public GameSettings()
     {

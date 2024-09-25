@@ -1,51 +1,16 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
+/* 游戏的显示设置栏目
+ * 可以根据项目需要修改设置项目
+ */
 public class DisplaySettingMonitor : CommonSettingMonitor<DisplaySettingMonitor>
 {
-    /// <summary>
-    /// 输出分辨率
-    /// </summary>
-    public enum OutputResolution
-    {
-        _720p,
-        _1080p,
-        _1440p,
-        _4K_UHD
-    }
-
-    /// <summary>
-    /// 最大帧率
-    /// </summary>
-    public enum FPSMaxMode
-    {
-        Unlimited = -1, //无限
-        _30fps = 0,
-        _60fps = 1,
-        _90fps = 2,
-        _144fps = 3,
-        _240fps = 4,
-    }
-
-    /// <summary>
-    /// 屏幕分辨率
-    /// </summary>
-    public struct ScreenResolution
-    {
-        public int width;
-        public int height;
-
-        public ScreenResolution(int width, int height)
-        {
-            this.width = width;
-            this.height = height;
-        }
-    }
-
     public const string _MAX_PFS = "max_fps"; //最大帧率
     public const string _VERTICAL_SYNC = "vertical_sync"; //垂直同步
     public const string _FULL_SCREEN = "screen_mode"; //显示模式
     public const string _OUTPUT_RESOLUTION = "output_resolution"; //输出分辨率
+
+    #region 静态成员
 
     private static bool _FullScreen;
     private static OutputResolution _GameOutputResolution;
@@ -63,6 +28,7 @@ public class DisplaySettingMonitor : CommonSettingMonitor<DisplaySettingMonitor>
             Screen.SetResolution(screenResolution.width, screenResolution.height, _FullScreen);
         }
     }
+
     public static OutputResolution GameOutputResolution
     {
         get => _GameOutputResolution;
@@ -74,16 +40,18 @@ public class DisplaySettingMonitor : CommonSettingMonitor<DisplaySettingMonitor>
             Screen.SetResolution(screenResolution.width, screenResolution.height, _FullScreen);
         }
     }
+
     public static FPSMaxMode GameFPSMax
     {
         get => _GameFPSMax;
         set
         {
             _GameFPSMax = value;
-            int targetFPS=GetMaxFPS(_GameFPSMax);
+            int targetFPS = GetMaxFPS(_GameFPSMax);
             Application.targetFrameRate = targetFPS;
         }
     }
+
     public static bool VSync
     {
         get => vSync;
@@ -108,12 +76,16 @@ public class DisplaySettingMonitor : CommonSettingMonitor<DisplaySettingMonitor>
         {
             case OutputResolution._720p:
                 return new ScreenResolution(1280, 720);
+
             case OutputResolution._1080p:
                 return new ScreenResolution(1920, 1080);
+
             case OutputResolution._1440p:
                 return new ScreenResolution(2560, 1440);
+
             case OutputResolution._4K_UHD:
                 return new ScreenResolution(3840, 2160);
+
             default:
                 return new ScreenResolution(1920, 1080);
         }
@@ -125,25 +97,46 @@ public class DisplaySettingMonitor : CommonSettingMonitor<DisplaySettingMonitor>
         {
             case FPSMaxMode._30fps:
                 return 30;
+
             case FPSMaxMode._144fps:
                 return 144;
+
             case FPSMaxMode._240fps:
                 return 240;
+
             case FPSMaxMode._60fps:
                 return 60;
+
             case FPSMaxMode._90fps:
                 return 90;
+
             case FPSMaxMode.Unlimited:
                 return -1;
+
             default:
                 return -1;
         }
     }
 
+    #endregion 静态成员
+
     public DisplaySettingMonitor()
     {
         SettingKey = GameSettings._DISPLAY;
     }
+
+    protected override void UpdateSettings()
+    {
+        //设置分辨率和是否全屏显示
+        FullScreen = CheckFullScreen();
+        GameOutputResolution = CheckScreenResolution();
+        //设置垂直同步
+        VSync = CheckVSyncMode();
+        //设置目标帧率
+        GameFPSMax = CheckMaxFPS();
+    }
+
+    #region 应用设置
 
     private bool CheckFullScreen()
     {
@@ -197,14 +190,48 @@ public class DisplaySettingMonitor : CommonSettingMonitor<DisplaySettingMonitor>
         return FPSMaxMode._60fps;
     }
 
-    protected override void UpdateSettings()
+    #endregion 应用设置
+
+    #region 枚举定义
+
+    /// <summary>
+    /// 屏幕分辨率
+    /// </summary>
+    public struct ScreenResolution
     {
-        //设置分辨率和是否全屏显示
-        FullScreen = CheckFullScreen();
-        GameOutputResolution = CheckScreenResolution();
-        //设置垂直同步
-        VSync = CheckVSyncMode();
-        //设置目标帧率
-        GameFPSMax = CheckMaxFPS();
+        public int width;
+        public int height;
+
+        public ScreenResolution(int width, int height)
+        {
+            this.width = width;
+            this.height = height;
+        }
     }
+
+    /// <summary>
+    /// 输出分辨率
+    /// </summary>
+    public enum OutputResolution
+    {
+        _720p,
+        _1080p,
+        _1440p,
+        _4K_UHD
+    }
+
+    /// <summary>
+    /// 最大帧率
+    /// </summary>
+    public enum FPSMaxMode
+    {
+        Unlimited = -1, //无限
+        _30fps = 0,
+        _60fps = 1,
+        _90fps = 2,
+        _144fps = 3,
+        _240fps = 4,
+    }
+
+    #endregion 枚举定义
 }

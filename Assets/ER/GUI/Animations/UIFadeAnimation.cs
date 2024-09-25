@@ -1,4 +1,4 @@
-using ER.ForEditor;
+﻿using ER.ForEditor;
 using ER.StateMachine;
 using System;
 using UnityEngine;
@@ -36,9 +36,19 @@ namespace ER.GUI.Animations
         private float anim_k;
 
         /// <summary>
+        /// 在进入 Enable 状态后触发的事件
+        /// </summary>
+        public event Action onEnable;
+
+        /// <summary>
         /// 在进入 Disable 状态后触发的事件
         /// </summary>
         public event Action onDisable;
+
+        public void ClearOnEnableEvent()
+        {
+            onEnable = null;
+        }
 
         public void ClearOnDisableEvent()
         {
@@ -96,6 +106,12 @@ namespace ER.GUI.Animations
                 {
                     scm.ChangeState(Enums.TransitionEnum.Enable);
                 }
+            };
+
+            state = scm.GetState(Enums.TransitionEnum.Enable);
+            state.OnEnter = s =>
+            {
+                onEnable?.Invoke();
             };
 
             state = scm.GetState(Enums.TransitionEnum.Exiting);

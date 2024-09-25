@@ -20,10 +20,12 @@ public abstract class CommonSettingMonitor<T> : Singleton<T> where T : class, ne
             settings[pair.Key] = pair.Value;
         }
     }
+
     /// <summary>
     /// 应用设置
     /// </summary>
     protected abstract void UpdateSettings();
+
     /// <summary>
     /// 推送本类的设置更改
     /// </summary>
@@ -34,6 +36,7 @@ public abstract class CommonSettingMonitor<T> : Singleton<T> where T : class, ne
     }
 
     #region 公开方法
+
     /// <summary>
     /// 同步GameSettings中的设置
     /// </summary>
@@ -64,6 +67,7 @@ public abstract class CommonSettingMonitor<T> : Singleton<T> where T : class, ne
         }
         return null;
     }
+
     /// <summary>
     /// 更改设置
     /// </summary>
@@ -74,6 +78,7 @@ public abstract class CommonSettingMonitor<T> : Singleton<T> where T : class, ne
         UpdateSettings();
         PushSettingDic();
     }
+
     /// <summary>
     /// 获取设置的字典拷贝
     /// </summary>
@@ -82,5 +87,6 @@ public abstract class CommonSettingMonitor<T> : Singleton<T> where T : class, ne
     {
         return settings.Copy();
     }
-    #endregion
+
+    #endregion 公开方法
 }

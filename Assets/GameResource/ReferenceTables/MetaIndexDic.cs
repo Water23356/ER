@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace Dev
 {
-    [CreateAssetMenu(fileName = "MetaSprite", menuName = "ER/元/索引表")]
+    [CreateAssetMenu(fileName = "MetaIndexDic", menuName = "ER/元/索引表")]
     [MetaTable("index")]
     public class MetaIndexDic: AssetModifyConfigure
     {

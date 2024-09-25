@@ -1,5 +1,6 @@
 ﻿using ER;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -317,5 +318,69 @@ namespace Dev
             }
             return null;
         }
+
+        #region 加载任务处理
+        /// <summary>
+        /// 当加载任务全部完成后触发, 一次性
+        /// </summary>
+        public event Action OnTaskListDone;
+
+        private Queue<ResourceLoadTask> tasks = new Queue<ResourceLoadTask>();
+
+        public void StartLoadTask()
+        {
+            StartCoroutine(ExecuteLoadTask());
+        }
+        public IEnumerator StartLoadTaskAsync()
+        {
+            return ExecuteLoadTask();
+        }
+
+        private IEnumerator ExecuteLoadTask()
+        {
+            while (tasks.Count > 0)
+            {
+                var task = tasks.Dequeue();
+                int i = 0;
+                while (!task.IsDone)
+                {
+                    ELoad(task.dic.pack[i], (res) => task.doneCount += 1);
+                }
+
+                yield return new WaitUntil(() => task.IsDone);
+            }
+            var action = OnTaskListDone;
+            OnTaskListDone = null;
+            action?.Invoke();
+            yield return 0;
+        }
+
+        public ResourceLoadTask AddLoadDic(MetaDic dic)
+        {
+            var task = new ResourceLoadTask(dic);
+            tasks.Append(task);
+            return task;
+        }
+
+        public class ResourceLoadTask
+        {
+            public int total;
+            public int doneCount;
+            public MetaDic dic;
+
+            public bool IsDone
+            {
+                get => doneCount >= total;
+            }
+
+            public ResourceLoadTask(MetaDic dic)
+            {
+                this.dic = dic;
+                total = dic.pack.Length;
+                doneCount = 0;
+            }
+        }
+
+        #endregion 加载任务处理
     }
 }

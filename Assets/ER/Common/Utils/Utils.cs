@@ -59,6 +59,19 @@ namespace ER
             return Math.Min(maxDelta, delta) + start;
         }
 
+        public static float LerpForTime(float start, float end, float lerpSpeed, float maxSpeed, out bool catched, float tolerance = 0.01f)
+        {
+            float t = Mathf.Clamp01(Time.deltaTime * lerpSpeed);
+            float delta = (end - start) * t;
+            if (delta <= tolerance)
+            {
+                catched = true;
+                return end;
+            }
+            catched = false;
+            return Math.Min(maxSpeed * Time.deltaTime, delta) + start;
+        }
+
         /// <summary>
         /// 插值运算, 计算start->end 在t处的插值, maxDelta表示最大变化值限定
         /// </summary>
@@ -695,7 +708,7 @@ namespace ER
         /// <summary>
         /// 取线段 ab 内, 距离C为指定值的点
         /// </summary>
-        public static Vector2[] FindPointsOnLineSegment(Vector2 A,Vector2 B,Vector2 C,float r)
+        public static Vector2[] FindPointsOnLineSegment(Vector2 A, Vector2 B, Vector2 C, float r)
         {
             List<Vector2> result = new List<Vector2>(2);
 
@@ -752,6 +765,41 @@ namespace ER
                     handler.Invoke(type);
                 }
             }
+        }
+
+        /// <summary>
+        /// 向字符串中嵌入数值;
+        /// 将会替换文本中 {key} 的部分;
+        /// 可替换的部分由 dic 参数决定;
+        /// </summary>
+        /// <param name="template"></param>
+        /// <param name="replacements"></param>
+        /// <returns></returns>
+        public static string ReplacePlaceholders(string template, Dictionary<string, object> replacements)
+        {
+            // 遍历字典并替换占位符
+            foreach (var kvp in replacements)
+            {
+                template = template.Replace($"{{{{{kvp.Key}}}}}", kvp.Value.ToString());
+            }
+            return template;
+        }
+        /// <summary>
+        /// 向字符串中嵌入数值;
+        /// 将会替换文本中 {key} 的部分;
+        /// 可替换的部分由 dic 参数决定;
+        /// </summary>
+        /// <param name="template"></param>
+        /// <param name="replacements"></param>
+        /// <returns></returns>
+        public static string ReplacePlaceholders(string template, Dictionary<string, string> replacements)
+        {
+            // 遍历字典并替换占位符
+            foreach (var kvp in replacements)
+            {
+                template = template.Replace($"{{{{{kvp.Key}}}}}", kvp.Value);
+            }
+            return template;
         }
     }
 }

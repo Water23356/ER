@@ -58,7 +58,7 @@ namespace Dev
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
         {
             // 计算高度
-            return EditorGUIUtility.singleLineHeight * 3 + EditorGUIUtility.standardVerticalSpacing * 3;
+            return (EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing) * 3;
         }
     }
 }

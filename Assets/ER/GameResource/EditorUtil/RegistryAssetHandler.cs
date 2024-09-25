@@ -1,16 +1,15 @@
 ﻿# if UNITY_EDITOR
+using Dev;
 using System.Collections.Generic;
-using System.IO;
 using UnityEditor;
 using UnityEditor.AddressableAssets;
 using UnityEditor.AddressableAssets.Settings;
-using UnityEditor.AddressableAssets.Settings.GroupSchemas;
 using UnityEngine;
-using UnityEngine.AddressableAssets;
-using UnityEngine.ResourceManagement.AsyncOperations;
 
 namespace ER.Resource.Editor
 {
+    /*
+
     /// <summary>
     /// 自动化处理资产键名和注册名工具脚本(仅处理 Assets/res/ 下的资产)
     /// </summary>
@@ -101,10 +100,12 @@ namespace ER.Resource.Editor
             if (obj != null)
             {
                 SerializedObject serializedObject = new SerializedObject(obj);
-                SerializedProperty registryNameProperty = serializedObject.FindProperty("registryName");
+                SerializedProperty registryNameProperty = serializedObject.FindProperty("m_registryName");
 
                 if (registryNameProperty != null)
                 {
+                    SerializedProperty head = registryNameProperty.FindPropertyRelative("Head");
+                    head.stringValue=
                     registryNameProperty.stringValue = newRegistryName;
                     serializedObject.ApplyModifiedProperties(); // 保存更改
                     Debug.Log($"- 更新 registryName :'{assetPath}' -> '{newRegistryName}'");
@@ -212,7 +213,7 @@ namespace ER.Resource.Editor
                 //AssetUtility.ConfigureAsset(path, key, DefaultGroupName);
                 //EditorUtility.SetDirty(asset); // 标记资产已改变，确保变更被保存
             }
-        }*/
-    }
+        }
+    }*/
 }
 #endif

@@ -47,6 +47,21 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 488174d776602684e8f82eeba690e97f
+    m_Address: meta/dic/defualt
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9403460f829aa90429eb4398d39299c0
+    m_Address: meta/index/default
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f2d8ab87e196fb5449fc484bbe0aa13f
+    m_Address: meta/scene/main
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 031914a2ea80fbb4fa4ff5338e97b39f, type: 2}
   m_SchemaSet:

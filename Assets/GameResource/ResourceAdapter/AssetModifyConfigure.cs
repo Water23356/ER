@@ -10,7 +10,7 @@ namespace Dev
 {
     public abstract class AssetModifyConfigure : ScriptableObject, IRegisterResource
     {
-        [ReadOnly]
+        [DisplayLabel("注册名")]
         public RegistryName m_registryName;
         /// <summary>
         /// 数据表头(用于指示是哪一类数据的配置文件)
