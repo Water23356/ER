@@ -1,9 +1,9 @@
-using ER.Resource;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using UnityEngine;
+using Dev;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -12,7 +12,7 @@ namespace ER.ForEditor
     public class ScriptableObjectEditorWindow : EditorWindow
     {
         private string directoryPath = "Assets/ScriptableObjects";
-        private List<BaseAssetConfigure> assets = new List<BaseAssetConfigure>();
+        private List<AssetModifyConfigure> assets = new List<AssetModifyConfigure>();
         private Vector2 scrollPosition;
         private FieldInfo[] fieldTypes;
         private bool[] visibles;
@@ -148,7 +148,7 @@ namespace ER.ForEditor
             foreach (var guid in guids)
             {
                 string path = AssetDatabase.GUIDToAssetPath(guid);
-                BaseAssetConfigure asset = AssetDatabase.LoadAssetAtPath<BaseAssetConfigure>(path);
+                AssetModifyConfigure asset = AssetDatabase.LoadAssetAtPath<AssetModifyConfigure>(path);
                 if (asset != null)
                 {
                     assets.Add(asset);
@@ -262,7 +262,7 @@ namespace ER.ForEditor
                     }
                     else
                     {
-                        GUILayout.Label(asset.registryName, EditorStyles.label, GUILayout.Width(registryNameWidth - 2));
+                        GUILayout.Label(asset.registryName.ToString(), EditorStyles.label, GUILayout.Width(registryNameWidth - 2));
                     }
                 }
                 else
@@ -295,7 +295,7 @@ namespace ER.ForEditor
             }
         }
 
-        private void DrawFields(BaseAssetConfigure asset, SerializedObject serializedObject)
+        private void DrawFields(AssetModifyConfigure asset, SerializedObject serializedObject)
         {
             for (int j = 0; j < fieldTypes.Length; j++)
             {
@@ -397,7 +397,7 @@ namespace ER.ForEditor
             if (rightClickedIndex != -1)
             {
                 isRenaming = true;
-                newName = assets[rightClickedIndex].registryName;
+                newName = assets[rightClickedIndex].registryName.ToString();
             }
         }
 
@@ -476,27 +476,7 @@ namespace ER.ForEditor
             return handled.ToArray();
         }
 
-        private void SearchAssets()
-        {
-            if (!string.IsNullOrEmpty(searchQuery))
-            {
-                assets = assets.FindAll(asset => asset.registryName.Contains(searchQuery));
-            }
-        }
 
-        private void DeleteSelectedAssets()
-        {
-            foreach (var index in selectedIndices)
-            {
-                var asset = assets[index];
-                string path = AssetDatabase.GetAssetPath(asset);
-                AssetDatabase.DeleteAsset(path);
-            }
-            AssetDatabase.SaveAssets();
-            AssetDatabase.Refresh();
-            LoadAssets();
-            selectedIndices.Clear();
-        }
     }
 }
 #endif

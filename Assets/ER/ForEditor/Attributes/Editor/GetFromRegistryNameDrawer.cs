@@ -1,4 +1,4 @@
-using ER.Resource;
+﻿using Dev;
 using UnityEditor;
 using UnityEngine;
 
@@ -49,7 +49,7 @@ namespace ER.ForEditor
                         foreach (Object draggedObject in DragAndDrop.objectReferences)
                         {
                             string assetPath = AssetDatabase.GetAssetPath(draggedObject);
-                            var registryName = GR.ADToRegistryName(assetPath);
+                            var registryName = GR.ADToRegName(assetPath);
                             if (!string.IsNullOrEmpty(registryName))
                             {
                                 property.stringValue = registryName;

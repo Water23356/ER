@@ -1,4 +1,4 @@
-﻿using ER.Resource;
+﻿using Dev;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -60,7 +60,7 @@ namespace ER.GUI
         /// <param name="registryName"></param>
         private void Load(string registryName)
         {
-            var res = GR.Get<GUIPanelResource>(registryName);
+            var res = GR.Get<PrefabResource>(registryName);
             var obj = res?.Copy ?? null;
             var gui = obj?.GetComponent<GUIPanel>() ?? null;
             if (gui == null)
@@ -68,8 +68,8 @@ namespace ER.GUI
                 Debug.LogError("GUI面板预制体出错: 资源不存在 或 缺失'GUIPanel'组件");
                 return;
             }
+
             obj.name = registryName;
-            gui.Layer = res.layer;
             gui.RegistryName = registryName;
             var rectt = gui.GetComponent<RectTransform>();
 
@@ -101,13 +101,6 @@ namespace ER.GUI
                     break;
             }
             //由于重设sort会触发重新排序, 所以上方switch就不手动调用 UpdateSort()
-            gui.Sort = res.sort;
-
-            rectt.anchoredPosition = res.anchoredPosition;
-            rectt.offsetMin = res.offsetMin;
-            rectt.offsetMax = res.offsetMax;
-            rectt.anchorMax = res.anchorMax;
-            rectt.anchorMin = res.anchorMin;
             rectt.localScale = Vector3.one;
             panels[registryName] = gui;
 

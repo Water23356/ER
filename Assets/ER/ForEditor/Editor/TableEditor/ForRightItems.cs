@@ -1,7 +1,5 @@
-using ER.Resource;
-using System.IO;
+﻿using System.IO;
 using UnityEditor;
-using UnityEngine;
 
 namespace ER.ForEditor
 {

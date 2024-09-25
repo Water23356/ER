@@ -375,7 +375,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 1}
+  m_Color: {r: 0.05, g: 0.05, b: 0.05, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -741,8 +741,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   skipSettingLoad: 0
-  defaultIndexer: {fileID: 0}
-  initDic: {fileID: 0}
+  defaultIndexer: {fileID: 11400000, guid: 9403460f829aa90429eb4398d39299c0, type: 2}
+  initDic: {fileID: 11400000, guid: 488174d776602684e8f82eeba690e97f, type: 2}
   logo: {fileID: 0}
   aimScene: {fileID: 0}
 --- !u!4 &1139485225
@@ -1309,7 +1309,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ad40110baaaa2a64595dbde2c7ac5936, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_transition: {fileID: 0}
+  m_transition: {fileID: 40695148}
 --- !u!114 &2107931040
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1470,5 +1470,5 @@ SceneRoots:
   - {fileID: 1944568124}
   - {fileID: 1899804354}
   - {fileID: 1139485225}
-  - {fileID: 2107931043}
   - {fileID: 1548352966}
+  - {fileID: 2107931043}

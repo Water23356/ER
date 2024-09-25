@@ -1,5 +1,6 @@
 ﻿using Dev;
 using Dev2;
+using ER;
 using ER.ForEditor;
 using GameSetting;
 using System.Collections;
@@ -20,7 +21,8 @@ public class GameInitManager : MonoBehaviour
      * 2. 组织 LOGO
      * 3. 初始化资源字典
      * 4. 初始化 必须资源目录 中的资源
-     * 5. 跳转至主场景 (由场景跳转负责大部分资源加载)
+     * 5. 装载指令字典
+     * 6. 跳转至主场景 (由场景跳转负责大部分资源加载)
      */
 
     #region 属性
@@ -59,6 +61,7 @@ public class GameInitManager : MonoBehaviour
         yield return PlayLogo();
         LoadIndexer();
         yield return LoadInitResource();
+        ModifyCommandDictionary();
         SkipScene();
 
         //销毁自身
@@ -82,6 +85,13 @@ public class GameInitManager : MonoBehaviour
             logo.PlayLogo(() => wait = false);
             yield return new WaitWhile(() => wait);
         }
+    }
+
+    private void ModifyCommandDictionary()
+    {
+        ConsolePanel.dictionary.Modify<GameCD>();
+        ConsolePanel.dictionary.Modify<MathCD>();
+        ConsolePanel.dictionary.Modify<TestCD>();
     }
 
     private void LoadIndexer()

@@ -1,6 +1,7 @@
-﻿using ER;
+﻿using Dev;
+using ER;
 using ER.GUI;
-using ER.Resource;
+using Dev3;
 
 public class TestCD : ICommandDictionaryModfier
 {
@@ -29,7 +30,7 @@ public class TestCD : ICommandDictionaryModfier
             foreach(var r in res)
             {
                 i++;
-                ConsolePanel.Print($"[{i}]: {r?.RegistryName} [notNull: {r!=null}]");
+                ConsolePanel.Print($"[{i}]: {r?.registryName} [notNull: {r!=null}]");
             }
             return Data.Empty;
         });
@@ -38,7 +39,7 @@ public class TestCD : ICommandDictionaryModfier
         {
             string path = d.NextText();
             var res = GR.Get(path);
-            ConsolePanel.Print($"获取: {path} -> rname: {res?.RegistryName} notnull: {res!=null}");
+            ConsolePanel.Print($"获取: {path} -> rname: {res?.registryName} notnull: {res!=null}");
             return Data.Empty;
         });
 
@@ -61,7 +62,7 @@ public class TestCD : ICommandDictionaryModfier
         dic.AddCommand("test lang #string", d =>
         {
             var path = d.NextText();
-            var lang = LangText.GetLangText(path, "__ERRO__");
+            var lang = GLL.GetText(path, "__ERRO__");
             ConsolePanel.Print(lang);
             return Data.Empty;
         });

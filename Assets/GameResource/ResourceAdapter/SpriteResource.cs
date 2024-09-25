@@ -1,5 +1,4 @@
-﻿using ER.Resource;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Dev
 {

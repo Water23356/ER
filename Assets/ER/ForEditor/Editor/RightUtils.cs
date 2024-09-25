@@ -1,8 +1,8 @@
-﻿using ER.Resource;
-using UnityEditor;
-using UnityEngine;
+﻿using Dev;
 using System.IO;
+using UnityEditor;
 using UnityEditor.U2D;
+using UnityEngine;
 using UnityEngine.U2D;
 
 namespace ER.ForEditor
@@ -18,7 +18,7 @@ namespace ER.ForEditor
             if (asset != null)
             {
                 string assetPath = AssetDatabase.GetAssetPath(asset);
-                string registryName = GR.ADToRegistryName(assetPath);
+                string registryName = GR.ADToRegName(assetPath);
                 EditorGUIUtility.systemCopyBuffer = registryName;
                 Debug.Log($"已复制到剪贴板: {registryName}");
             }
@@ -27,7 +27,7 @@ namespace ER.ForEditor
         private void CopyAssetPathToClipboard(Object target)
         {
             string assetPath = AssetDatabase.GetAssetPath(target);
-            string registryName = GR.ADToRegistryName(assetPath);
+            string registryName = GR.ADToRegName(assetPath);
             EditorGUIUtility.systemCopyBuffer = registryName;
             Debug.Log($"已复制到剪贴板: {registryName}");
         }
