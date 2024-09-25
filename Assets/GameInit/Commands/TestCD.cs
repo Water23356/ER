@@ -1,7 +1,7 @@
-﻿using Dev;
+﻿using ER.ResourceManager;
 using ER;
 using ER.GUI;
-using Dev3;
+using ER.Localization;
 
 public class TestCD : ICommandDictionaryModfier
 {

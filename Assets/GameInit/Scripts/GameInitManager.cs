@@ -1,8 +1,8 @@
-﻿using Dev;
-using Dev2;
+﻿using ER.ResourceManager;
+using ER.SceneJumper;
 using ER;
 using ER.ForEditor;
-using GameSetting;
+using ER.GameSetting;
 using System.Collections;
 using UnityEngine;
 
