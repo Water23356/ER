@@ -1,4 +1,6 @@
-﻿using ER;
+﻿#define CUSTOM_TEST_
+
+using ER;
 using ER.ForEditor;
 using System.Collections.Generic;
 using UnityEngine;
@@ -15,6 +17,7 @@ namespace Dev
 
         [SerializeField]
         private float timeScale = 1f;
+
         [Tooltip("这个值越大越不容易相撞")]
         [DisplayLabel("冗余宽度")]
         [SerializeField]
@@ -151,7 +154,7 @@ namespace Dev
             }
             else
             {
-                Debug.Log("无点限制");
+                //Debug.Log("无点限制");
                 SetVelocity(PreferredVelocity);
                 return;
             }
@@ -169,7 +172,7 @@ namespace Dev
                         newSpeed = points[i].pos;
                     }
                 }
-                Debug.Log("无解");
+                //Debug.Log("无解");
                 SetVelocity(newSpeed);
             }
             else//有解的情况
@@ -186,7 +189,7 @@ namespace Dev
 
                 if (preferredInRange)//如果期望速度在可选范围内
                 {
-                    Debug.Log("期望可选");
+                    //Debug.Log("期望可选");
                     SetVelocity(PreferredVelocity);
                 }
                 else
@@ -255,16 +258,18 @@ namespace Dev
 
             bool inCircle = (spAB - AB).magnitude < r;
 
-            //这里r-width_ORCA的目的是, 为了让圆的边界小于投影边界, 否则容易出现临界抖动的问题 
-            float rad_AB_v = Mathf.Asin(r- width_ORCA / AB.magnitude);//AB 到 切线的角度大小
+            //这里r-width_ORCA的目的是, 为了让圆的边界小于投影边界, 否则容易出现临界抖动的问题
+            float rad_AB_v = Mathf.Asin(r - width_ORCA / AB.magnitude);//AB 到 切线的角度大小
             float rad_AB_sp = AB.ClockAngle(spAB) * Mathf.Deg2Rad;//AB 到 sp 的角度
 
+#if CUSTOM_TEST
             //绘制速度线
             DrawFromSelf(spAB, Color.green);
             //绘制障碍边界线
             DrawCircle(obj.transform.position, r, color_barrier);
             DrawFromSelf(AB.RotateRad(rad_AB_v), color_barrier);
             DrawFromSelf(AB.RotateRad(-rad_AB_v), color_barrier);
+#endif
 
             if (AB.magnitude < r)
             {
@@ -296,18 +301,19 @@ namespace Dev
                 {
                     var delta = spAB - AB;
                     var change = delta.normalized * (r - delta.magnitude);
-                    Debug.DrawLine(transform.position + (Vector3)spAB, transform.position + (Vector3)spAB + (Vector3)change, Color.red);
-                    Debug.DrawLine(transform.position, transform.position + (Vector3)speedA, Color.blue);
+#if CUSTOM_TEST
+                Debug.DrawLine(transform.position + (Vector3)spAB, transform.position + (Vector3)spAB + (Vector3)change, Color.red);
+                Debug.DrawLine(transform.position, transform.position + (Vector3)speedA, Color.blue);
 
-                    var k = new AreaLine()
-                    {
-                        dir = change.normalized,
-                        node = speedA,
-                        state = AreaLine.LineState.None
-                    };
-                    //k.Draw(transform.position,Color.red);
-                    Debug.DrawLine(transform.position + (Vector3)speedA, transform.position + (Vector3)speedA + (Vector3)change, Color.red);
-
+                var k = new AreaLine()
+                {
+                    dir = change.normalized,
+                    node = speedA,
+                    state = AreaLine.LineState.None
+                };
+                //k.Draw(transform.position, Color.red);
+                Debug.DrawLine(transform.position + (Vector3)speedA, transform.position + (Vector3)speedA + (Vector3)change, Color.red);
+#endif
                     //change 速度改变方向
                     orca = new AreaLine()
                     {
@@ -332,6 +338,8 @@ namespace Dev
                 }
                 var dir = AB.RotateRad(rotateRad).normalized;//取得半平面的垂直向量
                 var change = dir * s_sp * Mathf.Tan(rad_AB_v - Mathf.Abs(rad_AB_sp));
+
+#if CUSTOM_TEST
                 Debug.DrawLine(transform.position + (Vector3)spAB, transform.position + (Vector3)spAB + (Vector3)change, Color.red);
                 Debug.DrawLine(transform.position, transform.position + (Vector3)speedA, Color.blue);
 
@@ -343,7 +351,7 @@ namespace Dev
                 };
                 //k.Draw(transform.position, Color.red);
                 Debug.DrawLine(transform.position + (Vector3)speedA, transform.position + (Vector3)speedA + (Vector3)change, Color.red);
-
+#endif
                 //change 速度改变方向
                 orca = new AreaLine()
                 {
@@ -369,7 +377,7 @@ namespace Dev
 
         private void DrawFromSelf(Vector3 dir, Color color)
         {
-            Debug.DrawLine(transform.position, transform.position + dir, color, checkCd*Time.fixedDeltaTime);
+            Debug.DrawLine(transform.position, transform.position + dir, color, checkCd * Time.fixedDeltaTime);
         }
 
         private int checkCd = 2;//3tick检查一次
