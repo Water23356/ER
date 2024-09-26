@@ -612,6 +612,10 @@ namespace ER
             float rad = angle * Mathf.Deg2Rad;
             return new Vector2(dir.x * MathF.Cos(rad) - dir.y * MathF.Sin(rad), dir.x * MathF.Sin(rad) + dir.y * MathF.Cos(rad));
         }
+        public static Vector2 RotateRad(this Vector2 dir, float rad)
+        {
+            return new Vector2(dir.x * MathF.Cos(rad) - dir.y * MathF.Sin(rad), dir.x * MathF.Sin(rad) + dir.y * MathF.Cos(rad));
+        }
 
         /// <summary>
         /// 获取指定向量的垂直向量(逆时针方向)
