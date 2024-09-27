@@ -1,4 +1,4 @@
-﻿#define CUSTOM_TEST_
+﻿#define CUSTOM_TEST
 
 using ER;
 using ER.ForEditor;
@@ -244,9 +244,18 @@ namespace Dev
             var speedB = obj.GetComponent<Rigidbody2D>().velocity;
             var speedA = rigidbody.velocity;
             var collider = obj.GetComponent<CircleCollider2D>();
+            var colliderRect = obj.GetComponent<BoxCollider2D>();
 
             var AB = (Vector2)obj.transform.position - (Vector2)transform.position;
-            var r = collider.radius + this.collider.radius + width_ORCA;//把A看作点, B对A的半径
+            var r = 0f;
+            if(collider!=null)
+            {
+                r = collider.radius + this.collider.radius + width_ORCA;//把A看作点, B对A的半径
+            }
+            else if(colliderRect!=null)
+            {
+                r = colliderRect.size.magnitude / 2 + width_ORCA;
+            }
             var spAB = (speedA - speedB) * timeScale;//A对B的相对速度
 
             // 处理速度非常接近的情况

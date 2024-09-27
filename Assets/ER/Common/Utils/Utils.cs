@@ -624,7 +624,7 @@ namespace ER
         /// <returns></returns>
         public static Vector2 Vertical(this Vector2 dir)
         {
-            Vector2 v = new Vector2(1, -dir.x / dir.y).normalized;
+            Vector2 v = new Vector2(dir.y, -dir.x).normalized;
             if (GetRotateDir(dir, v) == RotateDir.Anticlockwise)
                 return v;
             else

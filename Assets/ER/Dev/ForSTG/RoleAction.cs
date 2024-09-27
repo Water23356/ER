@@ -31,7 +31,7 @@ namespace ER.STG
 
         public void Shoot(Vector2 speed,Color color)
         {
-            ProjectileManager.Instance.ShootSin(Owner.transform.position, speed, color);
+            ProjectileManager.Instance.Shoot(Owner.transform.position, speed, color);
         }
         public void Shoot(Vector2 speed,Vector2 offsetPos,Color color)
         {
