@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Dev2;
+using UnityEngine;
 
 namespace ER.STG
 {
@@ -20,6 +21,8 @@ namespace ER.STG
             prjt.Speed = speed;
             prjt.Color = color;
             prjt.enabled = true;
+
+            STG_OA_Map.Instance.AddAgent(prjt.GetComponent<STG_OA_Agent>());
         }
 
         public void ShootSin(Vector2 startPos, Vector2 speed, Color color)

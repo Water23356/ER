@@ -51,7 +51,7 @@ namespace Dev2
                 var box = collider as BoxCollider2D;
                 if (box != null)
                 {
-                    return Vector2.Dot(box.size, velocity.normalized);
+                    return Mathf.Abs(box.size.x*velocity.normalized.x)* Mathf.Abs(box.size.y * velocity.normalized.y);
                 }
 
                 return defaultRadius;
@@ -70,10 +70,10 @@ namespace Dev2
             }
         }
 
-        private void OnDrawGizmos()
+        private void OnDrawGizmosSelected()
         {
-            Gizmos.color = Color.red;
-            Gizmos.DrawSphere(transform.position, defaultRadius);
+            //Gizmos.color = Color.red;
+            //Gizmos.DrawSphere(transform.position, defaultRadius);
         }
     }
 }

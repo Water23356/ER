@@ -1,16 +1,15 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Tilemaps;
-
+using ER;
 namespace Dev2
 {
     /// <summary>
     /// 避障网格图
     /// </summary>
-    public class STG_OA_Map : MonoBehaviour
+    public class STG_OA_Map : MonoSingleton<STG_OA_Map>
     {
         public GameObject prefab_text;
         public RectTransform canvas;
@@ -37,7 +36,8 @@ namespace Dev2
         /// <summary>
         /// 单元大小
         /// </summary>
-        private float cellSize;
+        [SerializeField]
+        private float cellSize = 1;
 
         /// <summary>
         /// 实体代理
@@ -98,6 +98,13 @@ namespace Dev2
             return x >= 0 && x < width && y >= 0 && y < height;
         }
 
+        public float GetWeight(Vector3Int point)
+        {
+            if(IsInRange(point))
+                return weightMap[point.x,point.y];
+            return 9999f;
+        }
+
         public Vector3Int GetGridPoint(Transform trf)
         {
             return tilemap.WorldToCell(trf.position);
@@ -108,10 +115,21 @@ namespace Dev2
             return tilemap.WorldToCell(worldPosition);
         }
 
+        public void AddAgent(STG_OA_Agent agent)
+        {
+            if (agent == null) return;
+            agents.Add(agent);
+        }
+        public void RemoveAgent(STG_OA_Agent agent)
+        {
+            agents.Remove(agent);
+        }
+
         public void UpdateMap()
         {
             ClearWeight();
-            foreach (var agent in agents)
+            var copy = agents.ToArray();
+            foreach (var agent in copy)
             {
                 ComputeAgentWeight(agent);
             }
@@ -126,11 +144,12 @@ namespace Dev2
             isUpdatingMap = true;
             ClearWeight();
             int counter = 0;
-            foreach (var agent in agents)
+            var copy = agents.ToArray();
+            foreach (var agent in copy)
             {
                 ComputeAgentWeight(agent);
                 counter += 1;
-                if (counter % 10 == 0)//每检测10个单位就暂停 1 tick
+                if (counter % 30 == 0)//每检测30个单位就暂停 1 tick
                 {
                     yield return new WaitForFixedUpdate();
                 }
@@ -172,28 +191,94 @@ namespace Dev2
         private void AddSearchItem(Vector2 dir, Vector3Int point, Queue<Vector3Int> searchQueue)
         {
             float tolerance = 0.001f;
-            var next = point;
+
+            int index = 5;
             if (dir.x > tolerance)
             {
-                next += Vector3Int.right;
+                index = 6;
             }
             else if (dir.x < -tolerance)
             {
-                next += Vector3Int.left;
+                index = 4;
             }
 
-            if (!searchQueue.Contains(next)) searchQueue.Enqueue(next);
-
-            next = point;
             if (dir.y > tolerance)
             {
-                next += Vector3Int.up;
+                switch (index)
+                {
+                    case 5: index = 8; break;
+                    case 4: index = 7; break;
+                    case 6: index = 9; break;
+                }
             }
             else if (dir.y < -tolerance)
             {
-                next += Vector3Int.down;
+                switch (index)
+                {
+                    case 5: index = 2; break;
+                    case 4: index = 1; break;
+                    case 6: index = 3; break;
+                }
             }
-            if (!searchQueue.Contains(next)) searchQueue.Enqueue(next);
+
+            switch (index)
+            {
+                case 1:
+                    AddQueueItemNoRepeat(searchQueue, point + new Vector3Int(-1, 0));
+                    AddQueueItemNoRepeat(searchQueue, point + new Vector3Int(0, -1));
+                    AddQueueItemNoRepeat(searchQueue, point + new Vector3Int(-1, -1));
+                    break;
+
+                case 2:
+                    AddQueueItemNoRepeat(searchQueue, point + new Vector3Int(0, -1));
+                    break;
+
+                case 3:
+                    AddQueueItemNoRepeat(searchQueue, point + new Vector3Int(1, 0));
+                    AddQueueItemNoRepeat(searchQueue, point + new Vector3Int(0, -1));
+                    AddQueueItemNoRepeat(searchQueue, point + new Vector3Int(1, -1));
+                    break;
+
+                case 4:
+                    AddQueueItemNoRepeat(searchQueue, point + new Vector3Int(-1, 0));
+                    break;
+
+                case 5:
+                    break;
+
+                case 6:
+                    AddQueueItemNoRepeat(searchQueue, point + new Vector3Int(1, 0));
+                    break;
+
+                case 7:
+                    AddQueueItemNoRepeat(searchQueue, point + new Vector3Int(-1, 1));
+                    AddQueueItemNoRepeat(searchQueue, point + new Vector3Int(-1, 0));
+                    AddQueueItemNoRepeat(searchQueue, point + new Vector3Int(0, 1));
+                    break;
+
+                case 8:
+                    AddQueueItemNoRepeat(searchQueue, point + new Vector3Int(1, 0));
+                    break;
+
+                case 9:
+                    AddQueueItemNoRepeat(searchQueue, point + new Vector3Int(1, 1));
+                    AddQueueItemNoRepeat(searchQueue, point + new Vector3Int(1, 0));
+                    AddQueueItemNoRepeat(searchQueue, point + new Vector3Int(0, 1));
+                    break;
+            }
+        }
+
+        private void AddQueueItemNoRepeat(Queue<Vector3Int> queue, params Vector3Int[] points)
+        {
+            foreach (var point in points)
+            {
+                if (!queue.Contains(point)) queue.Enqueue(point);
+            }
+        }
+
+        private float ComputeHeightWeight(float heightDistance)
+        {
+            return 1 / (heightDistance + cellSize / (cellSize + 1)) - 1 / cellSize;
         }
 
         //计算指定单元格的权重, 如果该单元格权重无关则返回false
@@ -202,20 +287,21 @@ namespace Dev2
             if (!IsInRange(point)) return false;
 
             var center = GetCellCenter(point);
-            var point_w = coordinate.GetWeightAbs(center);
+            var point_w = coordinate.GetWeight(center);
 
-            if (point.y > cellSize)
+            var heightWeight = ComputeHeightWeight(Mathf.Abs(point_w.y));
+            if (point_w.x < 0)
+            {
+                weightMap[point.x, point.y] += inputWeight;
+                return true;
+            }
+            var weight = (cellSize + inputWeight - Mathf.Abs(point_w.x)) * 10;
+
+            if (heightWeight <= 0 || weight <= 0)//表示在可作用域外
             {
                 return false;
             }
-
-            if (point_w.y < radius)
-            {
-                weightMap[point.x, point.y] += inputWeight - point_w.x;
-                return true;
-            }
-
-            weightMap[point.x, point.y] += Math.Max(0, 1 - 1 / (point_w.y * point_w.y)) * (inputWeight - point_w.x);
+            weightMap[point.x, point.y] += weight * heightWeight;
             return true;
         }
 
@@ -239,6 +325,7 @@ namespace Dev2
                 }
             }
         }
+
 
         public void DrawMap()
         {

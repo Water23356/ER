@@ -1,4 +1,4 @@
-﻿using Unity.VisualScripting;
+﻿using Dev2;
 using UnityEngine;
 
 namespace ER.STG
@@ -27,9 +27,8 @@ namespace ER.STG
         /// </summary>
         private string damageTimerTag;
 
-
         private SpriteRenderer m_spriteRenderer;
-        
+
         private Rigidbody2D m_rigidbody;
 
         public float Durable { get => durable; set => durable = value; }
@@ -49,7 +48,9 @@ namespace ER.STG
             }
         }
 
-        public SpriteRenderer Renderer { get { if (m_spriteRenderer == null) m_spriteRenderer = GetComponent<SpriteRenderer>(); return m_spriteRenderer; } }
+        public SpriteRenderer Renderer
+        { get { if (m_spriteRenderer == null) m_spriteRenderer = GetComponent<SpriteRenderer>(); return m_spriteRenderer; } }
+
         public Rigidbody2D Rigidbody
         {
             get
@@ -62,21 +63,25 @@ namespace ER.STG
 
         private void Start()
         {
-
         }
-
 
         private void OnTriggerEnter2D(Collider2D collision)
         {
             //Debug.Log($"子弹接触: {collision.tag}");
-            if(collision.CompareTag("Edge"))
+            if (collision.CompareTag("Edge"))
             {
                 Destroy();
             }
         }
+
         private void OnTriggerExit2D(Collider2D collision)
         {
-            
+        }
+
+        public override void OnHide()
+
+        {
+            STG_OA_Map.Instance?.RemoveAgent(GetComponent<STG_OA_Agent>());
         }
     }
 }
