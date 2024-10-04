@@ -1,4 +1,4 @@
-﻿using Dev2;
+﻿
 using UnityEngine;
 
 namespace ER.STG
@@ -76,12 +76,8 @@ namespace ER.STG
 
         private void OnTriggerExit2D(Collider2D collision)
         {
+
         }
 
-        public override void OnHide()
-
-        {
-            STG_OA_Map.Instance?.RemoveAgent(GetComponent<STG_OA_Agent>());
-        }
     }
 }

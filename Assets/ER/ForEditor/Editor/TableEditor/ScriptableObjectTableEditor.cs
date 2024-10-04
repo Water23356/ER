@@ -12,7 +12,7 @@ namespace ER.ForEditor
     public class ScriptableObjectEditorWindow : EditorWindow
     {
         private string directoryPath = "Assets/ScriptableObjects";
-        private List<AssetModifyConfigure> assets = new List<AssetModifyConfigure>();
+        private List<MetaResource> assets = new List<MetaResource>();
         private Vector2 scrollPosition;
         private FieldInfo[] fieldTypes;
         private bool[] visibles;
@@ -148,7 +148,7 @@ namespace ER.ForEditor
             foreach (var guid in guids)
             {
                 string path = AssetDatabase.GUIDToAssetPath(guid);
-                AssetModifyConfigure asset = AssetDatabase.LoadAssetAtPath<AssetModifyConfigure>(path);
+                MetaResource asset = AssetDatabase.LoadAssetAtPath<MetaResource>(path);
                 if (asset != null)
                 {
                     assets.Add(asset);
@@ -295,7 +295,7 @@ namespace ER.ForEditor
             }
         }
 
-        private void DrawFields(AssetModifyConfigure asset, SerializedObject serializedObject)
+        private void DrawFields(MetaResource asset, SerializedObject serializedObject)
         {
             for (int j = 0; j < fieldTypes.Length; j++)
             {

@@ -7,7 +7,7 @@ namespace ER.SceneJumper
 {
     [CreateAssetMenu(fileName = "MetaMetaSceneJumpDic", menuName = "ER/元/场景加载")]
     [MetaTable("scene")]
-    public class MetaSceneJump : AssetModifyConfigure
+    public class MetaSceneJump : MetaResource
     {
         public override string metaHead => "scene";
 
