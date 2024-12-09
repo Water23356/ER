@@ -5,7 +5,7 @@ namespace ER.STG.Actions
     /// <summary>
     /// 单向整圆扫描
     /// </summary>
-    public class Skill_2 : RoleAction
+    public class Skill_2 : EntityAction
     {
 
         [SerializeField]

@@ -1,4 +1,4 @@
-﻿using Dev2;
+﻿using ER.STG.Tracks;
 using UnityEngine;
 
 namespace ER.STG
@@ -34,24 +34,25 @@ namespace ER.STG
         public float Durable { get => durable; set => durable = value; }
         public string DamageTimerTag { get => damageTimerTag; set => damageTimerTag = value; }
         public float Damage { get => damage; set => damage = value; }
-        public Color Color { get => Renderer.color; set => Renderer.color = value; }
+        public Color Color { get => renderer.color; set => renderer.color = value; }
+        public Vector2 velocity { get => rigidbody.velocity; set => rigidbody.velocity = value; }
 
         public Vector2 Speed
         {
             get
             {
-                return Rigidbody.velocity;
+                return rigidbody.velocity;
             }
             set
             {
-                Rigidbody.velocity = value;
+                rigidbody.velocity = value;
             }
         }
 
-        public SpriteRenderer Renderer
+        public SpriteRenderer renderer
         { get { if (m_spriteRenderer == null) m_spriteRenderer = GetComponent<SpriteRenderer>(); return m_spriteRenderer; } }
 
-        public Rigidbody2D Rigidbody
+        public Rigidbody2D rigidbody
         {
             get
             {
@@ -68,20 +69,42 @@ namespace ER.STG
         private void OnTriggerEnter2D(Collider2D collision)
         {
             //Debug.Log($"子弹接触: {collision.tag}");
-            if (collision.CompareTag("Edge"))
+            if (collision.CompareTag("ProjectileEdge"))
             {
                 Destroy();
+            }
+            else if(collision.CompareTag(tag))
+            {
+                //和自身标签相同则不发生检测
+            }
+            else//造成伤害
+            {
+
             }
         }
 
         private void OnTriggerExit2D(Collider2D collision)
         {
         }
-
-        public override void OnHide()
-
+        /// <summary>
+        /// 获取或者创建轨迹组件
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        public T GetOrCreateTrack<T>() where T: ProjectileTrack
         {
-            STG_OA_Map.Instance?.RemoveAgent(GetComponent<STG_OA_Agent>());
+            return transform.GetOrAddComponent<T>();
+        }
+        /// <summary>
+        /// 禁用所有轨迹组件
+        /// </summary>
+        public void DisableAllTack()
+        {
+            ProjectileTrack[] tracks = GetComponents<ProjectileTrack>();
+            foreach (ProjectileTrack track in tracks)
+            {
+                track.enabled = false;
+            }
         }
     }
 }

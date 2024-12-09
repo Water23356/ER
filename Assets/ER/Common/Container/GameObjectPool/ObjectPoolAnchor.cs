@@ -5,7 +5,7 @@ namespace ER
     /// <summary>
     /// 对象池的回收锚点
     /// </summary>
-    public  class ObjectPoolAnchor : MonoBehaviour
+    public class ObjectPoolAnchor : MonoBehaviour
     {
         /// <summary>
         /// 来源池

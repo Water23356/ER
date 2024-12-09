@@ -7,7 +7,7 @@ namespace ER.STG
     /// <summary>
     /// 线绘制器
     /// </summary>
-    public class ProjectilePrinterForLine : RoleAction, ILineGetter
+    public class ProjectilePrinterForLine : EntityAction, ILineGetter
     {
         [DisplayLabel("弹幕初速度")]
         [SerializeField]

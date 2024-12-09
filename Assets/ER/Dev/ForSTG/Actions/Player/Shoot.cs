@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace ER.STG.Actions
 {
-    public class Shoot : RoleAction
+    public class Shoot : EntityAction
     {
         private readonly string poolName = "pool:projectile";
 

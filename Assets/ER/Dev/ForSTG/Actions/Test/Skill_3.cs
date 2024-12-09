@@ -6,7 +6,7 @@ namespace ER.STG.Actions
     /// <summary>
     /// 圆弧弹幕扫荡
     /// </summary>
-    public class Skill_3 : RoleAction
+    public class Skill_3 : EntityAction
     {
         [SerializeField]
         private int keepTime = 300;//6s
