@@ -344,7 +344,7 @@ namespace ER.ResourceManager
                 int i = 0;
                 while (!task.IsDone)
                 {
-                    ELoad(task.dic.pack[i], (res) => task.doneCount += 1);
+                    ELoad(task.dic[i], (res) => task.doneCount += 1);
                 }
 
                 yield return new WaitUntil(() => task.IsDone);
@@ -361,12 +361,18 @@ namespace ER.ResourceManager
             tasks.Append(task);
             return task;
         }
+        public ResourceLoadTask AddLoadDic(string[] dic)
+        {
+            var task = new ResourceLoadTask(dic);
+            tasks.Append(task);
+            return task;
+        }
 
         public class ResourceLoadTask
         {
             public int total;
             public int doneCount;
-            public MetaDic dic;
+            public string[] dic;
 
             public bool IsDone
             {
@@ -375,8 +381,14 @@ namespace ER.ResourceManager
 
             public ResourceLoadTask(MetaDic dic)
             {
-                this.dic = dic;
+                this.dic = dic.pack;
                 total = dic.pack.Length;
+                doneCount = 0;
+            }
+            public ResourceLoadTask(string[] dic)
+            {
+                this.dic = dic;
+                total = dic.Length;
                 doneCount = 0;
             }
         }

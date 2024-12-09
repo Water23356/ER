@@ -1,6 +1,6 @@
 ﻿using ER.StateMachine;
 using UnityEngine;
-using static ER.StateMachine.Enums;
+using static ER.StateMachine.StateEnums;
 
 namespace ER.GUI
 {
@@ -44,7 +44,7 @@ namespace ER.GUI
                 //Debug.Log("状态:静默");
                 if (keepEnable && !keepDisable)
                 {
-                    scm.ChangeState(TransitionEnum.Entering);
+                    scm.TransitionTo(TransitionEnum.Entering);
                 }
             };
             state.OnExit = (s) =>
@@ -66,7 +66,7 @@ namespace ER.GUI
                 if (timer > 1f)
                 {
                     transform.localScale = defaultSize * magnification;
-                    scm.ChangeState(TransitionEnum.Enable);
+                    scm.TransitionTo(TransitionEnum.Enable);
                     return;
                 }
             };
@@ -81,7 +81,7 @@ namespace ER.GUI
                 //Debug.Log("状态:开启");
                 if (!keepEnable && keepDisable)
                 {
-                    scm.ChangeState(TransitionEnum.Exiting);
+                    scm.TransitionTo(TransitionEnum.Exiting);
                 }
             };
             state.OnExit = (s) =>
@@ -103,7 +103,7 @@ namespace ER.GUI
                 transform.localScale = defaultSize * Mathf.Lerp(1f, magnification, Mathf.Clamp01(timer));
                 if (timer < 0f)
                 {
-                    scm.ChangeState(TransitionEnum.Disable);
+                    scm.TransitionTo(TransitionEnum.Disable);
                     return;
                 }
             };

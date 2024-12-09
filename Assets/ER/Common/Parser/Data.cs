@@ -157,76 +157,105 @@ namespace ER
 
         #region 方法
 
-        public int ToInt()
+        public int Int
         {
-            switch (Type)
+            get
             {
-                case DataType.Int:
-                    return (int)Value;
+                switch (Type)
+                {
+                    case DataType.Int:
+                        return (int)Value;
 
-                case DataType.Float:
-                    return (int)(float)Value;
+                    case DataType.Float:
+                        return (int)(float)Value;
 
-                default:
-                    Debug.LogError("数据转化出错");
-                    return 0;
+                    default:
+                        Debug.LogError("数据转化出错");
+                        return 0;
+                }
             }
         }
 
-        public float ToFloat()
+        public float Float
         {
-            switch (Type)
+            get
             {
-                case DataType.Int:
-                    return (int)Value;
+                switch (Type)
+                {
+                    case DataType.Int:
+                        return (int)Value;
 
-                case DataType.Float:
-                    return (float)Value;
+                    case DataType.Float:
+                        return (float)Value;
 
-                default:
-                    Debug.LogError("数据转化出错");
-                    return 0;
+                    default:
+                        Debug.LogError("数据转化出错");
+                        return 0;
+                }
             }
         }
 
-        public double ToDouble()
+        public double Double
         {
-            switch (Type)
+            get
             {
-                case DataType.Int:
-                    return (int)Value;
+                switch (Type)
+                {
+                    case DataType.Int:
+                        return (int)Value;
 
-                case DataType.Float:
-                    return (float)Value;
+                    case DataType.Float:
+                        return (float)Value;
 
-                default:
-                    //Debug.LogError("数据转化出错");
-                    return 0;
+                    default:
+                        //Debug.LogError("数据转化出错");
+                        return 0;
+                }
             }
         }
 
+        public string String
+        {
+            get
+            {
+                return Value.ToString();
+            }
+        }
+        public bool Boolean
+        {
+            get { return (bool)Value; }
+        }
+
+        public Command Command
+        {
+            get
+            {
+                if (Type == DataType.Command)
+                    return (Command)Value;
+                return null;
+            }
+        }
         public new string ToString() => Value.ToString();
 
-        public Command ToCommand()
-        {
-            if (Type == DataType.Command)
-                return (Command)Value;
-            return null;
-        }
 
-        public bool ToBoolean() => (bool)Value;
 
         /// <summary>
         /// 此数据是否为空数据
         /// </summary>
         /// <returns></returns>
-        public bool isEmpty() => Value == null;
+        public bool isEmpty
+        {
+            get => Value == null;
+        }
 
         /// <summary>
         /// 此数据是否为错误数据
         /// </summary>
         /// <returns></returns>
-        public bool isError() => Type == DataType.Error;
+        public bool isError
+        {
+            get => Type == DataType.Error;
+        }
 
         /// <summary>
         /// 解析字符串，更新为解析数据
@@ -238,7 +267,7 @@ namespace ER
         {
             object v;
             Type = Parse(dataString, out v, type);
-            if (isError())
+            if (isError)
             {
                 Value = null;
                 return false;
@@ -279,7 +308,7 @@ namespace ER
             {
                 if (datas[index].Type == DataType.Int || datas[index].Type == DataType.Float || datas[index].Type == DataType.Float)
                 {
-                    return datas[index].ToInt();
+                    return datas[index].Int;
                 }
             }
             return defaultValue;
@@ -291,7 +320,7 @@ namespace ER
             {
                 if (datas[index].Type == DataType.Int || datas[index].Type == DataType.Float || datas[index].Type == DataType.Float)
                 {
-                    return datas[index].ToFloat();
+                    return datas[index].Float;
                 }
             }
             return defaultValue;
@@ -303,7 +332,7 @@ namespace ER
             {
                 if (datas[index].Type == DataType.Bool)
                 {
-                    return datas[index].ToBoolean();
+                    return datas[index].Boolean;
                 }
             }
             return defaultValue;

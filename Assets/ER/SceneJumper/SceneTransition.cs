@@ -37,7 +37,6 @@ namespace ER.SceneJumper
             get => state;
             protected set
             {
-                var tmp = state;
                 state = value;
             }
         }

@@ -23,7 +23,7 @@ namespace ER.GUI
             set => txt.text = value;
         }
 
-        private StateCellMachine<Enums.TransitionEnum> scm;
+        private StateCellMachine<StateEnums.TransitionEnum> scm;
 
         [SerializeField]
         private float lerpSpeed = 6f;
@@ -51,14 +51,14 @@ namespace ER.GUI
         public void Play()
         {
             IsVisible = true;
-            scm.ChangeState(Enums.TransitionEnum.Entering);
+            scm.TransitionTo(StateEnums.TransitionEnum.Entering);
         }
 
         public void Play(string title)
         {
             txt.text = title;
             IsVisible = true;
-            scm.ChangeState(Enums.TransitionEnum.Entering);
+            scm.TransitionTo(StateEnums.TransitionEnum.Entering);
         }
 
         private void Awake()
@@ -74,15 +74,15 @@ namespace ER.GUI
         private void InitStateMachine()
         {
             scm = new();
-            scm.CreateStates(Enums.TransitionEnum.Disable);
+            scm.CreateStates(StateEnums.TransitionEnum.Disable);
 
-            var state = scm.GetState(Enums.TransitionEnum.Disable);
+            var state = scm.GetState(StateEnums.TransitionEnum.Disable);
             state.OnUpdate = () =>
             {
                 IsVisible = false;
             };
 
-            state = scm.GetState(Enums.TransitionEnum.Entering);
+            state = scm.GetState(StateEnums.TransitionEnum.Entering);
             state.OnEnter = s =>
             {
                 anim_k = 0;
@@ -96,7 +96,7 @@ namespace ER.GUI
                 img_rect.anchorMax = new Vector2(Mathf.Clamp01(anim_k), img_rect.anchorMax.y);
                 if (anim_k > 1)
                 {
-                    scm.ChangeState(Enums.TransitionEnum.Enable);
+                    scm.TransitionTo(StateEnums.TransitionEnum.Enable);
                 }
             };
             state.OnExit = s =>
@@ -104,7 +104,7 @@ namespace ER.GUI
                 img_rect.anchorMax = new Vector2(1, img_rect.anchorMax.y);
             };
 
-            state = scm.GetState(Enums.TransitionEnum.Enable);
+            state = scm.GetState(StateEnums.TransitionEnum.Enable);
             state.OnEnter = s =>
             {
                 anim_k = 0;
@@ -115,11 +115,11 @@ namespace ER.GUI
                 txt.color = txt.color.ModifyAlpha(Mathf.Clamp01(anim_k));
                 if (anim_k > 1 + keepTime)
                 {
-                    scm.ChangeState(Enums.TransitionEnum.Exiting);
+                    scm.TransitionTo(StateEnums.TransitionEnum.Exiting);
                 }
             };
 
-            state = scm.GetState(Enums.TransitionEnum.Exiting);
+            state = scm.GetState(StateEnums.TransitionEnum.Exiting);
             state.OnEnter = s =>
             {
                 anim_k = 0;
@@ -130,7 +130,7 @@ namespace ER.GUI
                 img_rect.anchorMin = new Vector2(Mathf.Clamp01(anim_k), img_rect.anchorMin.y);
                 if (anim_k > 1)
                 {
-                    scm.ChangeState(Enums.TransitionEnum.Disable);
+                    scm.TransitionTo(StateEnums.TransitionEnum.Disable);
                 }
             };
             state.OnExit = s =>

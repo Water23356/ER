@@ -379,9 +379,9 @@ namespace ER
             {
                 bool status = d.NextBool();
                 Data d1 = d.NextData();
-                if (d1.isError()) d1 = Data.Empty;
+                if (d1.isError) d1 = Data.Empty;
                 Data d2 = d.NextData();
-                if (d2.isError()) d2 = Data.Empty;
+                if (d2.isError) d2 = Data.Empty;
                 if(status)
                 {
                     return d1;
@@ -456,7 +456,7 @@ namespace ER
                 switch (cparams[i].Type)
                 {
                     case DataType.Command:
-                        cparams[i] = Execute(cparams[i].ToCommand(), dic);
+                        cparams[i] = Execute(cparams[i].Command, dic);
                         break;
 
                     case DataType.Prop:

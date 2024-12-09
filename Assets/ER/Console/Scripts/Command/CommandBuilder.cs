@@ -94,7 +94,7 @@ namespace ER
                 if (isOver)
                 {
                     parsed.AddCommand(PushOver());
-                    scm.ChangeState(ParseMode.None);
+                    scm.TransitionTo(ParseMode.None);
                     return;
                 }
                 if (c == ' ')
@@ -111,19 +111,19 @@ namespace ER
                 }
                 else if (c == '\\')
                 {
-                    scm.ChangeState(ParseMode.Escape);
+                    scm.TransitionTo(ParseMode.Escape);
                 }
                 else if (c == '<')
                 {
-                    scm.ChangeState(ParseMode.Text);
+                    scm.TransitionTo(ParseMode.Text);
                 }
                 else if (c == '[')
                 {
-                    scm.ChangeState(ParseMode.Command);
+                    scm.TransitionTo(ParseMode.Command);
                 }
                 else if (c == '{')
                 {
-                    scm.ChangeState(ParseMode.Prop);
+                    scm.TransitionTo(ParseMode.Prop);
                 }
                 else
                 {
@@ -155,7 +155,7 @@ namespace ER
                         colt.Append(c);
                     }
                 }
-                scm.ChangeState(lastMode);
+                scm.TransitionTo(lastMode);
             };
 
             state = scm.GetState(ParseMode.Text);
@@ -170,7 +170,7 @@ namespace ER
                 {
                     if (c == '\\')
                     {
-                        scm.ChangeState(ParseMode.Escape);
+                        scm.TransitionTo(ParseMode.Escape);
                     }
                     else if (c == '<')
                     {
@@ -182,7 +182,7 @@ namespace ER
                         if (deepCount == 0)
                         {
                             BuildField(DataType.String);
-                            scm.ChangeState(ParseMode.Normal);
+                            scm.TransitionTo(ParseMode.Normal);
                         }
                         else
                         {
@@ -196,7 +196,7 @@ namespace ER
                     }
                     return;
                 }
-                scm.ChangeState(ParseMode.Normal);
+                scm.TransitionTo(ParseMode.Normal);
             };
 
             state = scm.GetState(ParseMode.Command);
@@ -211,7 +211,7 @@ namespace ER
                 {
                     if (c == '\\')
                     {
-                        scm.ChangeState(ParseMode.Escape);
+                        scm.TransitionTo(ParseMode.Escape);
                     }
                     else if (c == '[')
                     {
@@ -223,7 +223,7 @@ namespace ER
                         if (deepCount == 0)
                         {
                             BuildCommandField();
-                            scm.ChangeState(ParseMode.Normal);
+                            scm.TransitionTo(ParseMode.Normal);
                         }
                         else
                         {
@@ -237,7 +237,7 @@ namespace ER
                     }
                     return;
                 }
-                scm.ChangeState(ParseMode.Normal);
+                scm.TransitionTo(ParseMode.Normal);
             };
 
             state = scm.GetState(ParseMode.Prop);
@@ -252,12 +252,12 @@ namespace ER
                 {
                     if (c == '\\')
                     {
-                        scm.ChangeState(ParseMode.Escape);
+                        scm.TransitionTo(ParseMode.Escape);
                     }
                     else if (c == '}')
                     {
                         BuildField(DataType.Prop);
-                        scm.ChangeState(ParseMode.Normal);
+                        scm.TransitionTo(ParseMode.Normal);
                     }
                     else
                     {
@@ -265,7 +265,7 @@ namespace ER
                     }
                     return;
                 }
-                scm.ChangeState(ParseMode.Normal);
+                scm.TransitionTo(ParseMode.Normal);
             };
         }
 
@@ -355,7 +355,7 @@ namespace ER
             index = 0;
             originText = text;
             parsed = new CommandRunes();
-            scm.ChangeState(ParseMode.Normal);
+            scm.TransitionTo(ParseMode.Normal);
             while (!isOver)
             {
                 scm.Update();
@@ -370,7 +370,7 @@ namespace ER
             index = 0;
             originText = text;
             parsed = new CommandRunes();
-            scm.ChangeState(ParseMode.Normal);
+            scm.TransitionTo(ParseMode.Normal);
             while (!isOver)
             {
                 scm.Update();

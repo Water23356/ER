@@ -354,7 +354,7 @@ battle player health {int,0}
         public int NextInt(int defaultValue = 0)
         {
             int value = Data.GetIntData(parameters, index,
-                area.GetCommandParam(index)?.defaultValue.ToInt() ?? defaultValue);
+                area.GetCommandParam(index)?.defaultValue.Int ?? defaultValue);
             index++;
             return value;
         }
@@ -362,7 +362,7 @@ battle player health {int,0}
         public string NextText(string defaultValue = "")
         {
             string value = Data.GetTextData(parameters, index,
-                area.GetCommandParam(index)?.defaultValue.ToString() ?? defaultValue);
+                area.GetCommandParam(index)?.defaultValue.String ?? defaultValue);
             index++;
             return value;
         }
@@ -372,7 +372,7 @@ battle player health {int,0}
             //Debug.Log("类型: " + area.GetCommandParam(index).defaultValue.Type + "封装类型: " + area.GetCommandParam(index).type);
             //Debug.Log("默认值: " + area.GetCommandParam(index).defaultValue);
             bool value = Data.GetBoolData(parameters, index,
-                area.GetCommandParam(index)?.defaultValue.ToBoolean() ?? defaultValue);
+                area.GetCommandParam(index)?.defaultValue.Boolean ?? defaultValue);
             index++;
             return value;
         }
@@ -380,7 +380,7 @@ battle player health {int,0}
         public float NextFloat(float defaultValue = 0f)
         {
             float value = Data.GetFloatData(parameters, index,
-                area.GetCommandParam(index)?.defaultValue.ToFloat() ?? defaultValue);
+                area.GetCommandParam(index)?.defaultValue.Float ?? defaultValue);
             index++;
             return value;
         }

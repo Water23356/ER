@@ -17,7 +17,7 @@ namespace ER.GUI
         public float ay = 100f;
         public Vector2 startPos;
 
-        private StateCellMachine<Enums.SwithEnum> scm;
+        private StateCellMachine<StateEnums.SwithEnum> scm;
 
         public void SetDamage(float damage)
         {
@@ -38,7 +38,7 @@ namespace ER.GUI
 
         private void OnEnable()
         {
-            scm.ChangeState(Enums.SwithEnum.Enable);
+            scm.TransitionTo(StateEnums.SwithEnum.Enable);
         }
 
         private void Update()
@@ -48,16 +48,16 @@ namespace ER.GUI
 
         private void InitStateMachine()
         {
-            scm = new StateCellMachine<Enums.SwithEnum>();
-            scm.CreateStates(Enums.SwithEnum.Disable);
+            scm = new StateCellMachine<StateEnums.SwithEnum>();
+            scm.CreateStates(StateEnums.SwithEnum.Disable);
 
-            var state = scm.GetState(Enums.SwithEnum.Disable);
+            var state = scm.GetState(StateEnums.SwithEnum.Disable);
             state.OnEnter = s =>
             {
                 Destroy();
             };
 
-            state = scm.GetState(Enums.SwithEnum.Enable);
+            state = scm.GetState(StateEnums.SwithEnum.Enable);
             state.OnEnter = s =>
             {
                 anim_k = 1;
@@ -73,7 +73,7 @@ namespace ER.GUI
 
                 if (anim_k < 0)
                 {
-                    scm.ChangeState(Enums.SwithEnum.Disable);
+                    scm.TransitionTo(StateEnums.SwithEnum.Disable);
                 }
             };
         }

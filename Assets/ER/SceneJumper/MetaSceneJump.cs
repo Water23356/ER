@@ -27,10 +27,15 @@ namespace ER.SceneJumper
 
         public SceneJumpInfo GetInfo()
         {
+            string[][] dics = new string[depends.Length][];
+            for(int i=0;i<dics.Length;i++)
+            {
+                dics[i] = depends[i].pack;
+            }
             return new SceneJumpInfo
             {
                 loadMode = loadMode,
-                depends = depends,
+                depends = dics,
                 aimScene = registryName,
                 statusText = statusText
             };

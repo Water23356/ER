@@ -9,13 +9,13 @@ using UnityEngine;
 
 namespace ER.StateMachine
 {
-    public class StateCellMachine
+    public class StateCellMachine<T> where T : Enum
     {
-        private Dictionary<int, StateCell> states = new Dictionary<int, StateCell>();
-        private StateCell m_currentState;
-        private StateCell m_defaultState;
+        private Dictionary<T, StateCell<T>> states = new Dictionary<T, StateCell<T>>();
+        private StateCell<T> m_currentState;
+        private StateCell<T> m_defaultState;
 
-        public StateCell defaultState
+        public StateCell<T> defaultState
         {
             get => m_defaultState;
             set
@@ -33,26 +33,23 @@ namespace ER.StateMachine
             }
         }
 
-        public StateCell currentState
+        public StateCell<T> currentState
         {
             get { return m_currentState; }
             protected set => m_currentState = value;
         }
 
-        #region 状态常规管理
-
         /// <summary>
         /// 根据指定枚举类型创建状态机模板, 每个枚举值都会有一个对应的状态
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        public void CreateStates<T>(T defaultState) where T : Enum
+        public void CreateStates(T defaultState)
         {
-            int defaultIndex = (int)(object)defaultState;
-            foreach (int value in Enum.GetValues(typeof(T)))
+            foreach (T value in Enum.GetValues(typeof(T)))
             {
-                var state = new StateCell(value);
+                var state = new StateCell<T>(value);
                 RegistryState(state);
-                if (value == defaultIndex)
+                if (value.Equals(defaultState))
                 {
                     this.defaultState = state;
                     currentState = state;
@@ -60,26 +57,7 @@ namespace ER.StateMachine
             }
         }
 
-        /// <summary>
-        /// 根据指定枚举类型创建状态机模板, 每个枚举值都会有一个对应的状态
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        public void CreateStates<T>() where T : Enum
-        {
-            int defaultIndex = (int)(object)defaultState;
-            foreach (int value in Enum.GetValues(typeof(T)))
-            {
-                var state = new StateCell(value);
-                RegistryState(state);
-                if (value == 0)
-                {
-                    this.defaultState = state;
-                    currentState = state;
-                }
-            }
-        }
-
-        private void RegistryState(StateCell state)
+        private void RegistryState(StateCell<T> state)
         {
             states[state.StateIndex] = state;
         }
@@ -88,7 +66,7 @@ namespace ER.StateMachine
         /// 跳转至指定状态, 如果目标状态不存在则保持当前状态
         /// </summary>
         /// <param name="state"></param>
-        public void TransitionTo(int state)
+        public void TransitionTo(T state)
         {
             var current = currentState;
             var next = GetState(state);
@@ -107,32 +85,20 @@ namespace ER.StateMachine
             next?.Enter(current);
         }
 
-        public void TransitionTo<T>(T stateIndex) where T : Enum
-        {
-            TransitionTo((int)(object)stateIndex);
-        }
-
-        #endregion 状态常规管理
-
         /// <summary>
         /// 跳转到指定状态, 不做状态过渡
         /// </summary>
-        public void SkipTo<T>(T state) where T : Enum
+        public void SkipTo(T state)
         {
             var next = GetState(state);
             currentState = next;
         }
 
-        public StateCell GetState(int stateIndex)
+        public StateCell<T> GetState(T stateIndex)
         {
-            if (states.TryGetValue(stateIndex, out StateCell state)) return state;
+            if (states.TryGetValue(stateIndex, out StateCell<T> state)) return state;
             //Debug.LogError($"指定状态不存在: {stateIndex}");
             return null;
-        }
-
-        public StateCell GetState<T>(T stateIndex) where T : Enum
-        {
-            return GetState((int)(object)stateIndex);
         }
 
         /// <summary>
@@ -141,7 +107,7 @@ namespace ER.StateMachine
         /// <typeparam name="T"></typeparam>
         /// <param name="stateIndex"></param>
         /// <returns></returns>
-        public T CurrentState<T>() where T : Enum
+        public T CurrentState()
         {
             if (currentState == null)
             {
@@ -150,6 +116,7 @@ namespace ER.StateMachine
             }
             return (T)(object)currentState.StateIndex;
         }
+
         public void Update()
         {
 #if DISPLAY_STATUS
@@ -167,7 +134,7 @@ namespace ER.StateMachine
             currentState = null;
         }
 
-        public StateCellMachine(StateCell defaultState)
+        public StateCellMachine(StateCell<T> defaultState)
         {
             this.defaultState = defaultState;
             currentState = defaultState;

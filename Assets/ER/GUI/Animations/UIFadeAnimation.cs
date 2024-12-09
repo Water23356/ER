@@ -12,7 +12,7 @@ namespace ER.GUI.Animations
     public class UIFadeAnimation : MonoBehaviour
     {
         private CanvasGroup canvasGroup;
-        private StateCellMachine<Enums.TransitionEnum> scm;
+        private StateCellMachine<StateEnums.TransitionEnum> scm;
 
         [DisplayLabel("插值速度")]
         [SerializeField]
@@ -79,20 +79,20 @@ namespace ER.GUI.Animations
 
         private void InitStateMachine()
         {
-            scm = new StateCellMachine<Enums.TransitionEnum>();
-            scm.CreateStates(Enums.TransitionEnum.Disable);
+            scm = new StateCellMachine<StateEnums.TransitionEnum>();
+            scm.CreateStates(StateEnums.TransitionEnum.Disable);
 
-            var state = scm.GetState(Enums.TransitionEnum.Disable);
+            var state = scm.GetState(StateEnums.TransitionEnum.Disable);
             state.OnEnter = s =>
             {
                 enabled = false;
                 onDisable?.Invoke();
             };
 
-            state = scm.GetState(Enums.TransitionEnum.Entering);
+            state = scm.GetState(StateEnums.TransitionEnum.Entering);
             state.OnEnter = s =>
             {
-                if (s.StateIndex != Enums.TransitionEnum.Entering && s.StateIndex != Enums.TransitionEnum.Exiting)
+                if (s.StateIndex != StateEnums.TransitionEnum.Entering && s.StateIndex != StateEnums.TransitionEnum.Exiting)
                 {
                     anim_k = 0;
                 }
@@ -104,20 +104,20 @@ namespace ER.GUI.Animations
 
                 if (anim_k > 1)
                 {
-                    scm.ChangeState(Enums.TransitionEnum.Enable);
+                    scm.TransitionTo(StateEnums.TransitionEnum.Enable);
                 }
             };
 
-            state = scm.GetState(Enums.TransitionEnum.Enable);
+            state = scm.GetState(StateEnums.TransitionEnum.Enable);
             state.OnEnter = s =>
             {
                 onEnable?.Invoke();
             };
 
-            state = scm.GetState(Enums.TransitionEnum.Exiting);
+            state = scm.GetState(StateEnums.TransitionEnum.Exiting);
             state.OnEnter = s =>
             {
-                if (s.StateIndex != Enums.TransitionEnum.Entering && s.StateIndex != Enums.TransitionEnum.Exiting)
+                if (s.StateIndex != StateEnums.TransitionEnum.Entering && s.StateIndex != StateEnums.TransitionEnum.Exiting)
                 {
                     anim_k = 1;
                 }
@@ -129,7 +129,7 @@ namespace ER.GUI.Animations
 
                 if (anim_k < 0)
                 {
-                    scm.ChangeState(Enums.TransitionEnum.Disable);
+                    scm.TransitionTo(StateEnums.TransitionEnum.Disable);
                 }
             };
         }
@@ -138,13 +138,13 @@ namespace ER.GUI.Animations
         public void PlayDisplay()
         {
             enabled = true;
-            scm.ChangeState(Enums.TransitionEnum.Entering);
+            scm.TransitionTo(StateEnums.TransitionEnum.Entering);
         }
 
         [ContextMenu("播放淡出")]
         public void PlayHiden()
         {
-            scm.ChangeState(Enums.TransitionEnum.Exiting);
+            scm.TransitionTo(StateEnums.TransitionEnum.Exiting);
         }
     }
 }

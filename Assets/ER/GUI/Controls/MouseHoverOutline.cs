@@ -22,15 +22,15 @@ namespace ER.GUI
             base.Awake();
         }
 
-        protected override void InitSateMachine(StateCellMachine<Enums.TransitionEnum> scm)
+        protected override void InitSateMachine(StateCellMachine<StateEnums.TransitionEnum> scm)
         {
-            var state = scm.GetState(Enums.TransitionEnum.Disable);
+            var state = scm.GetState(StateEnums.TransitionEnum.Disable);
             state.OnEnter = s =>
             {
                 outline.enabled = false;
             };
 
-            state = scm.GetState(Enums.TransitionEnum.Entering);
+            state = scm.GetState(StateEnums.TransitionEnum.Entering);
             state.OnEnter = s =>
             {
                 outline.enabled = true;
@@ -42,14 +42,14 @@ namespace ER.GUI
                 outline.effectColor = outline.effectColor.ModifyAlpha(anim_k * aimAlpha);
                 if (anim_k > 1)
                 {
-                    scm.ChangeState(Enums.TransitionEnum.Enable);
+                    scm.TransitionTo(StateEnums.TransitionEnum.Enable);
                 }
             };
 
 
-            state = scm.GetState(Enums.TransitionEnum.Enable);
+            state = scm.GetState(StateEnums.TransitionEnum.Enable);
 
-            state = scm.GetState(Enums.TransitionEnum.Exiting);
+            state = scm.GetState(StateEnums.TransitionEnum.Exiting);
             state.OnEnter = s =>
             {
                 anim_k = 0f;
@@ -60,7 +60,7 @@ namespace ER.GUI
                 outline.effectColor = outline.effectColor.ModifyAlpha((1 - anim_k) * aimAlpha);
                 if (anim_k > 1)
                 {
-                    scm.ChangeState(Enums.TransitionEnum.Enable);
+                    scm.TransitionTo(StateEnums.TransitionEnum.Enable);
                 }
             };
         }

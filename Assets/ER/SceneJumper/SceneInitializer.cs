@@ -5,7 +5,7 @@ namespace ER.SceneJumper
 {
     public abstract class SceneInitializer : MonoBehaviour
     {
-        private bool autoDestroy = true;
+        public bool autoDestroy = true;
 
         public SceneInitializer(bool autoDestroy)
         {

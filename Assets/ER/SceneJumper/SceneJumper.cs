@@ -82,9 +82,21 @@ namespace ER.SceneJumper
 
     public struct SceneJumpInfo
     {
+        /// <summary>
+        /// 加载模式
+        /// </summary>
         public LoadSceneMode loadMode;
+        /// <summary>
+        /// 目标场景的注册名
+        /// </summary>
         public RegistryName aimScene;
-        public MetaDic[] depends;
+        /// <summary>
+        /// 依赖的资源包, 每个资源包又包含着一系列的资源
+        /// </summary>
+        public string[][] depends;
+        /// <summary>
+        /// 加载依赖资源时显示的文本 (相当于资源包的名称)
+        /// </summary>
         public string[] statusText;
     }
 }
