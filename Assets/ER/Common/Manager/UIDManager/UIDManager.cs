@@ -16,14 +16,14 @@ namespace ER
         /// <summary>
         /// 加载本地UID资源时触发的事件, 使用本接口来实现不同情况下的 资源加载, 本类并不提供具体的 load 反序列化功能
         /// </summary>
-        public static event Action<ObjectUIDInfo[]> OnLoadEvent;
+        public static event Action<UIDObjectInfo[]> OnLoadEvent;
 
-        private Dictionary<UID, IUID> items = new Dictionary<UID, IUID>();
+        private Dictionary<UID, IUIDObject> items = new Dictionary<UID, IUIDObject>();
         /// <summary>
         /// 注册uuid对象
         /// </summary>
         /// <param name="item"></param>
-        public void Registry(IUID item)
+        public void Registry(IUIDObject item)
         {
             Debug.Log($"UID注册:{item.UUID}");
             items[item.UUID]=item;
@@ -32,7 +32,7 @@ namespace ER
         {
             items.Clear();
         }
-        public void Unregistry(IUID item)
+        public void Unregistry(IUIDObject item)
         {
             Debug.Log($"UID注销:{item.UUID}");
             if (items.ContainsKey(item.UUID))
@@ -56,7 +56,7 @@ namespace ER
         {
             return items.ContainsKey(uuid);
         }
-        public bool Contains(IUID item)
+        public bool Contains(IUIDObject item)
         {
             return (items.ContainsKey(item.UUID));
         }
@@ -65,9 +65,9 @@ namespace ER
         /// </summary>
         /// <param name="className"></param>
         /// <returns></returns>
-        public IUID[] GetWithClassName(string className)
+        public IUIDObject[] GetWithClassName(string className)
         {
-            List<IUID> uids = new List<IUID>();
+            List<IUIDObject> uids = new List<IUIDObject>();
             foreach (var pair in items)
             {
                 if (pair.Key.ClassName == className)
@@ -82,18 +82,18 @@ namespace ER
         /// </summary>
         /// <param name="uuid"></param>
         /// <returns></returns>
-        public IUID Get(UID uuid)
+        public IUIDObject Get(UID uuid)
         {
-            if (items.TryGetValue(uuid, out IUID item))
+            if (items.TryGetValue(uuid, out IUIDObject item))
             {
                 return item;
             }
             Debug.Log($"目标UID对象不存在:{uuid}");
             return null;
         }
-        public T Get<T>(UID uuid) where T : class, IUID
+        public T Get<T>(UID uuid) where T : class, IUIDObject
         {
-            IUID item = Get(uuid);
+            IUIDObject item = Get(uuid);
             if (item == null)
             {
                 return null;
@@ -104,7 +104,7 @@ namespace ER
         /// 获取所有的UID对象
         /// </summary>
         /// <returns></returns>
-        public IUID[] GetAll()
+        public IUIDObject[] GetAll()
         {
             return items.Values.ToArray();
         }
@@ -113,9 +113,9 @@ namespace ER
         /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>
-        public IUID[] GetAll(System.Type type)
+        public IUIDObject[] GetAll(System.Type type)
         {
-            List<IUID> uids = new List<IUID>();
+            List<IUIDObject> uids = new List<IUIDObject>();
             foreach (var v in items.Values)
             {
                 if (v.GetType() == type)
@@ -155,10 +155,10 @@ namespace ER
         /// </summary>
         public void Save(string savePath)
         {
-            List<ObjectUIDInfo> datas = new List<ObjectUIDInfo>();
+            List<UIDObjectInfo> datas = new List<UIDObjectInfo>();
             foreach (var item in items)
             {
-                ObjectUIDInfo data = item.Value.Serialize();
+                UIDObjectInfo data = item.Value.Serialize();
                 if (!data.IsEmpty())
                 {
                     datas.Add(data);
@@ -181,19 +181,19 @@ namespace ER
         /// 读取储存在本地的uid信息
         /// </summary>
         /// <returns></returns>
-        private ObjectUIDInfo[] LoadUIDInfo(string savePath)
+        private UIDObjectInfo[] LoadUIDInfo(string savePath)
         {
             string text = File.ReadAllText(savePath);
-            ObjectUIDInfo[] datas = JsonConvert.DeserializeObject<ObjectUIDInfo[]>(text);
+            UIDObjectInfo[] datas = JsonConvert.DeserializeObject<UIDObjectInfo[]>(text);
             return datas;
         }
 
-        public static void Save(IUID[] uids, string savePath)
+        public static void Save(IUIDObject[] uids, string savePath)
         {
-            List<ObjectUIDInfo> datas = new List<ObjectUIDInfo>();
+            List<UIDObjectInfo> datas = new List<UIDObjectInfo>();
             foreach (var item in uids)
             {
-                ObjectUIDInfo data = item.Serialize();
+                UIDObjectInfo data = item.Serialize();
                 if (!data.IsEmpty())
                 {
                     datas.Add(data);

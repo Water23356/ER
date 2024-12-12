@@ -10,20 +10,6 @@ namespace ER
 {
     public static class Utils
     {
-        /// <summary>
-        /// 比较离自身更近的, 如果a比b近则返回true
-        /// </summary>
-        /// <param name="a"></param>
-        /// <param name="b"></param>
-        /// <param name="self"></param>
-        /// <returns></returns>
-        public static bool ComparerNearest(Entity a, Entity b, Transform self)
-        {
-            float pa = ((Vector2)a.transform.position - (Vector2)self.position).magnitude;
-            float pb = ((Vector2)b.transform.position - (Vector2)self.position).magnitude;
-            return pa < pb;
-        }
-
         public static void InvokeUnscaled(this MonoBehaviour owner, Action method, float delay)
         {
             TimerManager.UnscaledInvoke(method, delay);
@@ -402,7 +388,7 @@ namespace ER
         /// 将该uid对象注册进管理器
         /// </summary>
         /// <param name="obj"></param>
-        public static void Registry(this IUID obj)
+        public static void Registry(this IUIDObject obj)
         {
             UIDManager.Instance.Registry(obj);
         }
@@ -411,7 +397,7 @@ namespace ER
         /// 将该uid对象从管理器中注销
         /// </summary>
         /// <param name="obj"></param>
-        public static void Unregistry(this IUID obj)
+        public static void Unregistry(this IUIDObject obj)
         {
             UIDManager.Instance.Unregistry(obj);
         }

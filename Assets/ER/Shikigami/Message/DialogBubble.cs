@@ -1,6 +1,4 @@
-﻿using ER.Control;
-using ER.UI;
-using System;
+﻿using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
