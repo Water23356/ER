@@ -15,12 +15,18 @@ namespace ER.Entity2D
         }
 
         public ControllerAgent agent { get; set; }
-        public EntityAgent entity { get=>agent?.entity; }
+        public EntityAgent entity { get => agent?.entity; }
 
+        /// <summary>
+        /// 功能初始化
+        /// </summary>
         public abstract void Init();
 
-        public virtual void Start() { }
-        public virtual void OnDestroy() { }
 
+        public virtual void Start()
+        { }
+
+        public virtual void OnDestroy()
+        { }
     }
 }

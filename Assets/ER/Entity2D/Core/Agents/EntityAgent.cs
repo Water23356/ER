@@ -37,6 +37,8 @@ namespace ER.Entity2D.Agents
         public HurtHandler hurtHandler { get => m_hurtHandler; set => m_hurtHandler = value; }
         public Rigidbody2D rigidbody => m_rigidbody;
 
+        public Vector2 position { get => transform.position; set => transform.position = value; }
+
         private void Awake()
         {
             if (actAgent == null) actAgent = GetComponent<ActionAgent>();

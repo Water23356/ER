@@ -1,7 +1,7 @@
 ﻿// Ignore Spelling: Unregistry
 
 #define ON_WARNING
-#define DISPLAY_STATUS
+//#define DISPLAY_STATUS
 
 using System;
 using System.Collections.Generic;

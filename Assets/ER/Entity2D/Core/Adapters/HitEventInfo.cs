@@ -12,7 +12,7 @@ namespace ER.Entity2D
         /// <summary>
         /// 伤害值
         /// </summary>
-        public int damage;
+        public float damage;
 
         /// <summary>
         /// 伤害标签
@@ -22,7 +22,7 @@ namespace ER.Entity2D
         /// <summary>
         /// 造成受击硬直时间
         /// </summary>
-        public float hitTime;
+        public float hitingTime;
     }
 
     /// <summary>
@@ -37,19 +37,21 @@ namespace ER.Entity2D
         /// <summary>
         /// 实际受到的伤害值
         /// </summary>
-        public int damage;
+        public float damage;
 
         /// <summary>
         /// 处理标志
         /// </summary>
         public HitHandleFlag handleTag;
+
         /// <summary>
         /// 是否为空的(无效)反馈信息
         /// </summary>
         public bool IsEmpty
         {
-            get=> handleTag == HitHandleFlag.None;
+            get => handleTag == HitHandleFlag.None;
         }
+
         /// <summary>
         /// 无效反馈信息
         /// </summary>
@@ -57,7 +59,6 @@ namespace ER.Entity2D
         {
             get => new HitedResponseInfo { handleTag = HitHandleFlag.None };
         }
-
     }
 
     /// <summary>

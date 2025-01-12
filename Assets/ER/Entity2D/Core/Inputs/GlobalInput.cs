@@ -15,8 +15,6 @@ public class GlobalInput
             }
             return action;
         }
-
-        
     }
 
 }

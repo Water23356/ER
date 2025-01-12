@@ -12,11 +12,14 @@ namespace ER.Entity2D
     [Serializable]
     public class HitSourceGroup: IHitSource
     {
-        private List<HitSource> handlers = new List<HitSource>();
+        private List<IHitSource> handlers = new List<IHitSource>();
 
         [DisplayLabel("事件源")]
         [SerializeField]
         private HitSource[] requires;
+
+        private bool m_enabled;
+        public bool enabled { get => m_enabled; set => m_enabled=value; }
 
         /// <summary>
         /// 当触发攻击时(成功击中实体)触发的事件;
@@ -24,7 +27,9 @@ namespace ER.Entity2D
         /// 使用该事件接受信息, 不应向受击者发送伤害信息, 如需要发送信息, 应当使用 HitEventHandler 接口
         /// </code>
         /// </summary>
-        public event Action<EntityAgent> onHit;
+        public event Action<HurtHandler> onHit;
+
+        
 
         public void Init()
         {
@@ -34,18 +39,18 @@ namespace ER.Entity2D
             }
         }
 
-        public void AddSource(HitSource handler)
+        public void AddSource(IHitSource handler)
         {
             handlers.Remove(handler);
             handlers.Add(handler);
         }
 
-        public void RemoveSource(HitSource handler)
+        public void RemoveSource(IHitSource handler)
         {
             handlers.Remove(handler);
         }
 
-        public void SendHitEvent(EntityAgent hitedEntity)
+        public void SendHitEvent(HurtHandler hitedEntity)
         {
             onHit?.Invoke(hitedEntity);
             foreach (var handler in handlers)

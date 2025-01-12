@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using ER.ForEditor;
+using UnityEngine;
 
 namespace ER
 {
@@ -30,6 +31,8 @@ namespace ER
     public class MonoSingleton<T> : MonoBehaviour where T : class, new()
     {
         private static T instance;
+        [SerializeField]
+        [DisplayLabel("不销毁")]
         protected bool dontDestroyed = true;
 
         public static T Instance
@@ -47,16 +50,17 @@ namespace ER
         /// <summary>
         /// 替换单例对象为自身，如果已存在则销毁自身
         /// </summary>
-        protected void PasteInstance()
+        protected bool PasteInstance()
         {
             if (instance == null)
             {
                 instance = this as T;
                 if (dontDestroyed)
                     DontDestroyOnLoad(gameObject);
-                return;
+                return true;
             }
             Destroy(gameObject);
+            return false;
         }
 
         protected virtual void Awake()
@@ -80,7 +84,7 @@ namespace ER
             {
                 if (isShuttingDown)
                 {
-                    Debug.Log($"{nameof(T)} 已经被销毁, 不再支持访问");
+                    Debug.Log($"{typeof(T)} 已经被销毁, 不再支持访问");
                     return null; // 避免在应用关闭时创建新实例
                 }
 
@@ -95,9 +99,9 @@ namespace ER
         }
 
         /// <summary>
-        /// 替换单例对象为自身，如果已存在则销毁自身
+        /// 替换单例对象为自身，| 如果已存在则销毁自身并返回false
         /// </summary>
-        protected void PasteInstance()
+        protected bool PasteInstance()
         {
             if (instance == null)
             {
@@ -107,7 +111,9 @@ namespace ER
             else if (instance != this)
             {
                 Destroy(gameObject); // 销毁重复的实例
+                return false;
             }
+            return true;
         }
 
         protected virtual void Awake()

@@ -34,12 +34,14 @@ namespace ER.Entity2D
 
         public void AddSource(HitReplySource source)
         {
+            if (source == null) return;
             sources.Add(source);
             source.handler = this;
         }
 
         public void RemoveSource(HitReplySource source)
         {
+            if (source == null) return;
             sources.Remove(source);
             source.handler = null;
         }

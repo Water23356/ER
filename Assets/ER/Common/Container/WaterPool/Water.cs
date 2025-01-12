@@ -5,7 +5,7 @@ namespace ER
     /// <summary>
     /// 对象池内容物
     /// </summary>
-    public abstract class Water : MonoBehaviour,IWater
+    public abstract class Water : MonoBehaviour, IWater
     {
         /// <summary>
         /// 所属池子对象
@@ -23,26 +23,24 @@ namespace ER
         {
             IWater.Destroy(this);
         }
+
         public virtual void OnGetFormPool()
         {
         }
-
-        /// <summary>
-        /// 重置状态
-        /// </summary>
-        public virtual void ResetState()
-        { }
 
         /// <summary>
         /// 自身返回对象池时触发的函数
         /// </summary>
         public virtual void OnHide()
         { }
+
+        public virtual void ResetState()
+        { }
     }
 
     public interface IWater
     {
-        public WaterPool Pool { get; set ; }
+        public WaterPool Pool { get; set; }
         public GameObject GameObject { get; }
         public Transform Transform { get => GameObject.transform; }
 
@@ -50,18 +48,22 @@ namespace ER
         /// 重置状态
         /// </summary>
         public void ResetState();
+
         /// <summary>
         /// 从池中取出时
         /// </summary>
         public void OnGetFormPool();
+
         /// <summary>
         /// 返回对象池时
         /// </summary>
         public void OnHide();
+
         public void Destroy()
         {
             Destroy(this);
         }
+
         /// <summary>
         /// 销毁(返回对象池)
         /// </summary>

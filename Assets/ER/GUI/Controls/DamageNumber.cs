@@ -1,8 +1,8 @@
-using ER;
 using ER.StateMachine;
+using Neo.IronLua;
+using System;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace ER.GUI
 {
@@ -12,21 +12,21 @@ namespace ER.GUI
         private TMP_Text txt;
         private float anim_k;
 
-        public float offset_x_speed = 50f;
-        public float speed_y = 100f;
-        public float ay = 100f;
+        public float offset_x_speed = 50f;  //x速度偏移量
+        public float speed_y = 100f;    //y初速度
+        public float ay = 100f; //y加速度
         public Vector2 startPos;
 
         private StateCellMachine<StateEnums.SwithEnum> scm;
 
-        public void SetDamage(float damage)
+        public void SetDamage(float damage, int precision = 1)
         {
-            txt.text = damage.ToString();
+            txt.text = string.Format(Math.Round(damage, precision).ToString());
         }
 
-        public void SetDamage(float damage, Color color)
+        public void SetDamage(float damage, Color color, int precision = 1)
         {
-            txt.text = damage.ToString();
+            txt.text = string.Format(Math.Round(damage, precision).ToString());
             txt.color = color;
         }
 
@@ -38,6 +38,7 @@ namespace ER.GUI
 
         private void OnEnable()
         {
+            //Debug.Log(startPos);
             scm.TransitionTo(StateEnums.SwithEnum.Enable);
         }
 
@@ -66,8 +67,8 @@ namespace ER.GUI
             {
                 anim_k -= Time.deltaTime;
                 float k = Mathf.Clamp01(anim_k);
-
-                transform.position = startPos + new Vector2(offset_x_speed * k, speed_y * k - ay * k * k);
+                float p = 1 - k;
+                transform.position = startPos + new Vector2(offset_x_speed * p, speed_y * p - ay * p * p);
                 transform.localScale = Vector3.one * (1 + k * 0.5f);
                 txt.color = txt.color.ModifyAlpha(k);
 

@@ -12,7 +12,7 @@ namespace ER.Entity2D
 
         public HurtHandler handler
         {
-            get => handler; set => handler = value;
+            get => m_handler; set => m_handler = value;
         }
 
         public EntityAgent entity => handler?.entity;

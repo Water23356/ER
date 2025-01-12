@@ -74,9 +74,9 @@ namespace ER
         #region 功能函数
 
         [ContextMenu("取出一个对象")]
-        private void GetObject()
+        private void _GetObject()
         {
-            GetObject(true).Transform.SetParent(null);
+            GetObject().Transform.SetParent(null);
         }
 
         /// <summary>
@@ -84,7 +84,7 @@ namespace ER
         /// </summary>
         /// <param name="reset">是否自动重置为默认状态</param>
         /// <returns></returns>
-        public IWater GetObject(bool reset = true)
+        public IWater GetObject()
         {
             if (Prefab == null) return null;
             if (Pool.Count > 0)
@@ -93,10 +93,6 @@ namespace ER
                 Pool.RemoveFirst();
                 obj.Transform.SetParent(null);
                 obj.GameObject.SetActive(true);
-                if (reset)
-                {
-                    obj.ResetState();
-                }
                 obj.OnGetFormPool();
                 return obj;
             }
@@ -111,7 +107,7 @@ namespace ER
                         water.Pool = this;
                         ReturnObject(water);
                     }
-                    return GetObject(reset);
+                    return GetObject();
                 }
                 Debug.LogWarning("对象池为空，无法获取新对象！");
                 return null;

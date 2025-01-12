@@ -1,13 +1,13 @@
 ﻿using ER.ForEditor;
 using UnityEngine;
 
-namespace ER.STG
+namespace ER.Entity2D.Components
 {
     /// <summary>
     /// 自动根据速度修正方向
     /// </summary>
     [RequireComponent(typeof(Rigidbody2D))]
-    public class AutoFixDir : MonoBehaviour
+    public class AutoFixDirRigidbody : MonoBehaviour
     {
         [DisplayLabel("默认朝向")]
         [SerializeField]

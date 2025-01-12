@@ -13,7 +13,7 @@ namespace ER.Entity2D
         /// </summary>
         /// <param name="hitedEntity">受击实体</param>
         /// <param name="selfEntity">攻击实体</param>
-        public abstract void SendHitEvent(EntityAgent hitedEntity);
+        public abstract void SendHitEvent(HurtHandler hitedEntity);
 
         public void HandleResponse(HitedResponseInfo info)
         {

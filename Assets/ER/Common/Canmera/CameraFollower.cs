@@ -19,8 +19,13 @@ namespace ER
 
         private void LateUpdate()
         {
-            // 线性插值平滑地移动到目标位置
-            transform.position = Utils.LerpForTime(transform.position, target.position + offset, lerpSpeed, maxLerpSpeed, out bool catched);
+            if (target != null)
+            {
+                // 线性插值平滑地移动到目标位置
+                Vector3 newPos = Utils.LerpForTime(transform.position, target.position + offset, lerpSpeed, maxLerpSpeed, out bool catched);
+                newPos.z = offset.z;
+                transform.position = newPos;
+            }
         }
     }
 }
